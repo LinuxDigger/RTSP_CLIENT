@@ -1,0 +1,16 @@
+/*
+ * livemedia_version.h
+ *
+ *  Created on: Jun 12, 2018
+ *      Author: jhb
+ */
+
+#ifndef INCLUDE_LIVEMEDIA_VERSION_H_
+#define INCLUDE_LIVEMEDIA_VERSION_H_
+
+#define LIVEMEDIA_LIBRARY_VERSION_STRING	"2017.07.18"
+#define LIVEMEDIA_LIBRARY_VERSION_INT		1500336000
+
+
+
+#endif /* INCLUDE_LIVEMEDIA_VERSION_H_ */
