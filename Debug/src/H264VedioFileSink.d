@@ -12,7 +12,7 @@ src/H264VedioFileSink.o: ../src/H264VedioFileSink.cpp \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/UsageEnvironment.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/NetCommon.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/TaskScheduler.h \
- /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/GetFrameData.h \
+ /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/DP_RTSP_CLIENT_CycleQueue.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/CycleQueue.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/DP_RTSP_CLIENT_GlobDefine.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/OutputFile.h
@@ -43,7 +43,7 @@ src/H264VedioFileSink.o: ../src/H264VedioFileSink.cpp \
 
 /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/TaskScheduler.h:
 
-/home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/GetFrameData.h:
+/home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/DP_RTSP_CLIENT_CycleQueue.h:
 
 /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/CycleQueue.h:
 

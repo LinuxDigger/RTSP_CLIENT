@@ -9,7 +9,7 @@
 #define INCLUDE_FILESINK_H_
 
 #include "MediaSink.h"
-#include "GetFrameData.h"
+#include "DP_RTSP_CLIENT_CycleQueue.h"
 class FileSink: public MediaSink {
 public:
 	static FileSink* createNew(UsageEnvironment& env, char const* fileName,

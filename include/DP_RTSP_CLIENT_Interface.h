@@ -11,7 +11,7 @@
 #include <string.h>
 #include <map>
 #include "DP_RTSP_CLIENT_GlobDefine.h"
-#include "CycleQueue.h"
+#include "DP_RTSP_CLIENT_CycleQueue.h"
 #include "EfficientAddOrUpdate.h"
 #include "Mutex.h"
 using namespace std;
@@ -115,8 +115,7 @@ public:
 
 	static map<DP_U16, pthread_cond_t*> mCliCondSet;
 	static map<DP_U16, pthread_mutex_t*> mCliMuxSet;
-	static map<DP_U16, CycleQueue*> _mDataQueueSet;
-
+	static map<DP_U16, DP_RTSP_CLIENT_CycleQueue*> _mDataQueueSet;
 
 private:
 	DP_U16 _u16ClientNum;

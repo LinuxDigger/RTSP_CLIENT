@@ -15,7 +15,7 @@
 using namespace std;
 
 ////////// FileSink //////////
-
+int flag = 0;
 FileSink::FileSink(UsageEnvironment& env, FILE* fid, unsigned bufferSize,
 		char const* perFrameFileNamePrefix, unsigned short clientID) :
 		MediaSink(env), fOutFid(fid), fBufferSize(bufferSize), fSamePresentationTimeCounter(
@@ -86,7 +86,10 @@ void FileSink::afterGettingFrame(void* clientData, unsigned frameSize,
 		unsigned numTruncatedBytes, struct timeval presentationTime,
 		unsigned /*durationInMicroseconds*/) {
 	FileSink* sink = (FileSink*) clientData;
-	sink->afterGettingFrame(frameSize, numTruncatedBytes, presentationTime);
+//	afterGettingFrame
+//	afterGettingFrameGetData
+	sink->afterGettingFrame(frameSize, numTruncatedBytes,
+			presentationTime);
 }
 
 void FileSink::addData(unsigned char const* data, unsigned dataSize,
@@ -123,6 +126,12 @@ void FileSink::addData(unsigned char const* data, unsigned dataSize,
 	if (!packetIsLost)
 #endif
 	if (fOutFid != NULL && data != NULL) {
+//		unsigned char start[4] = { 0 };
+//		start[0] = 0x00;
+//		start[1] = 0x00;
+//		start[2] = 0x00;
+//		start[3] = 0x01;
+//		fwrite(start, 1, 4, fOutFid);
 		fwrite(data, 1, dataSize, fOutFid);
 		cout << "dataSize : " << dataSize << endl;
 	}
@@ -171,24 +180,29 @@ void FileSink::afterGettingFrameGetData(unsigned frameSize,
 				<< " bytes of trailing data was dropped!  Correct this by increasing the \"bufferSize\" parameter in the \"createNew()\" call to at least "
 				<< fBufferSize + numTruncatedBytes << "\n";
 	}
-
+#if 1
 	DP_RTSP_CLIENT_FRAME_DATA_S stFrameData(_cliID);
-	stFrameData.pu8Data = new unsigned char[frameSize];
-	memset(stFrameData.pu8Data, 0, frameSize);
+	stFrameData.pu8Data = new unsigned char[frameSize + 4];
+	memset(stFrameData.pu8Data, 0, frameSize + 4);
 //	if (video) {
-//		stFrameData.pu8Data[0] = 0x00;
-//		stFrameData.pu8Data[1] = 0x00;
-//		stFrameData.pu8Data[2] = 0x00;
-//		stFrameData.pu8Data[3] = 0x01;
-//		memcpy(stFrameData.pu8Data + 4, fBuffer, frameSize);
+	stFrameData.pu8Data[0] = 0x00;
+	stFrameData.pu8Data[1] = 0x00;
+	stFrameData.pu8Data[2] = 0x00;
+	stFrameData.pu8Data[3] = 0x01;
+	memcpy(stFrameData.pu8Data + 4, fBuffer, frameSize);
 //	}
-	DP_RTSP_CLIENT_Client::_mDataQueueSet[_cliID]->DSP_PutData(&stFrameData,
-			sizeof(DP_RTSP_CLIENT_FRAME_DATA_S));
-
+//	sleep(1);
+	DP_RTSP_CLIENT_Client::_mDataQueueSet[_cliID]->DP_RTSP_CLIENT_PutData(
+			&stFrameData, sizeof(DP_RTSP_CLIENT_FRAME_DATA_S));
+#endif
 #if 0 //
-	///fwrite data 将数据保存到文件中
-	addData(fBuffer, frameSize, presentationTime);
 
+	addData(fBuffer, frameSize, presentationTime);
+	if (((fBuffer[0] & 0x7E) >> 1) == 19 || ((fBuffer[0] & 0x7E) >> 1) == 21) { //16~21
+		///fwrite data 将数据保存到文件中
+		if (flag++ == 1)
+		exit(0);
+	}
 	if (fOutFid == NULL || fflush(fOutFid) == EOF) {
 		// The output file has closed.  Handle this the same way as if the input source had closed:
 		if (fSource != NULL)

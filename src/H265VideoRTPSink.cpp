@@ -39,10 +39,12 @@ H265VideoRTPSink* H265VideoRTPSink::createNew(UsageEnvironment& env,
 			spsSize, pps, ppsSize);
 }
 
+////fmtp
 H265VideoRTPSink* H265VideoRTPSink::createNew(UsageEnvironment& env,
 		Groupsock* RTPgs, unsigned char rtpPayloadFormat,
 		char const* sPropVPSStr, char const* sPropSPSStr,
 		char const* sPropPPSStr) {
+	//none
 	cout << "YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY"
 			<< endl;
 	u_int8_t* vps = NULL;

@@ -20,7 +20,7 @@ using namespace std;
 
 map<DP_U16, pthread_cond_t*> DP_RTSP_CLIENT_Client::mCliCondSet;
 map<DP_U16, pthread_mutex_t*> DP_RTSP_CLIENT_Client::mCliMuxSet;
-map<DP_U16, CycleQueue*> DP_RTSP_CLIENT_Client::_mDataQueueSet;
+map<DP_U16, DP_RTSP_CLIENT_CycleQueue*> DP_RTSP_CLIENT_Client::_mDataQueueSet;
 
 DP_RTSP_CLIENT_Client::DP_RTSP_CLIENT_Client() :
 		_u16ClientNum(0), _u16ClientMaxNum(DP_RTSP_CLIENT_ClientMaxNum), _u32MaxFrameSize(
@@ -62,10 +62,17 @@ DP_S32 DP_RTSP_CLIENT_Client::DP_RTSP_CLIENT_Init(const DP_S8 *ps8URL,
 	ClientInitArgs_S stCliArgs(_u16ClientNum, ps8URL, enStreamType,
 			enNetProtocol, u32FrmNums, pu8UsrName, pu8UsrPassword, this);
 	if (pthread_create(&tid, NULL, sClientInit, (void*) &stCliArgs) == 0) {
+		DP_RTSP_CLIENT_CycleQueue *cycQ = new DP_RTSP_CLIENT_CycleQueue(
+				u32FrmNums * sizeof(DP_RTSP_CLIENT_FRAME_DATA_S));
+		cycQ->DSP_QueueInit();
+		efficientAddOrUpdate(_mDataQueueSet, _u16ClientNum, cycQ);
 		if (pthread_cond_timedwait(cond, mutex, &outtime) != 0) {
 			cout
 					<< "error cond ++++++++++++++++++++++++++++++++++++++++++++++++++++++!"
 					<< endl;
+			//erase a queue
+			//check!!!!!!!!!!
+			_mDataQueueSet.erase(_u16ClientNum);
 			///close connection
 			return DP_RetError;
 		} else {
@@ -73,9 +80,6 @@ DP_S32 DP_RTSP_CLIENT_Client::DP_RTSP_CLIENT_Init(const DP_S8 *ps8URL,
 					<< "cond time wait == 000000000000000000000000000000000000000000000000"
 					<< endl;
 			//init a queue according a uID.put it in map
-			CycleQueue *cycQ = new CycleQueue(
-					u32FrmNums * sizeof(DP_RTSP_CLIENT_FRAME_DATA_S));
-			efficientAddOrUpdate(_mDataQueueSet, _u16ClientNum, cycQ);
 		}
 		pthread_cond_destroy(cond);
 		pthread_mutex_destroy(mutex);
@@ -95,6 +99,7 @@ void* DP_RTSP_CLIENT_Client::sClientInit(void*args) {
 	UsageEnvironment* env;
 	TaskScheduler* scheduler = BasicTaskScheduler::createNew();
 	env = BasicUsageEnvironment::createNew(*scheduler, stCliArgs->clientID); //111id?
+
 	setEnvURL(*env, stCliArgs->ps8URL);
 	//	char const* progName;
 	Medium* ourClient = createClient(*env, stCliArgs->ps8URL);
@@ -121,7 +126,7 @@ DP_S32 DP_RTSP_CLIENT_Client::DP_RTSP_CLIENT_GetStreamData(
 		delete[] stDataRecv->pu8Data;
 		stDataRecv->pu8Data = NULL;
 	}
-	_mDataQueueSet[cliID]->DSP_GetDate(stDataRecv,
+	_mDataQueueSet[cliID]->DSP_GetData(stDataRecv,
 			sizeof(DP_RTSP_CLIENT_FRAME_DATA_S));
 
 	return DP_RetOk;

@@ -20,6 +20,7 @@ CPP_SRCS += \
 ../src/BasicUsageEnvironment.cpp \
 ../src/BitVector.cpp \
 ../src/CycleQueue.cpp \
+../src/DP_RTSP_CLIENT_CycleQueue.cpp \
 ../src/DP_RTSP_CLIENT_Interface.cpp \
 ../src/DVVideoRTPSink.cpp \
 ../src/DVVideoRTPSource.cpp \
@@ -159,6 +160,7 @@ OBJS += \
 ./src/BasicUsageEnvironment.o \
 ./src/BitVector.o \
 ./src/CycleQueue.o \
+./src/DP_RTSP_CLIENT_CycleQueue.o \
 ./src/DP_RTSP_CLIENT_Interface.o \
 ./src/DVVideoRTPSink.o \
 ./src/DVVideoRTPSource.o \
@@ -296,6 +298,7 @@ CPP_DEPS += \
 ./src/BasicUsageEnvironment.d \
 ./src/BitVector.d \
 ./src/CycleQueue.d \
+./src/DP_RTSP_CLIENT_CycleQueue.d \
 ./src/DP_RTSP_CLIENT_Interface.d \
 ./src/DVVideoRTPSink.d \
 ./src/DVVideoRTPSource.d \

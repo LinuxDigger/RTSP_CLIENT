@@ -324,7 +324,7 @@ Boolean MediaSession::parseSDPLine_s(char const* sdpLine) {
 		fSessionName = strDup(buffer);
 		parseSuccess = True;
 		//////h265
-		cout << "fSessionName :::::::::::::::::"<<fSessionName<<endl;
+		cout << "fSessionName :::::::::::::::::" << fSessionName << endl;
 	}
 	delete[] buffer;
 
@@ -1382,6 +1382,9 @@ Boolean MediaSubsession::parseSDPAttribute_fmtp(char const* sdpLine) {
 				//sprop-sps 265
 				unsigned char ssbackup[iPos] = { 0 };
 				memcpy(ssbackup, base64ss, iPos);
+				unsigned char nal_unit_type = (ssbackup[0] & 0x7E) >> 1;
+				printf("nal_unit_type::::::::::::: %d", nal_unit_type);
+
 				vc_params_t params;
 				if (strcmp(nameStr, "sprop-parameter-sets") == 0) {
 					if (h264_decode_sps(ssbackup, iPos, width, height, fps)) {
@@ -1393,7 +1396,8 @@ Boolean MediaSubsession::parseSDPAttribute_fmtp(char const* sdpLine) {
 					ParseSequenceParameterSet(ssbackup, iPos, params);
 					cout << "width : " << params.width << " height "
 							<< params.height << " profile : " << params.profile
-							<< " nal_length_size : " << params.nal_length_size << endl;
+							<< " nal_length_size : " << params.nal_length_size
+							<< endl;
 				}
 			}
 			// Move to the next parameter assignment string:
