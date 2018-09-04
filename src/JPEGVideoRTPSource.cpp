@@ -34,20 +34,20 @@ private: // redefined virtual functions
 #define DWORD unsigned long
 
 JPEGVideoRTPSource*
-JPEGVideoRTPSource::createNew(UsageEnvironment& env, Groupsock* RTPgs,
+JPEGVideoRTPSource::createNew(UsageEnvironment& env, CommonPlay *cpObj,Groupsock* RTPgs,
 			      unsigned char rtpPayloadFormat,
 			      unsigned rtpTimestampFrequency,
 			      unsigned defaultWidth, unsigned defaultHeight) {
-  return new JPEGVideoRTPSource(env, RTPgs, rtpPayloadFormat,
+  return new JPEGVideoRTPSource(env, cpObj,RTPgs, rtpPayloadFormat,
 				rtpTimestampFrequency, defaultWidth, defaultHeight);
 }
 
-JPEGVideoRTPSource::JPEGVideoRTPSource(UsageEnvironment& env,
+JPEGVideoRTPSource::JPEGVideoRTPSource(UsageEnvironment& env,CommonPlay *cpObj,
 				       Groupsock* RTPgs,
 				       unsigned char rtpPayloadFormat,
 				       unsigned rtpTimestampFrequency,
 				       unsigned defaultWidth, unsigned defaultHeight)
-  : MultiFramedRTPSource(env, RTPgs,
+  : MultiFramedRTPSource(env, cpObj,RTPgs,
 			 rtpPayloadFormat, rtpTimestampFrequency,
 			 new JPEGBufferedPacketFactory),
     fDefaultWidth(defaultWidth), fDefaultHeight(defaultHeight) {

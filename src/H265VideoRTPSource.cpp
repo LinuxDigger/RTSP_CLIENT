@@ -31,17 +31,17 @@ private:
 ///////// H265VideoRTPSource implementation ////////
 
 H265VideoRTPSource*
-H265VideoRTPSource::createNew(UsageEnvironment& env, Groupsock* RTPgs,
-		unsigned char rtpPayloadFormat, Boolean expectDONFields,
-		unsigned rtpTimestampFrequency) {
-	return new H265VideoRTPSource(env, RTPgs, rtpPayloadFormat, expectDONFields,
-			rtpTimestampFrequency);
+H265VideoRTPSource::createNew(UsageEnvironment& env, CommonPlay *cpObj,
+		Groupsock* RTPgs, unsigned char rtpPayloadFormat,
+		Boolean expectDONFields, unsigned rtpTimestampFrequency) {
+	return new H265VideoRTPSource(env, cpObj, RTPgs, rtpPayloadFormat,
+			expectDONFields, rtpTimestampFrequency);
 }
 
-H265VideoRTPSource::H265VideoRTPSource(UsageEnvironment& env, Groupsock* RTPgs,
-		unsigned char rtpPayloadFormat, Boolean expectDONFields,
-		unsigned rtpTimestampFrequency) :
-		MultiFramedRTPSource(env, RTPgs, rtpPayloadFormat,
+H265VideoRTPSource::H265VideoRTPSource(UsageEnvironment& env, CommonPlay *cpObj,
+		Groupsock* RTPgs, unsigned char rtpPayloadFormat,
+		Boolean expectDONFields, unsigned rtpTimestampFrequency) :
+		MultiFramedRTPSource(env, cpObj, RTPgs, rtpPayloadFormat,
 				rtpTimestampFrequency, new H265BufferedPacketFactory), fExpectDONFields(
 				expectDONFields), fCurPacketNALUnitType(0), fPreviousNALUnitDON(
 				0), fCurrentNALUnitAbsDon((u_int64_t) (~0)) {

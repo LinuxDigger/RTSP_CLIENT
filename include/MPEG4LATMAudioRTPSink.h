@@ -12,13 +12,13 @@
 
 class MPEG4LATMAudioRTPSink: public AudioRTPSink {
 public:
-	static MPEG4LATMAudioRTPSink* createNew(UsageEnvironment& env,
+	static MPEG4LATMAudioRTPSink* createNew(UsageEnvironment& env,CommonPlay *cpObj,
 			Groupsock* RTPgs, unsigned char rtpPayloadFormat,
 			u_int32_t rtpTimestampFrequency, char const* streamMuxConfigString,
 			unsigned numChannels, Boolean allowMultipleFramesPerPacket = False);
 
 protected:
-	MPEG4LATMAudioRTPSink(UsageEnvironment& env, Groupsock* RTPgs,
+	MPEG4LATMAudioRTPSink(UsageEnvironment& env,CommonPlay *cpObj, Groupsock* RTPgs,
 			unsigned char rtpPayloadFormat, u_int32_t rtpTimestampFrequency,
 			char const* streamMuxConfigString, unsigned numChannels,
 			Boolean allowMultipleFramesPerPacket);

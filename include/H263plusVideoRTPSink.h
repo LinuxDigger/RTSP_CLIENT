@@ -12,12 +12,13 @@
 class H263plusVideoRTPSink: public VideoRTPSink {
 public:
 	static H263plusVideoRTPSink* createNew(UsageEnvironment& env,
-			Groupsock* RTPgs, unsigned char rtpPayloadFormat,
+			CommonPlay *cpObj, Groupsock* RTPgs, unsigned char rtpPayloadFormat,
 			u_int32_t rtpTimestampFrequency = 90000);
 
 protected:
-	H263plusVideoRTPSink(UsageEnvironment& env, Groupsock* RTPgs,
-			unsigned char rtpPayloadFormat, u_int32_t rtpTimestampFrequency);
+	H263plusVideoRTPSink(UsageEnvironment& env, CommonPlay *cpObj,
+			Groupsock* RTPgs, unsigned char rtpPayloadFormat,
+			u_int32_t rtpTimestampFrequency);
 	// called only by createNew()
 
 	virtual ~H263plusVideoRTPSink();

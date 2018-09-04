@@ -9,15 +9,16 @@
 #define INCLUDE_MEDIASINK_H_
 
 #include "FramedSource.h"
-
+//#include "CommonPlay.h"
+class CommonPlay;
 class MediaSink: public Medium {
 public:
 	static Boolean lookupByName(UsageEnvironment& env, char const* sinkName,
 			MediaSink*& resultSink);
 
-	typedef void (afterPlayingFunc)(void* clientData);
+	typedef void (afterPlayingFunc)(void* clientData, CommonPlay *cpObj);
 	Boolean startPlaying(MediaSource& source, afterPlayingFunc* afterFunc,
-			void* afterClientData);
+			void* afterClientData, CommonPlay *cpObj);
 	virtual void stopPlaying();
 
 	// Test for specific types of sink:
@@ -28,7 +29,7 @@ public:
 	}
 
 protected:
-	MediaSink(UsageEnvironment& env); // abstract base class
+	MediaSink(UsageEnvironment& env, CommonPlay *cpObj); // abstract base class
 	virtual ~MediaSink();
 
 	virtual Boolean sourceIsCompatibleWithUs(MediaSource& source);
@@ -51,6 +52,8 @@ private:
 	// The following fields are used when we're being played:
 	afterPlayingFunc* fAfterFunc;
 	void* fAfterClientData;
+protected:
+	CommonPlay *fcpObj;
 };
 
 // A data structure that a sink may use for an output packet:

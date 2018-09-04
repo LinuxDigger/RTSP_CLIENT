@@ -19,6 +19,7 @@ CPP_SRCS += \
 ../src/BasicUDPSource.cpp \
 ../src/BasicUsageEnvironment.cpp \
 ../src/BitVector.cpp \
+../src/CommonPlay.cpp \
 ../src/CycleQueue.cpp \
 ../src/DP_RTSP_CLIENT_CycleQueue.cpp \
 ../src/DP_RTSP_CLIENT_Interface.cpp \
@@ -159,6 +160,7 @@ OBJS += \
 ./src/BasicUDPSource.o \
 ./src/BasicUsageEnvironment.o \
 ./src/BitVector.o \
+./src/CommonPlay.o \
 ./src/CycleQueue.o \
 ./src/DP_RTSP_CLIENT_CycleQueue.o \
 ./src/DP_RTSP_CLIENT_Interface.o \
@@ -297,6 +299,7 @@ CPP_DEPS += \
 ./src/BasicUDPSource.d \
 ./src/BasicUsageEnvironment.d \
 ./src/BitVector.d \
+./src/CommonPlay.d \
 ./src/CycleQueue.d \
 ./src/DP_RTSP_CLIENT_CycleQueue.d \
 ./src/DP_RTSP_CLIENT_Interface.d \

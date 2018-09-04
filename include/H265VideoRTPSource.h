@@ -13,7 +13,7 @@
 class H265VideoRTPSource: public MultiFramedRTPSource {
 public:
 	static H265VideoRTPSource*
-	createNew(UsageEnvironment& env, Groupsock* RTPgs,
+	createNew(UsageEnvironment& env, CommonPlay *cpObj,Groupsock* RTPgs,
 			unsigned char rtpPayloadFormat, Boolean expectDONFields = False,
 			unsigned rtpTimestampFrequency = 90000);
 	// "expectDONFields" is True iff we expect incoming H.265/RTP packets to contain
@@ -25,7 +25,7 @@ public:
 	// the 'absolute decoding order number (AbsDon)' for the most-recently delivered NAL unit
 
 protected:
-	H265VideoRTPSource(UsageEnvironment& env, Groupsock* RTPgs,
+	H265VideoRTPSource(UsageEnvironment& env, CommonPlay *cpObj,Groupsock* RTPgs,
 			unsigned char rtpPayloadFormat, Boolean expectDONFields,
 			unsigned rtpTimestampFrequency);
 	// called only by createNew()

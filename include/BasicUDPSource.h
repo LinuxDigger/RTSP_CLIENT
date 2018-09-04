@@ -8,35 +8,36 @@
 #ifndef INCLUDE_BASICUDPSOURCE_H_
 #define INCLUDE_BASICUDPSOURCE_H_
 
-
-
 #include "FramedSource.h"
 #include "GroupSock.h"
 
 class BasicUDPSource: public FramedSource {
 public:
-  static BasicUDPSource* createNew(UsageEnvironment& env, Groupsock* inputGS);
+	static BasicUDPSource* createNew(UsageEnvironment& env, CommonPlay *cpObj,
+			Groupsock* inputGS);
 
-  virtual ~BasicUDPSource();
+	virtual ~BasicUDPSource();
 
-  Groupsock* gs() const { return fInputGS; }
-
-private:
-  BasicUDPSource(UsageEnvironment& env, Groupsock* inputGS);
-      // called only by createNew()
-
-  static void incomingPacketHandler(BasicUDPSource* source, int mask);
-  void incomingPacketHandler1();
-
-private: // redefined virtual functions:
-  virtual void doGetNextFrame();
-  virtual void doStopGettingFrames();
+	Groupsock* gs() const {
+		return fInputGS;
+	}
 
 private:
-  Groupsock* fInputGS;
-  Boolean fHaveStartedReading;
+	BasicUDPSource(UsageEnvironment& env, CommonPlay *cpObj,
+			Groupsock* inputGS);
+	// called only by createNew()
+
+	static void incomingPacketHandler(BasicUDPSource* source, int mask);
+	void incomingPacketHandler1();
+
+private:
+	// redefined virtual functions:
+	virtual void doGetNextFrame();
+	virtual void doStopGettingFrames();
+
+private:
+	Groupsock* fInputGS;
+	Boolean fHaveStartedReading;
 };
-
-
 
 #endif /* INCLUDE_BASICUDPSOURCE_H_ */

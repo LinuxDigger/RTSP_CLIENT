@@ -17,8 +17,9 @@ class BufferedPacketFactory;
 
 class MultiFramedRTPSource: public RTPSource {
 protected:
-	MultiFramedRTPSource(UsageEnvironment& env, Groupsock* RTPgs,
-			unsigned char rtpPayloadFormat, unsigned rtpTimestampFrequency,
+	MultiFramedRTPSource(UsageEnvironment& env, CommonPlay *cpObj,
+			Groupsock* RTPgs, unsigned char rtpPayloadFormat,
+			unsigned rtpTimestampFrequency,
 			BufferedPacketFactory* packetFactory = NULL);
 	// virtual base class
 	virtual ~MultiFramedRTPSource();

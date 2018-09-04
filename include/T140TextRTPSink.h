@@ -8,7 +8,6 @@
 #ifndef INCLUDE_T140TEXTRTPSINK_H_
 #define INCLUDE_T140TEXTRTPSINK_H_
 
-
 #include "TextRTPSink.h"
 #include "FramedFilter.h"
 
@@ -16,29 +15,29 @@ class T140IdleFilter;
 
 class T140TextRTPSink: public TextRTPSink {
 public:
-  static T140TextRTPSink* createNew(UsageEnvironment& env, Groupsock* RTPgs, unsigned char rtpPayloadFormat);
+	static T140TextRTPSink* createNew(UsageEnvironment& env, CommonPlay *cpObj,
+			Groupsock* RTPgs, unsigned char rtpPayloadFormat);
 
 protected:
-  T140TextRTPSink(UsageEnvironment& env, Groupsock* RTPgs, unsigned char rtpPayloadFormat);
+	T140TextRTPSink(UsageEnvironment& env, CommonPlay *cpObj, Groupsock* RTPgs,
+			unsigned char rtpPayloadFormat);
 	// called only by createNew()
 
-  virtual ~T140TextRTPSink();
-
-protected: // redefined virtual functions:
-  virtual Boolean continuePlaying();
-  virtual void doSpecialFrameHandling(unsigned fragmentationOffset,
-                                      unsigned char* frameStart,
-                                      unsigned numBytesInFrame,
-                                      struct timeval framePresentationTime,
-                                      unsigned numRemainingBytes);
-  virtual Boolean frameCanAppearAfterPacketStart(unsigned char const* frameStart,
-						 unsigned numBytesInFrame) const;
+	virtual ~T140TextRTPSink();
 
 protected:
-  T140IdleFilter* fOurIdleFilter;
-  Boolean fAreInIdlePeriod;
-};
+	// redefined virtual functions:
+	virtual Boolean continuePlaying();
+	virtual void doSpecialFrameHandling(unsigned fragmentationOffset,
+			unsigned char* frameStart, unsigned numBytesInFrame,
+			struct timeval framePresentationTime, unsigned numRemainingBytes);
+	virtual Boolean frameCanAppearAfterPacketStart(
+			unsigned char const* frameStart, unsigned numBytesInFrame) const;
 
+protected:
+	T140IdleFilter* fOurIdleFilter;
+	Boolean fAreInIdlePeriod;
+};
 
 ////////// T140IdleFilter definition //////////
 
@@ -49,42 +48,38 @@ protected:
 
 class T140IdleFilter: public FramedFilter {
 public:
-  T140IdleFilter(UsageEnvironment& env, FramedSource* inputSource);
-  virtual ~T140IdleFilter();
-
-private: // redefined virtual functions:
-  virtual void doGetNextFrame();
-  virtual void doStopGettingFrames();
+	T140IdleFilter(UsageEnvironment& env, CommonPlay *cpObj,
+			FramedSource* inputSource);
+	virtual ~T140IdleFilter();
 
 private:
-  static void afterGettingFrame(void* clientData, unsigned frameSize,
-				unsigned numTruncatedBytes,
-                                struct timeval presentationTime,
-                                unsigned durationInMicroseconds);
-  void afterGettingFrame(unsigned frameSize,
-			 unsigned numTruncatedBytes,
-			 struct timeval presentationTime,
-			 unsigned durationInMicroseconds);
-
-  static void handleIdleTimeout(void* clientData);
-  void handleIdleTimeout();
-
-  void deliverFromBuffer();
-  void deliverEmptyFrame();
-
-  static void onSourceClosure(void* clientData);
-  void onSourceClosure();
+	// redefined virtual functions:
+	virtual void doGetNextFrame();
+	virtual void doStopGettingFrames();
 
 private:
-  TaskToken fIdleTimerTask;
-  unsigned fBufferSize, fNumBufferedBytes;
-  char* fBuffer;
-  unsigned fBufferedNumTruncatedBytes; // a count of truncated bytes from the upstream
-  struct timeval fBufferedDataPresentationTime;
-  unsigned fBufferedDataDurationInMicroseconds;
+	static void afterGettingFrame(void* clientData, unsigned frameSize,
+			unsigned numTruncatedBytes, struct timeval presentationTime,
+			unsigned durationInMicroseconds);
+	void afterGettingFrame(unsigned frameSize, unsigned numTruncatedBytes,
+			struct timeval presentationTime, unsigned durationInMicroseconds);
+
+	static void handleIdleTimeout(void* clientData, CommonPlay *cpObj);
+	void handleIdleTimeout();
+
+	void deliverFromBuffer();
+	void deliverEmptyFrame();
+
+	static void onSourceClosure(void* clientData);
+	void onSourceClosure();
+
+private:
+	TaskToken fIdleTimerTask;
+	unsigned fBufferSize, fNumBufferedBytes;
+	char* fBuffer;
+	unsigned fBufferedNumTruncatedBytes; // a count of truncated bytes from the upstream
+	struct timeval fBufferedDataPresentationTime;
+	unsigned fBufferedDataDurationInMicroseconds;
 };
-
-
-
 
 #endif /* INCLUDE_T140TEXTRTPSINK_H_ */

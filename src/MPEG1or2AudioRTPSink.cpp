@@ -8,16 +8,17 @@
 #include "MPEG1or2AudioRTPSink.h"
 
 MPEG1or2AudioRTPSink::MPEG1or2AudioRTPSink(UsageEnvironment& env,
-		Groupsock* RTPgs) :
-		AudioRTPSink(env, RTPgs, 14, 90000, "MPA") {
+		CommonPlay *cpObj, Groupsock* RTPgs) :
+		AudioRTPSink(env, cpObj, RTPgs, 14, 90000, "MPA") {
 }
 
 MPEG1or2AudioRTPSink::~MPEG1or2AudioRTPSink() {
 }
 
 MPEG1or2AudioRTPSink*
-MPEG1or2AudioRTPSink::createNew(UsageEnvironment& env, Groupsock* RTPgs) {
-	return new MPEG1or2AudioRTPSink(env, RTPgs);
+MPEG1or2AudioRTPSink::createNew(UsageEnvironment& env, CommonPlay *cpObj,
+		Groupsock* RTPgs) {
+	return new MPEG1or2AudioRTPSink(env, cpObj, RTPgs);
 }
 
 void MPEG1or2AudioRTPSink::doSpecialFrameHandling(unsigned fragmentationOffset,

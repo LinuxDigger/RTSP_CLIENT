@@ -7,57 +7,53 @@
 
 #ifndef INCLUDE_GROUPSOCKHELPER_H_
 #define INCLUDE_GROUPSOCKHELPER_H_
+
 #include "NetAddress.h"
 
-
-
 int setupDatagramSocket(UsageEnvironment& env, Port port);
-int setupStreamSocket(UsageEnvironment& env,
-		      Port port, Boolean makeNonBlocking = True);
 
-int readSocket(UsageEnvironment& env,
-	       int socket, unsigned char* buffer, unsigned bufferSize,
-	       struct sockaddr_in& fromAddress);
+int setupStreamSocket(UsageEnvironment& env, Port port,
+		Boolean makeNonBlocking = True);
 
-Boolean writeSocket(UsageEnvironment& env,
-		    int socket, struct in_addr address, portNumBits portNum/*network byte order*/,
-		    u_int8_t ttlArg,
-		    unsigned char* buffer, unsigned bufferSize);
+int readSocket(UsageEnvironment& env, int socket, unsigned char* buffer,
+		unsigned bufferSize, struct sockaddr_in& fromAddress);
 
-Boolean writeSocket(UsageEnvironment& env,
-		    int socket, struct in_addr address, portNumBits portNum/*network byte order*/,
-		    unsigned char* buffer, unsigned bufferSize);
-    // An optimized version of "writeSocket" that omits the "setsockopt()" call to set the TTL.
+Boolean writeSocket(UsageEnvironment& env, int socket, struct in_addr address,
+		portNumBits portNum/*network byte order*/, u_int8_t ttlArg,
+		unsigned char* buffer, unsigned bufferSize);
+
+Boolean writeSocket(UsageEnvironment& env, int socket, struct in_addr address,
+		portNumBits portNum/*network byte order*/, unsigned char* buffer,
+		unsigned bufferSize);
+// An optimized version of "writeSocket" that omits the "setsockopt()" call to set the TTL.
 
 void ignoreSigPipeOnSocket(int socketNum);
 
 unsigned getSendBufferSize(UsageEnvironment& env, int socket);
 unsigned getReceiveBufferSize(UsageEnvironment& env, int socket);
-unsigned setSendBufferTo(UsageEnvironment& env,
-			 int socket, unsigned requestedSize);
-unsigned setReceiveBufferTo(UsageEnvironment& env,
-			    int socket, unsigned requestedSize);
-unsigned increaseSendBufferTo(UsageEnvironment& env,
-			      int socket, unsigned requestedSize);
-unsigned increaseReceiveBufferTo(UsageEnvironment& env,
-				 int socket, unsigned requestedSize);
+unsigned setSendBufferTo(UsageEnvironment& env, int socket,
+		unsigned requestedSize);
+unsigned setReceiveBufferTo(UsageEnvironment& env, int socket,
+		unsigned requestedSize);
+unsigned increaseSendBufferTo(UsageEnvironment& env, int socket,
+		unsigned requestedSize);
+unsigned increaseReceiveBufferTo(UsageEnvironment& env, int socket,
+		unsigned requestedSize);
 
 Boolean makeSocketNonBlocking(int sock);
 Boolean makeSocketBlocking(int sock, unsigned writeTimeoutInMilliseconds = 0);
-  // A "writeTimeoutInMilliseconds" value of 0 means: Don't timeout
+// A "writeTimeoutInMilliseconds" value of 0 means: Don't timeout
 
 Boolean socketJoinGroup(UsageEnvironment& env, int socket,
-			netAddressBits groupAddress);
+		netAddressBits groupAddress);
 Boolean socketLeaveGroup(UsageEnvironment&, int socket,
-			 netAddressBits groupAddress);
+		netAddressBits groupAddress);
 
 // source-specific multicast join/leave
 Boolean socketJoinGroupSSM(UsageEnvironment& env, int socket,
-			   netAddressBits groupAddress,
-			   netAddressBits sourceFilterAddr);
+		netAddressBits groupAddress, netAddressBits sourceFilterAddr);
 Boolean socketLeaveGroupSSM(UsageEnvironment&, int socket,
-			    netAddressBits groupAddress,
-			    netAddressBits sourceFilterAddr);
+		netAddressBits groupAddress, netAddressBits sourceFilterAddr);
 
 Boolean getSourcePort(UsageEnvironment& env, int socket, Port& port);
 
@@ -74,7 +70,6 @@ netAddressBits chooseRandomIPv4SSMAddress(UsageEnvironment& env);
 // Returns a simple "hh:mm:ss" string, for use in debugging output (e.g.)
 char const* timestampString();
 
-
 #ifdef HAVE_SOCKADDR_LEN
 #define SET_SOCKADDR_SIN_LEN(var) var.sin_len = sizeof var
 #else
@@ -88,7 +83,6 @@ char const* timestampString();
     var.sin_port = (prt);\
     SET_SOCKADDR_SIN_LEN(var);
 
-
 // By default, we create sockets with the SO_REUSE_* flag set.
 // If, instead, you want to create sockets without the SO_REUSE_* flags,
 // Then enclose the creation code with:
@@ -98,23 +92,21 @@ char const* timestampString();
 //          }
 class NoReuse {
 public:
-  NoReuse(UsageEnvironment& env);
-  ~NoReuse();
+	NoReuse(UsageEnvironment& env);
+	~NoReuse();
 
 private:
-  UsageEnvironment& fEnv;
+	UsageEnvironment& fEnv;
 };
-
 
 // Define the "UsageEnvironment"-specific "groupsockPriv" structure:
 
 struct _groupsockPriv { // There should be only one of these allocated
-  HashTable* socketTable;
-  int reuseFlag;
+	HashTable* socketTable;
+	int reuseFlag;
 };
 _groupsockPriv* groupsockPriv(UsageEnvironment& env); // allocates it if necessary
 void reclaimGroupsockPriv(UsageEnvironment& env);
-
 
 #if (defined(__WIN32__) || defined(_WIN32)) && !defined(__MINGW32__)
 // For Windoze, we need to implement our own gettimeofday()
@@ -128,6 +120,5 @@ extern "C" netAddressBits our_inet_addr(char const*);
 extern "C" void our_srandom(int x);
 extern "C" long our_random();
 extern "C" u_int32_t our_random32(); // because "our_random()" returns a 31-bit number
-
 
 #endif /* INCLUDE_GROUPSOCKHELPER_H_ */

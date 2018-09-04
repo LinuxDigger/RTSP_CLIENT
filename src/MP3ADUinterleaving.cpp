@@ -27,8 +27,8 @@ Interleaving::~Interleaving() {
 ////////// MP3ADUinterleaverBase //////////
 
 MP3ADUinterleaverBase::MP3ADUinterleaverBase(UsageEnvironment& env,
-		FramedSource* inputSource) :
-		FramedFilter(env, inputSource) {
+		CommonPlay *cpObj, FramedSource* inputSource) :
+		FramedFilter(env, cpObj, inputSource) {
 }
 MP3ADUinterleaverBase::~MP3ADUinterleaverBase() {
 }
@@ -88,9 +88,10 @@ private:
 
 ////////// MP3ADUinterleaver //////////
 
-MP3ADUinterleaver::MP3ADUinterleaver(UsageEnvironment& env,
+MP3ADUinterleaver::MP3ADUinterleaver(UsageEnvironment& env, CommonPlay *cpObj,
 		Interleaving const& interleaving, FramedSource* inputSource) :
-		MP3ADUinterleaverBase(env, inputSource), fInterleaving(interleaving), fFrames(
+		MP3ADUinterleaverBase(env, cpObj, inputSource), fInterleaving(
+				interleaving), fFrames(
 				new InterleavingFrames(interleaving.cycleSize())), fPositionOfNextIncomingFrame(
 				0), fII(0), fICC(0) {
 }
@@ -100,8 +101,9 @@ MP3ADUinterleaver::~MP3ADUinterleaver() {
 }
 
 MP3ADUinterleaver* MP3ADUinterleaver::createNew(UsageEnvironment& env,
-		Interleaving const& interleaving, FramedSource* inputSource) {
-	return new MP3ADUinterleaver(env, interleaving, inputSource);
+		CommonPlay *cpObj, Interleaving const& interleaving,
+		FramedSource* inputSource) {
+	return new MP3ADUinterleaver(env, cpObj, interleaving, inputSource);
 }
 
 void MP3ADUinterleaver::doGetNextFrame() {
@@ -184,8 +186,8 @@ private:
 ////////// MP3ADUdeinterleaver //////////
 
 MP3ADUdeinterleaver::MP3ADUdeinterleaver(UsageEnvironment& env,
-		FramedSource* inputSource) :
-		MP3ADUinterleaverBase(env, inputSource), fFrames(
+		CommonPlay *cpObj, FramedSource* inputSource) :
+		MP3ADUinterleaverBase(env, cpObj, inputSource), fFrames(
 				new DeinterleavingFrames), fIIlastSeen(~0), fICClastSeen(~0) {
 }
 
@@ -194,8 +196,8 @@ MP3ADUdeinterleaver::~MP3ADUdeinterleaver() {
 }
 
 MP3ADUdeinterleaver* MP3ADUdeinterleaver::createNew(UsageEnvironment& env,
-		FramedSource* inputSource) {
-	return new MP3ADUdeinterleaver(env, inputSource);
+		CommonPlay *cpObj, FramedSource* inputSource) {
+	return new MP3ADUdeinterleaver(env, cpObj, inputSource);
 }
 
 void MP3ADUdeinterleaver::doGetNextFrame() {

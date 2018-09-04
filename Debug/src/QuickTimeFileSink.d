@@ -1,9 +1,6 @@
 src/QuickTimeFileSink.o: ../src/QuickTimeFileSink.cpp \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/QuickTimeFileSink.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/MediaSession.h \
- /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/FramedFilter.h \
- /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/FramedSource.h \
- /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/MediaSource.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/Media.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/liveMedia_version.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/HashTable.h \
@@ -11,6 +8,9 @@ src/QuickTimeFileSink.o: ../src/QuickTimeFileSink.cpp \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/UsageEnvironment.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/NetCommon.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/TaskScheduler.h \
+ /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/FramedFilter.h \
+ /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/FramedSource.h \
+ /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/MediaSource.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/RTCP.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/RTPSink.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/MediaSink.h \
@@ -37,12 +37,6 @@ src/QuickTimeFileSink.o: ../src/QuickTimeFileSink.cpp \
 
 /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/MediaSession.h:
 
-/home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/FramedFilter.h:
-
-/home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/FramedSource.h:
-
-/home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/MediaSource.h:
-
 /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/Media.h:
 
 /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/liveMedia_version.h:
@@ -56,6 +50,12 @@ src/QuickTimeFileSink.o: ../src/QuickTimeFileSink.cpp \
 /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/NetCommon.h:
 
 /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/TaskScheduler.h:
+
+/home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/FramedFilter.h:
+
+/home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/FramedSource.h:
+
+/home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/MediaSource.h:
 
 /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/RTCP.h:
 

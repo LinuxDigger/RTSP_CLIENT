@@ -32,16 +32,17 @@ private:
 ///////// MPEG4LATMAudioRTPSource implementation ////////
 
 MPEG4LATMAudioRTPSource*
-MPEG4LATMAudioRTPSource::createNew(UsageEnvironment& env, Groupsock* RTPgs,
-		unsigned char rtpPayloadFormat, unsigned rtpTimestampFrequency) {
-	return new MPEG4LATMAudioRTPSource(env, RTPgs, rtpPayloadFormat,
+MPEG4LATMAudioRTPSource::createNew(UsageEnvironment& env, CommonPlay *cpObj,
+		Groupsock* RTPgs, unsigned char rtpPayloadFormat,
+		unsigned rtpTimestampFrequency) {
+	return new MPEG4LATMAudioRTPSource(env, cpObj, RTPgs, rtpPayloadFormat,
 			rtpTimestampFrequency);
 }
 
 MPEG4LATMAudioRTPSource::MPEG4LATMAudioRTPSource(UsageEnvironment& env,
-		Groupsock* RTPgs, unsigned char rtpPayloadFormat,
+		CommonPlay *cpObj, Groupsock* RTPgs, unsigned char rtpPayloadFormat,
 		unsigned rtpTimestampFrequency) :
-		MultiFramedRTPSource(env, RTPgs, rtpPayloadFormat,
+		MultiFramedRTPSource(env, cpObj, RTPgs, rtpPayloadFormat,
 				rtpTimestampFrequency, new LATMBufferedPacketFactory), fIncludeLATMDataLengthField(
 				True) {
 }

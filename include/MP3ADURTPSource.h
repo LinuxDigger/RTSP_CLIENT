@@ -16,7 +16,7 @@
 class MP3ADURTPSource: public MultiFramedRTPSource {
 public:
   static MP3ADURTPSource*
-  createNew(UsageEnvironment& env, Groupsock* RTPgs,
+  createNew(UsageEnvironment& env,CommonPlay *cpObj, Groupsock* RTPgs,
 	    unsigned char rtpPayloadFormat,
 	    unsigned rtpTimestampFrequency = 90000);
 
@@ -24,7 +24,7 @@ protected:
   virtual ~MP3ADURTPSource();
 
 private:
-  MP3ADURTPSource(UsageEnvironment& env, Groupsock* RTPgs,
+  MP3ADURTPSource(UsageEnvironment& env,CommonPlay *cpObj, Groupsock* RTPgs,
 		  unsigned char rtpPayloadFormat,
 		  unsigned rtpTimestampFrequency);
       // called only by createNew()

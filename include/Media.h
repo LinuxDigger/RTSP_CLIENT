@@ -11,7 +11,7 @@
 #include "liveMedia_version.h"
 #include "HashTable.h"
 #include "UsageEnvironment.h"
-
+typedef void* TaskToken;
 // Lots of files end up needing the following, so just #include them here:
 #ifndef _NET_COMMON_H
 #include "NetCommon.h"

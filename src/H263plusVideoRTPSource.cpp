@@ -8,16 +8,17 @@
 #include "H263plusVideoRTPSource.h"
 
 H263plusVideoRTPSource*
-H263plusVideoRTPSource::createNew(UsageEnvironment& env, Groupsock* RTPgs,
-		unsigned char rtpPayloadFormat, unsigned rtpTimestampFrequency) {
-	return new H263plusVideoRTPSource(env, RTPgs, rtpPayloadFormat,
+H263plusVideoRTPSource::createNew(UsageEnvironment& env, CommonPlay *cpObj,
+		Groupsock* RTPgs, unsigned char rtpPayloadFormat,
+		unsigned rtpTimestampFrequency) {
+	return new H263plusVideoRTPSource(env, cpObj, RTPgs, rtpPayloadFormat,
 			rtpTimestampFrequency);
 }
 
 H263plusVideoRTPSource::H263plusVideoRTPSource(UsageEnvironment& env,
-		Groupsock* RTPgs, unsigned char rtpPayloadFormat,
+		CommonPlay *cpObj, Groupsock* RTPgs, unsigned char rtpPayloadFormat,
 		unsigned rtpTimestampFrequency) :
-		MultiFramedRTPSource(env, RTPgs, rtpPayloadFormat,
+		MultiFramedRTPSource(env, cpObj, RTPgs, rtpPayloadFormat,
 				rtpTimestampFrequency), fNumSpecialHeaders(0), fSpecialHeaderBytesLength(
 				0) {
 }

@@ -73,11 +73,11 @@ private:
 ////////// H264or5VideoStreamFramer implementation //////////
 
 H264or5VideoStreamFramer::H264or5VideoStreamFramer(int hNumber,
-		UsageEnvironment& env, FramedSource* inputSource, Boolean createParser,
-		Boolean includeStartCodeInOutput) :
-		MPEGVideoStreamFramer(env, inputSource), fHNumber(hNumber), fLastSeenVPS(
+		UsageEnvironment& env, CommonPlay *cpObj, FramedSource* inputSource,
+		Boolean createParser, Boolean includeStartCodeInOutput) :
+		MPEGVideoStreamFramer(env, cpObj, inputSource), fHNumber(hNumber), fLastSeenVPS(
 		NULL), fLastSeenVPSSize(0), fLastSeenSPS(NULL), fLastSeenSPSSize(0), fLastSeenPPS(
-				NULL), fLastSeenPPSSize(0) {
+		NULL), fLastSeenPPSSize(0) {
 	fParser =
 			createParser ?
 					new H264or5VideoStreamParser(hNumber, this, inputSource,

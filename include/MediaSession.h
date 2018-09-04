@@ -8,19 +8,20 @@
 #ifndef INCLUDE_MEDIASESSION_H_
 #define INCLUDE_MEDIASESSION_H_
 
-//#include "Media.h"
+#include "Media.h"
 //#include "MediaSink.h"
 //#include "liveMedia.h"
 #include "FramedFilter.h"
 #include "RTCP.h"
 
 class MediaSubsession;
+//
 // forward
 
 class MediaSession: public Medium {
 public:
 	static MediaSession* createNew(UsageEnvironment& env,
-			char const* sdpDescription);
+			char const* sdpDescription, CommonPlay *cpObj);
 
 	static Boolean lookupByName(UsageEnvironment& env, char const* sourceName,
 			MediaSession*& resultSession);
@@ -81,12 +82,13 @@ public:
 	const char* getSessionName() const {
 		return fSessionName;
 	}
+	CommonPlay *fcpObj;
 protected:
 	// redefined virtual functions
 	virtual Boolean isMediaSession() const;
 
 protected:
-	MediaSession(UsageEnvironment& env);
+	MediaSession(UsageEnvironment& env, CommonPlay *cpObj);
 	// called only by createNew();
 	virtual ~MediaSession();
 
@@ -130,6 +132,7 @@ protected:
 	char* fControlPath; // holds optional a=control: string
 };
 
+class MediaSink;
 class MediaSubsessionIterator {
 public:
 	MediaSubsessionIterator(MediaSession const& session);
@@ -333,7 +336,7 @@ public:
 protected:
 	friend class MediaSession;
 	friend class MediaSubsessionIterator;
-	MediaSubsession(MediaSession& parent);
+	MediaSubsession(MediaSession& parent, CommonPlay *cpObj);
 	virtual ~MediaSubsession();
 
 	UsageEnvironment& env() {
@@ -405,6 +408,7 @@ protected:
 
 	// Other fields:
 	char* fSessionId; // used by RTSP
+	CommonPlay *fcpObj;
 };
 
 #endif /* INCLUDE_MEDIASESSION_H_ */

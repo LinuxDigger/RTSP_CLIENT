@@ -11,10 +11,10 @@
 #include "strDup.h"
 
 MPEG4ESVideoRTPSink::MPEG4ESVideoRTPSink(UsageEnvironment& env,
-		Groupsock* RTPgs, unsigned char rtpPayloadFormat,
+		CommonPlay *cpObj, Groupsock* RTPgs, unsigned char rtpPayloadFormat,
 		u_int32_t rtpTimestampFrequency, u_int8_t profileAndLevelIndication,
 		char const* configStr) :
-		VideoRTPSink(env, RTPgs, rtpPayloadFormat, rtpTimestampFrequency,
+		VideoRTPSink(env, cpObj, RTPgs, rtpPayloadFormat, rtpTimestampFrequency,
 				"MP4V-ES"), fVOPIsPresent(False), fProfileAndLevelIndication(
 				profileAndLevelIndication), fFmtpSDPLine(NULL) {
 	fConfigBytes = parseGeneralConfigStr(configStr, fNumConfigBytes);
@@ -26,17 +26,19 @@ MPEG4ESVideoRTPSink::~MPEG4ESVideoRTPSink() {
 }
 
 MPEG4ESVideoRTPSink*
-MPEG4ESVideoRTPSink::createNew(UsageEnvironment& env, Groupsock* RTPgs,
-		unsigned char rtpPayloadFormat, u_int32_t rtpTimestampFrequency) {
-	return new MPEG4ESVideoRTPSink(env, RTPgs, rtpPayloadFormat,
+MPEG4ESVideoRTPSink::createNew(UsageEnvironment& env, CommonPlay *cpObj,
+		Groupsock* RTPgs, unsigned char rtpPayloadFormat,
+		u_int32_t rtpTimestampFrequency) {
+	return new MPEG4ESVideoRTPSink(env, cpObj, RTPgs, rtpPayloadFormat,
 			rtpTimestampFrequency);
 }
 
 MPEG4ESVideoRTPSink*
-MPEG4ESVideoRTPSink::createNew(UsageEnvironment& env, Groupsock* RTPgs,
-		unsigned char rtpPayloadFormat, u_int32_t rtpTimestampFrequency,
-		u_int8_t profileAndLevelIndication, char const* configStr) {
-	return new MPEG4ESVideoRTPSink(env, RTPgs, rtpPayloadFormat,
+MPEG4ESVideoRTPSink::createNew(UsageEnvironment& env, CommonPlay *cpObj,
+		Groupsock* RTPgs, unsigned char rtpPayloadFormat,
+		u_int32_t rtpTimestampFrequency, u_int8_t profileAndLevelIndication,
+		char const* configStr) {
+	return new MPEG4ESVideoRTPSink(env, cpObj, RTPgs, rtpPayloadFormat,
 			rtpTimestampFrequency, profileAndLevelIndication, configStr);
 }
 

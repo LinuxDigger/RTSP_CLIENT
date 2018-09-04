@@ -445,11 +445,11 @@ void QuickTimeFileSink::onSourceClosure1() {
 
 	// Call our specified 'after' function:
 	if (fAfterFunc != NULL) {
-		(*fAfterFunc)(fAfterClientData);
+		(*fAfterFunc)(fAfterClientData,NULL);
 	}
 }
 
-void QuickTimeFileSink::onRTCPBye(void* clientData) {
+void QuickTimeFileSink::onRTCPBye(void* clientData,CommonPlay *cpObj) {
 	SubsessionIOState* ioState = (SubsessionIOState*) clientData;
 
 	struct timeval timeNow;

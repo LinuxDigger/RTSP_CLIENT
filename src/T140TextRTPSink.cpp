@@ -10,9 +10,9 @@
 
 ////////// T140TextRTPSink implementation //////////
 
-T140TextRTPSink::T140TextRTPSink(UsageEnvironment& env, Groupsock* RTPgs,
-		unsigned char rtpPayloadFormat) :
-		TextRTPSink(env, RTPgs, rtpPayloadFormat,
+T140TextRTPSink::T140TextRTPSink(UsageEnvironment& env, CommonPlay *cpObj,
+		Groupsock* RTPgs, unsigned char rtpPayloadFormat) :
+		TextRTPSink(env, cpObj, RTPgs, rtpPayloadFormat,
 				1000/*mandatory RTP timestamp frequency for this payload format*/,
 				"T140"), fOurIdleFilter(NULL), fAreInIdlePeriod(True) {
 }
@@ -27,15 +27,15 @@ T140TextRTPSink::~T140TextRTPSink() {
 }
 
 T140TextRTPSink*
-T140TextRTPSink::createNew(UsageEnvironment& env, Groupsock* RTPgs,
-		unsigned char rtpPayloadFormat) {
-	return new T140TextRTPSink(env, RTPgs, rtpPayloadFormat);
+T140TextRTPSink::createNew(UsageEnvironment& env, CommonPlay *cpObj,
+		Groupsock* RTPgs, unsigned char rtpPayloadFormat) {
+	return new T140TextRTPSink(env, cpObj, RTPgs, rtpPayloadFormat);
 }
 
 Boolean T140TextRTPSink::continuePlaying() {
 	// First, check whether we have an 'idle filter' set up yet. If not, create it now, and insert it in front of our existing source:
 	if (fOurIdleFilter == NULL) {
-		fOurIdleFilter = new T140IdleFilter(envir(), fSource);
+		fOurIdleFilter = new T140IdleFilter(envir(), fcpObj, fSource);
 	} else {
 		fOurIdleFilter->reassignInputSource(fSource);
 	}
@@ -64,9 +64,11 @@ Boolean T140TextRTPSink::frameCanAppearAfterPacketStart(
 
 ////////// T140IdleFilter implementation //////////
 
-T140IdleFilter::T140IdleFilter(UsageEnvironment& env, FramedSource* inputSource) :
-		FramedFilter(env, inputSource), fIdleTimerTask(NULL), fBufferSize(
-				OutPacketBuffer::maxSize), fNumBufferedBytes(0) {
+T140IdleFilter::T140IdleFilter(UsageEnvironment& env, CommonPlay *cpObj,
+		FramedSource* inputSource) :
+		FramedFilter(env, cpObj, inputSource), fIdleTimerTask(NULL), fBufferSize(
+				OutPacketBuffer::maxSize), fNumBufferedBytes(0), fBufferedNumTruncatedBytes(
+				0), fBufferedDataDurationInMicroseconds(0) {
 	fBuffer = new char[fBufferSize];
 }
 
@@ -89,7 +91,7 @@ void T140IdleFilter::doGetNextFrame() {
 	// We don't have any buffered data, so ask our input source for data (unless we've already done so).
 	// But also set a timer to expire if this doesn't arrive promptly:
 	fIdleTimerTask = envir().taskScheduler().scheduleDelayedTask(
-			IDLE_TIMEOUT_MICROSECONDS, handleIdleTimeout, this);
+	IDLE_TIMEOUT_MICROSECONDS, handleIdleTimeout, this, fcpObj);
 	if (fInputSource != NULL && !fInputSource->isCurrentlyAwaitingData()) {
 		fInputSource->getNextFrame((unsigned char*) fBuffer, fBufferSize,
 				afterGettingFrame, this, onSourceClosure, this);
@@ -128,7 +130,7 @@ void T140IdleFilter::doStopGettingFrames() {
 	FramedFilter::doStopGettingFrames();
 }
 
-void T140IdleFilter::handleIdleTimeout(void* clientData) {
+void T140IdleFilter::handleIdleTimeout(void* clientData, CommonPlay *cpObj) {
 	((T140IdleFilter*) clientData)->handleIdleTimeout();
 }
 

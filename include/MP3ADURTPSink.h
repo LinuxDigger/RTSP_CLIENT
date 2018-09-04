@@ -12,14 +12,14 @@
 
 class MP3ADURTPSink: public AudioRTPSink {
 public:
-	static MP3ADURTPSink* createNew(UsageEnvironment& env, Groupsock* RTPgs,
-			unsigned char RTPPayloadType);
+	static MP3ADURTPSink* createNew(UsageEnvironment& env, CommonPlay *cpObj,
+			Groupsock* RTPgs, unsigned char RTPPayloadType);
 
 protected:
 	virtual ~MP3ADURTPSink();
 
 private:
-	MP3ADURTPSink(UsageEnvironment& env, Groupsock* RTPgs,
+	MP3ADURTPSink(UsageEnvironment& env, CommonPlay *cpObj, Groupsock* RTPgs,
 			unsigned char RTPPayloadType);
 	// called only by createNew()
 

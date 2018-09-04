@@ -10,6 +10,7 @@
 
 #include "MediaSource.h"
 
+class CommonPlay;
 class FramedSource: public MediaSource {
 public:
 	static Boolean lookupByName(UsageEnvironment& env, char const* sourceName,
@@ -46,7 +47,7 @@ public:
 	// frame has been read (*iff* it is read successfully)
 
 protected:
-	FramedSource(UsageEnvironment& env); // abstract base class
+	FramedSource(UsageEnvironment& env, CommonPlay *cpObj); // abstract base class
 	virtual ~FramedSource();
 
 	virtual void doStopGettingFrames();
@@ -59,6 +60,7 @@ protected:
 	unsigned fNumTruncatedBytes; // out
 	struct timeval fPresentationTime; // out
 	unsigned fDurationInMicroseconds; // out
+	CommonPlay *fcpObj;
 
 private:
 	// redefined virtual functions:

@@ -93,7 +93,7 @@ private:
 
 protected:
 	RTPSource(UsageEnvironment& env, Groupsock* RTPgs,
-			unsigned char rtpPayloadFormat, u_int32_t rtpTimestampFrequency);
+			unsigned char rtpPayloadFormat, u_int32_t rtpTimestampFrequency, CommonPlay *cpObj);
 	// abstract base class
 	virtual ~RTPSource();
 

@@ -29,14 +29,14 @@ private:
 ///////// TheoraVideoRTPSource implementation ////////
 
 TheoraVideoRTPSource*
-TheoraVideoRTPSource::createNew(UsageEnvironment& env, Groupsock* RTPgs,
-		unsigned char rtpPayloadFormat) {
-	return new TheoraVideoRTPSource(env, RTPgs, rtpPayloadFormat);
+TheoraVideoRTPSource::createNew(UsageEnvironment& env, CommonPlay *cpObj,
+		Groupsock* RTPgs, unsigned char rtpPayloadFormat) {
+	return new TheoraVideoRTPSource(env, cpObj, RTPgs, rtpPayloadFormat);
 }
 
 TheoraVideoRTPSource::TheoraVideoRTPSource(UsageEnvironment& env,
-		Groupsock* RTPgs, unsigned char rtpPayloadFormat) :
-		MultiFramedRTPSource(env, RTPgs, rtpPayloadFormat, 90000,
+		CommonPlay *cpObj, Groupsock* RTPgs, unsigned char rtpPayloadFormat) :
+		MultiFramedRTPSource(env, cpObj, RTPgs, rtpPayloadFormat, 90000,
 				new TheoraBufferedPacketFactory), fCurPacketIdent(0) {
 }
 

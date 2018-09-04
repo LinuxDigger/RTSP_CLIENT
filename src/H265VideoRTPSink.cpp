@@ -19,8 +19,8 @@ H265VideoRTPSink::H265VideoRTPSink(UsageEnvironment& env, Groupsock* RTPgs,
 		unsigned char rtpPayloadFormat, u_int8_t const* vps, unsigned vpsSize,
 		u_int8_t const* sps, unsigned spsSize, u_int8_t const* pps,
 		unsigned ppsSize) :
-		H264or5VideoRTPSink(265, env, RTPgs, rtpPayloadFormat, vps, vpsSize,
-				sps, spsSize, pps, ppsSize) {
+		H264or5VideoRTPSink(265, env, fcpObj, RTPgs, rtpPayloadFormat, vps,
+				vpsSize, sps, spsSize, pps, ppsSize) {
 }
 
 H265VideoRTPSink::~H265VideoRTPSink() {
@@ -172,7 +172,8 @@ char const* H265VideoRTPSink::auxSDPLine() {
 
 	unsigned len = strlen(sprop_sps);
 	unsigned char* sps64 = base64Decode(sprop_sps, len, false);
-	cout << "sps64444444444444444444444444444444444444444444444444444 "<<sps64<<endl;
+	cout << "sps64444444444444444444444444444444444444444444444444444 " << sps64
+			<< endl;
 
 	delete[] sprop_vps;
 	delete[] sprop_sps;

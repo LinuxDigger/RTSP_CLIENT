@@ -20,12 +20,12 @@ public:
       // representing 'packed configuration headers' ("identification", "comment", "setup")
       // to prepend to the output.  (For 'Vorbis" audio and 'Theora' video.)
 				unsigned bufferSize = 100000,
-				Boolean oneFilePerFrame = False);
+				Boolean oneFilePerFrame = False, CommonPlay *cpObj=NULL);
       // See "FileSink.hh" for a description of these parameters.
 
 protected:
   OggFileSink(UsageEnvironment& env, FILE* fid, unsigned samplingFrequency, char const* configStr,
-	      unsigned bufferSize, char const* perFrameFileNamePrefix);
+	      unsigned bufferSize, char const* perFrameFileNamePrefix, CommonPlay *cpObj);
       // called only by createNew()
   virtual ~OggFileSink();
 

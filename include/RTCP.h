@@ -10,7 +10,8 @@
 
 #include "RTPSink.h"
 #include "RTPSource.h"
-
+class OutPacketBuffer;
+class RTPSink;
 class SDESItem {
 public:
 	SDESItem(unsigned char tag, unsigned char const* value);
@@ -36,7 +37,7 @@ public:
 	static RTCPInstance* createNew(UsageEnvironment& env, Groupsock* RTCPgs,
 			unsigned totSessionBW, /* in kbps */
 			unsigned char const* cname, RTPSink* sink, RTPSource* source,
-			Boolean isSSMSource = False);
+			Boolean isSSMSource = False, CommonPlay *cpObj = NULL);
 
 	static Boolean lookupByName(UsageEnvironment& env, char const* instanceName,
 			RTCPInstance*& resultInstance);
@@ -105,7 +106,7 @@ public:
 protected:
 	RTCPInstance(UsageEnvironment& env, Groupsock* RTPgs, unsigned totSessionBW,
 			unsigned char const* cname, RTPSink* sink, RTPSource* source,
-			Boolean isSSMSource);
+			Boolean isSSMSource,CommonPlay *cpObj);
 	// called only by createNew()
 	virtual ~RTCPInstance();
 
@@ -141,6 +142,7 @@ private:
 	void onReceive(int typeOfPacket, int totPacketSize, u_int32_t ssrc);
 
 private:
+	CommonPlay *fcpObj;
 	u_int8_t* fInBuf;
 	unsigned fNumBytesAlreadyRead;
 	OutPacketBuffer* fOutBuf;

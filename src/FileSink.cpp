@@ -17,8 +17,9 @@ using namespace std;
 ////////// FileSink //////////
 int flag = 0;
 FileSink::FileSink(UsageEnvironment& env, FILE* fid, unsigned bufferSize,
-		char const* perFrameFileNamePrefix, unsigned short clientID) :
-		MediaSink(env), fOutFid(fid), fBufferSize(bufferSize), fSamePresentationTimeCounter(
+		char const* perFrameFileNamePrefix, unsigned short clientID,
+		CommonPlay *cpObj) :
+		MediaSink(env, cpObj), fOutFid(fid), fBufferSize(bufferSize), fSamePresentationTimeCounter(
 				0), _cliID(clientID) {
 	fBuffer = new unsigned char[bufferSize];
 	if (perFrameFileNamePrefix != NULL) {
@@ -42,7 +43,8 @@ FileSink::~FileSink() {
 }
 
 FileSink* FileSink::createNew(UsageEnvironment& env, char const* fileName,
-		unsigned bufferSize, unsigned short clientID, Boolean oneFilePerFrame) {
+		unsigned bufferSize, unsigned short clientID, Boolean oneFilePerFrame,
+		CommonPlay *cpObj) {
 	do {
 		FILE* fid;
 		char const* perFrameFileNamePrefix;
@@ -59,7 +61,7 @@ FileSink* FileSink::createNew(UsageEnvironment& env, char const* fileName,
 		}
 
 		return new FileSink(env, fid, bufferSize, perFrameFileNamePrefix,
-				clientID);
+				clientID, cpObj);
 	} while (0);
 
 	return NULL;
@@ -88,8 +90,7 @@ void FileSink::afterGettingFrame(void* clientData, unsigned frameSize,
 	FileSink* sink = (FileSink*) clientData;
 //	afterGettingFrame
 //	afterGettingFrameGetData
-	sink->afterGettingFrame(frameSize, numTruncatedBytes,
-			presentationTime);
+	sink->afterGettingFrame(frameSize, numTruncatedBytes, presentationTime);
 }
 
 void FileSink::addData(unsigned char const* data, unsigned dataSize,

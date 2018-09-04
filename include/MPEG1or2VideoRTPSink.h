@@ -13,10 +13,11 @@
 class MPEG1or2VideoRTPSink: public VideoRTPSink {
 public:
 	static MPEG1or2VideoRTPSink* createNew(UsageEnvironment& env,
-			Groupsock* RTPgs);
+			CommonPlay *cpObj, Groupsock* RTPgs);
 
 protected:
-	MPEG1or2VideoRTPSink(UsageEnvironment& env, Groupsock* RTPgs);
+	MPEG1or2VideoRTPSink(UsageEnvironment& env, CommonPlay *cpObj,
+			Groupsock* RTPgs);
 	// called only by createNew()
 
 	virtual ~MPEG1or2VideoRTPSink();

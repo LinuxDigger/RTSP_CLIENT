@@ -12,16 +12,17 @@
 //##### NOTE: INCOMPLETE!!! #####
 
 MPEG4ESVideoRTPSource*
-MPEG4ESVideoRTPSource::createNew(UsageEnvironment& env, Groupsock* RTPgs,
-		unsigned char rtpPayloadFormat, unsigned rtpTimestampFrequency) {
-	return new MPEG4ESVideoRTPSource(env, RTPgs, rtpPayloadFormat,
+MPEG4ESVideoRTPSource::createNew(UsageEnvironment& env, CommonPlay *cpObj,
+		Groupsock* RTPgs, unsigned char rtpPayloadFormat,
+		unsigned rtpTimestampFrequency) {
+	return new MPEG4ESVideoRTPSource(env, cpObj, RTPgs, rtpPayloadFormat,
 			rtpTimestampFrequency);
 }
 
 MPEG4ESVideoRTPSource::MPEG4ESVideoRTPSource(UsageEnvironment& env,
-		Groupsock* RTPgs, unsigned char rtpPayloadFormat,
+		CommonPlay *cpObj, Groupsock* RTPgs, unsigned char rtpPayloadFormat,
 		unsigned rtpTimestampFrequency) :
-		MultiFramedRTPSource(env, RTPgs, rtpPayloadFormat,
+		MultiFramedRTPSource(env, cpObj, RTPgs, rtpPayloadFormat,
 				rtpTimestampFrequency) {
 }
 

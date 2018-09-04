@@ -7,18 +7,18 @@
 
 #include "VP8VideoRTPSink.h"
 
-VP8VideoRTPSink::VP8VideoRTPSink(UsageEnvironment& env, Groupsock* RTPgs,
-		unsigned char rtpPayloadFormat) :
-		VideoRTPSink(env, RTPgs, rtpPayloadFormat, 90000, "VP8") {
+VP8VideoRTPSink::VP8VideoRTPSink(UsageEnvironment& env, CommonPlay *cpObj,
+		Groupsock* RTPgs, unsigned char rtpPayloadFormat) :
+		VideoRTPSink(env, cpObj, RTPgs, rtpPayloadFormat, 90000, "VP8") {
 }
 
 VP8VideoRTPSink::~VP8VideoRTPSink() {
 }
 
 VP8VideoRTPSink*
-VP8VideoRTPSink::createNew(UsageEnvironment& env, Groupsock* RTPgs,
-		unsigned char rtpPayloadFormat) {
-	return new VP8VideoRTPSink(env, RTPgs, rtpPayloadFormat);
+VP8VideoRTPSink::createNew(UsageEnvironment& env, CommonPlay *cpObj,
+		Groupsock* RTPgs, unsigned char rtpPayloadFormat) {
+	return new VP8VideoRTPSink(env, cpObj, RTPgs, rtpPayloadFormat);
 }
 
 Boolean VP8VideoRTPSink::frameCanAppearAfterPacketStart(

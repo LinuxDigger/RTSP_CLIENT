@@ -8,8 +8,8 @@
 #include "H264or5VideoStreamDiscreteFramer.h"
 
 H264or5VideoStreamDiscreteFramer::H264or5VideoStreamDiscreteFramer(int hNumber,
-		UsageEnvironment& env, FramedSource* inputSource) :
-		H264or5VideoStreamFramer(hNumber, env, inputSource,
+		UsageEnvironment& env, CommonPlay *cpObj, FramedSource* inputSource) :
+		H264or5VideoStreamFramer(hNumber, env,cpObj, inputSource,
 				False/*don't create a parser*/, False) {
 }
 

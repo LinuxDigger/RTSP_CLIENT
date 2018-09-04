@@ -10,8 +10,9 @@
 ////////// MPEG1or2DemuxedElementaryStream //////////
 
 MPEG1or2DemuxedElementaryStream::MPEG1or2DemuxedElementaryStream(
-		UsageEnvironment& env, u_int8_t streamIdTag, MPEG1or2Demux& sourceDemux) :
-		FramedSource(env), fOurStreamIdTag(streamIdTag), fOurSourceDemux(
+		UsageEnvironment& env, CommonPlay *cpObj, u_int8_t streamIdTag,
+		MPEG1or2Demux& sourceDemux) :
+		FramedSource(env, cpObj), fOurStreamIdTag(streamIdTag), fOurSourceDemux(
 				sourceDemux), fMPEGversion(0) {
 	// Set our MIME type string for known media types:
 	if ((streamIdTag & 0xE0) == 0xC0) {

@@ -8,13 +8,13 @@
 #include "SimpleRTPSink.h"
 #include "strDup.h"
 
-SimpleRTPSink::SimpleRTPSink(UsageEnvironment& env, Groupsock* RTPgs,
-		unsigned char rtpPayloadFormat, unsigned rtpTimestampFrequency,
-		char const* sdpMediaTypeString, char const* rtpPayloadFormatName,
-		unsigned numChannels, Boolean allowMultipleFramesPerPacket,
-		Boolean doNormalMBitRule) :
-		MultiFramedRTPSink(env, RTPgs, rtpPayloadFormat, rtpTimestampFrequency,
-				rtpPayloadFormatName, numChannels), fAllowMultipleFramesPerPacket(
+SimpleRTPSink::SimpleRTPSink(UsageEnvironment& env, CommonPlay *cpObj,
+		Groupsock* RTPgs, unsigned char rtpPayloadFormat,
+		unsigned rtpTimestampFrequency, char const* sdpMediaTypeString,
+		char const* rtpPayloadFormatName, unsigned numChannels,
+		Boolean allowMultipleFramesPerPacket, Boolean doNormalMBitRule) :
+		MultiFramedRTPSink(env, cpObj, RTPgs, rtpPayloadFormat,
+				rtpTimestampFrequency, rtpPayloadFormatName, numChannels), fAllowMultipleFramesPerPacket(
 				allowMultipleFramesPerPacket), fSetMBitOnNextPacket(False) {
 	fSDPMediaTypeString = strDup(
 			sdpMediaTypeString == NULL ? "unknown" : sdpMediaTypeString);
@@ -27,12 +27,12 @@ SimpleRTPSink::~SimpleRTPSink() {
 }
 
 SimpleRTPSink*
-SimpleRTPSink::createNew(UsageEnvironment& env, Groupsock* RTPgs,
-		unsigned char rtpPayloadFormat, unsigned rtpTimestampFrequency,
-		char const* sdpMediaTypeString, char const* rtpPayloadFormatName,
-		unsigned numChannels, Boolean allowMultipleFramesPerPacket,
-		Boolean doNormalMBitRule) {
-	return new SimpleRTPSink(env, RTPgs, rtpPayloadFormat,
+SimpleRTPSink::createNew(UsageEnvironment& env, CommonPlay *cpObj,
+		Groupsock* RTPgs, unsigned char rtpPayloadFormat,
+		unsigned rtpTimestampFrequency, char const* sdpMediaTypeString,
+		char const* rtpPayloadFormatName, unsigned numChannels,
+		Boolean allowMultipleFramesPerPacket, Boolean doNormalMBitRule) {
+	return new SimpleRTPSink(env, cpObj, RTPgs, rtpPayloadFormat,
 			rtpTimestampFrequency, sdpMediaTypeString, rtpPayloadFormatName,
 			numChannels, allowMultipleFramesPerPacket, doNormalMBitRule);
 }

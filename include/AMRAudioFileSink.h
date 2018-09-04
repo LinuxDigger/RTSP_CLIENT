@@ -14,12 +14,12 @@ class AMRAudioFileSink: public FileSink {
 public:
 	static AMRAudioFileSink* createNew(UsageEnvironment& env,
 			char const* fileName, unsigned bufferSize = 10000,
-			Boolean oneFilePerFrame = False);
+			Boolean oneFilePerFrame = False, CommonPlay *cpObj=NULL);
 	// (See "FileSink.hh" for a description of these parameters.)
 
 protected:
 	AMRAudioFileSink(UsageEnvironment& env, FILE* fid, unsigned bufferSize,
-			char const* perFrameFileNamePrefix);
+			char const* perFrameFileNamePrefix, CommonPlay *cpObj);
 	// called only by createNew()
 	virtual ~AMRAudioFileSink();
 

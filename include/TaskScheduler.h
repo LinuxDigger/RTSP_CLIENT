@@ -8,12 +8,13 @@
 #ifndef INCLUDE_TASKSCHEDULER_H_
 #define INCLUDE_TASKSCHEDULER_H_
 
-
 #include <string.h>
 #include "NetCommon.h"
+//#include "CommonPlay.h"
 //typedef unsigned u_int32_t;
 
-typedef void TaskFunc(void* clientData);
+class CommonPlay;
+typedef void TaskFunc(void* clientData, CommonPlay *cpObj);
 typedef void* TaskToken;
 typedef u_int32_t EventTriggerId;
 
@@ -24,7 +25,7 @@ public:
 	bool pausePlay;
 
 	virtual TaskToken scheduleDelayedTask(int64_t microseconds, TaskFunc* proc,
-			void* clientData) = 0;
+			void* clientData, CommonPlay *cpObj) = 0;
 	// Schedules a task to occur (after a delay) when we next
 	// reach a scheduling point.
 	// (Does not delay if "microseconds" <= 0)
@@ -69,7 +70,7 @@ public:
 	virtual void deleteEventTrigger(EventTriggerId eventTriggerId) = 0;
 
 	virtual void triggerEvent(EventTriggerId eventTriggerId, void* clientData =
-			NULL) = 0;
+	NULL) = 0;
 	// Causes the (previously-registered) handler function for the specified event to be handled (from the event loop).
 	// The handler function is called with "clientData" as parameter.
 	// Note: This function (unlike other library functions) may be called from an external thread

@@ -36,9 +36,10 @@ Boolean RTPSource::isRTPSource() const {
 }
 
 RTPSource::RTPSource(UsageEnvironment& env, Groupsock* RTPgs,
-		unsigned char rtpPayloadFormat, u_int32_t rtpTimestampFrequency) :
-		FramedSource(env), fRTPInterface(this, RTPgs), fCurPacketRTPSeqNum(0), fCurPacketRTPTimestamp(
-				0), fCurPacketMarkerBit(false), fCurPacketHasBeenSynchronizedUsingRTCP(
+		unsigned char rtpPayloadFormat, u_int32_t rtpTimestampFrequency,
+		CommonPlay *cpObj) :
+		FramedSource(env, cpObj), fRTPInterface(this, RTPgs), fCurPacketRTPSeqNum(
+				0), fCurPacketRTPTimestamp(0), fCurPacketMarkerBit(false), fCurPacketHasBeenSynchronizedUsingRTCP(
 				False), fLastReceivedSSRC(0), fRTCPInstanceForMultiplexedRTCPPackets(
 		NULL), fRTPPayloadFormat(rtpPayloadFormat), fTimestampFrequency(
 				rtpTimestampFrequency), fSSRC(our_random32()), fEnableRTCPReports(

@@ -20,10 +20,10 @@ using namespace std;
 ////////// RTSPClient implementation //////////
 
 RTSPClient* RTSPClient::createNew(UsageEnvironment& env, char const* rtspURL,
-		int verbosityLevel, char const* applicationName,
+		CommonPlay *cpObj, int verbosityLevel, char const* applicationName,
 		portNumBits tunnelOverHTTPPortNum, int socketNumToServer) {
 	return new RTSPClient(env, rtspURL, verbosityLevel, applicationName,
-			tunnelOverHTTPPortNum, socketNumToServer);
+			tunnelOverHTTPPortNum, socketNumToServer, cpObj);
 }
 
 unsigned RTSPClient::sendDescribeCommand(responseHandler* responseHandler,
@@ -32,14 +32,16 @@ unsigned RTSPClient::sendDescribeCommand(responseHandler* responseHandler,
 			<< endl;
 	if (fCurrentAuthenticator < authenticator)
 		fCurrentAuthenticator = *authenticator;
-	return sendRequest(new RequestRecord(++fCSeq, "DESCRIBE", responseHandler));
+	return sendRequest(
+			new RequestRecord(++fCSeq, "DESCRIBE", fcpObj, responseHandler));
 }
 
 unsigned RTSPClient::sendOptionsCommand(responseHandler* responseHandler,
 		Authenticator* authenticator) {
 	if (authenticator != NULL)
 		fCurrentAuthenticator = *authenticator;
-	return sendRequest(new RequestRecord(++fCSeq, "OPTIONS", responseHandler));
+	return sendRequest(
+			new RequestRecord(++fCSeq, "OPTIONS", fcpObj, responseHandler));
 }
 
 unsigned RTSPClient::sendAnnounceCommand(char const* sdpDescription,
@@ -47,8 +49,9 @@ unsigned RTSPClient::sendAnnounceCommand(char const* sdpDescription,
 	if (fCurrentAuthenticator < authenticator)
 		fCurrentAuthenticator = *authenticator;
 	return sendRequest(
-			new RequestRecord(++fCSeq, "ANNOUNCE", responseHandler, NULL, NULL,
-					False, 0.0, 0.0, 0.0, sdpDescription));
+			new RequestRecord(++fCSeq, "ANNOUNCE", fcpObj, responseHandler,
+			NULL,
+			NULL, False, 0.0, 0.0, 0.0, sdpDescription));
 }
 
 unsigned RTSPClient::sendSetupCommand(MediaSubsession& subsession,
@@ -68,7 +71,7 @@ unsigned RTSPClient::sendSetupCommand(MediaSubsession& subsession,
 	if (forceMulticastOnUnspecified)
 		booleanFlags |= 0x4;
 	return sendRequest(
-			new RequestRecord(++fCSeq, "SETUP", responseHandler, NULL,
+			new RequestRecord(++fCSeq, "SETUP", fcpObj, responseHandler, NULL,
 					&subsession, booleanFlags));
 }
 
@@ -79,8 +82,9 @@ unsigned RTSPClient::sendPlayCommand(MediaSession& session,
 		fCurrentAuthenticator = *authenticator;
 	sendDummyUDPPackets(session); // hack to improve NAT traversal
 	return sendRequest(
-			new RequestRecord(++fCSeq, "PLAY", responseHandler, &session, NULL,
-					0, start, end, scale));
+			new RequestRecord(++fCSeq, "PLAY", fcpObj, responseHandler,
+					&session,
+					NULL, 0, start, end, scale));
 }
 
 unsigned RTSPClient::sendPlayCommand(MediaSubsession& subsession,
@@ -90,7 +94,7 @@ unsigned RTSPClient::sendPlayCommand(MediaSubsession& subsession,
 		fCurrentAuthenticator = *authenticator;
 	sendDummyUDPPackets(subsession); // hack to improve NAT traversal
 	return sendRequest(
-			new RequestRecord(++fCSeq, "PLAY", responseHandler, NULL,
+			new RequestRecord(++fCSeq, "PLAY", fcpObj, responseHandler, NULL,
 					&subsession, 0, start, end, scale));
 }
 
@@ -101,7 +105,7 @@ unsigned RTSPClient::sendPlayCommand(MediaSession& session,
 		fCurrentAuthenticator = *authenticator;
 	sendDummyUDPPackets(session); // hack to improve NAT traversal
 	return sendRequest(
-			new RequestRecord(++fCSeq, responseHandler, absStartTime,
+			new RequestRecord(++fCSeq, responseHandler, fcpObj, absStartTime,
 					absEndTime, scale, &session, NULL));
 }
 
@@ -112,7 +116,7 @@ unsigned RTSPClient::sendPlayCommand(MediaSubsession& subsession,
 		fCurrentAuthenticator = *authenticator;
 	sendDummyUDPPackets(subsession); // hack to improve NAT traversal
 	return sendRequest(
-			new RequestRecord(++fCSeq, responseHandler, absStartTime,
+			new RequestRecord(++fCSeq, responseHandler, fcpObj, absStartTime,
 					absEndTime, scale, NULL, &subsession));
 }
 
@@ -121,7 +125,8 @@ unsigned RTSPClient::sendPauseCommand(MediaSession& session,
 	if (fCurrentAuthenticator < authenticator)
 		fCurrentAuthenticator = *authenticator;
 	return sendRequest(
-			new RequestRecord(++fCSeq, "PAUSE", responseHandler, &session));
+			new RequestRecord(++fCSeq, "PAUSE", fcpObj, responseHandler,
+					&session));
 }
 
 unsigned RTSPClient::sendPauseCommand(MediaSubsession& subsession,
@@ -129,7 +134,7 @@ unsigned RTSPClient::sendPauseCommand(MediaSubsession& subsession,
 	if (fCurrentAuthenticator < authenticator)
 		fCurrentAuthenticator = *authenticator;
 	return sendRequest(
-			new RequestRecord(++fCSeq, "PAUSE", responseHandler, NULL,
+			new RequestRecord(++fCSeq, "PAUSE", fcpObj, responseHandler, NULL,
 					&subsession));
 }
 
@@ -138,7 +143,8 @@ unsigned RTSPClient::sendRecordCommand(MediaSession& session,
 	if (fCurrentAuthenticator < authenticator)
 		fCurrentAuthenticator = *authenticator;
 	return sendRequest(
-			new RequestRecord(++fCSeq, "RECORD", responseHandler, &session));
+			new RequestRecord(++fCSeq, "RECORD", fcpObj, responseHandler,
+					&session));
 }
 
 unsigned RTSPClient::sendRecordCommand(MediaSubsession& subsession,
@@ -146,7 +152,7 @@ unsigned RTSPClient::sendRecordCommand(MediaSubsession& subsession,
 	if (fCurrentAuthenticator < authenticator)
 		fCurrentAuthenticator = *authenticator;
 	return sendRequest(
-			new RequestRecord(++fCSeq, "RECORD", responseHandler, NULL,
+			new RequestRecord(++fCSeq, "RECORD", fcpObj, responseHandler, NULL,
 					&subsession));
 }
 
@@ -155,7 +161,8 @@ unsigned RTSPClient::sendTeardownCommand(MediaSession& session,
 	if (fCurrentAuthenticator < authenticator)
 		fCurrentAuthenticator = *authenticator;
 	return sendRequest(
-			new RequestRecord(++fCSeq, "TEARDOWN", responseHandler, &session));
+			new RequestRecord(++fCSeq, "TEARDOWN", fcpObj, responseHandler,
+					&session));
 }
 
 unsigned RTSPClient::sendTeardownCommand(MediaSubsession& subsession,
@@ -163,8 +170,8 @@ unsigned RTSPClient::sendTeardownCommand(MediaSubsession& subsession,
 	if (fCurrentAuthenticator < authenticator)
 		fCurrentAuthenticator = *authenticator;
 	return sendRequest(
-			new RequestRecord(++fCSeq, "TEARDOWN", responseHandler, NULL,
-					&subsession));
+			new RequestRecord(++fCSeq, "TEARDOWN", fcpObj, responseHandler,
+			NULL, &subsession));
 }
 
 unsigned RTSPClient::sendSetParameterCommand(MediaSession& session,
@@ -176,7 +183,7 @@ unsigned RTSPClient::sendSetParameterCommand(MediaSession& session,
 			+ 10];
 	sprintf(paramString, "%s: %s\r\n", parameterName, parameterValue);
 	unsigned result = sendRequest(
-			new RequestRecord(++fCSeq, "SET_PARAMETER", responseHandler,
+			new RequestRecord(++fCSeq, "SET_PARAMETER", fcpObj, responseHandler,
 					&session, NULL, False, 0.0, 0.0, 0.0, paramString));
 	delete[] paramString;
 	return result;
@@ -201,7 +208,7 @@ unsigned RTSPClient::sendGetParameterCommand(MediaSession& session,
 		sprintf(paramString, "%s\r\n", parameterName);
 	}
 	unsigned result = sendRequest(
-			new RequestRecord(++fCSeq, "GET_PARAMETER", responseHandler,
+			new RequestRecord(++fCSeq, "GET_PARAMETER", fcpObj, responseHandler,
 					&session, NULL, False, 0.0, 0.0, 0.0, paramString));
 	delete[] paramString;
 	return result;
@@ -423,10 +430,11 @@ unsigned RTSPClient::responseBufferSize = 20000; // default value; you can reass
 
 RTSPClient::RTSPClient(UsageEnvironment& env, char const* rtspURL,
 		int verbosityLevel, char const* applicationName,
-		portNumBits tunnelOverHTTPPortNum, int socketNumToServer) :
+		portNumBits tunnelOverHTTPPortNum, int socketNumToServer,
+		CommonPlay *cpObj) :
 		Medium(env), desiredMaxIncomingPacketSize(0), fVerbosityLevel(1), fCSeq(
-				1), fAllowBasicAuthentication(True), fServerAddress(0), fTunnelOverHTTPPortNum(
-				tunnelOverHTTPPortNum), fUserAgentHeaderStr(
+				1), fAllowBasicAuthentication(True), fServerAddress(0), fcpObj(
+				cpObj), fTunnelOverHTTPPortNum(tunnelOverHTTPPortNum), fUserAgentHeaderStr(
 		NULL), fUserAgentHeaderStrLen(0), fInputSocketNum(-1), fOutputSocketNum(
 				-1), fBaseURL(NULL), fTCPStreamIdCount(0), fLastSessionId(NULL), fSessionTimeoutParameter(
 				0), fSessionCookieCounter(0), fHTTPTunnelingConnectionIsPending(
@@ -1103,7 +1111,8 @@ void RTSPClient::handleRequestError(RequestRecord* request) {
 #endif
 	}
 	if (request->handler() != NULL)
-		(*request->handler())(this, resultCode, strDup(envir().getResultMsg()));
+		(*request->handler())(this, resultCode, strDup(envir().getResultMsg()),
+				fcpObj);
 }
 
 Boolean RTSPClient::parseResponseCode(char const* line, unsigned& responseCode,
@@ -1654,12 +1663,13 @@ Boolean RTSPClient::setupHTTPTunneling1() {
 	}
 
 	// Begin by sending a HTTP "GET", to set up the server->client link.  Continue when we handle the response:
-	return sendRequest(new RequestRecord(1, "GET", responseHandlerForHTTP_GET))
+	return sendRequest(
+			new RequestRecord(1, "GET", fcpObj, responseHandlerForHTTP_GET))
 			!= 0;
 }
 
 void RTSPClient::responseHandlerForHTTP_GET(RTSPClient* rtspClient,
-		int responseCode, char* responseString) {
+		int responseCode, char* responseString, CommonPlay *cpObj) {
 	if (rtspClient != NULL)
 		rtspClient->responseHandlerForHTTP_GET1(responseCode, responseString);
 }
@@ -1718,7 +1728,7 @@ Boolean RTSPClient::setupHTTPTunneling2() {
 	fHTTPTunnelingConnectionIsPending = False;
 
 	// Send a HTTP "POST", to set up the client->server link.  (Note that we won't see a reply to the "POST".)
-	return sendRequest(new RequestRecord(1, "POST", NULL)) != 0;
+	return sendRequest(new RequestRecord(1, "POST", fcpObj, NULL)) != 0;
 }
 
 void RTSPClient::connectionHandler(void* instance, int /*mask*/) {
@@ -1771,7 +1781,8 @@ void RTSPClient::connectionHandler1() {
 	}
 }
 
-void RTSPClient::incomingDataHandler(void* instance, int /*mask*/) {   /////
+void RTSPClient::incomingDataHandler(void* instance, int /*mask*/
+) {   /////
 	cout << "do incoming Data ||||||||||||||||||||||||||||||||||||||" << endl;
 	RTSPClient* client = (RTSPClient*) instance;
 	client->incomingDataHandler1();
@@ -2179,7 +2190,8 @@ void RTSPClient::handleResponseBytes(int newBytesRead) {
 					resultString = strDup(responseStr);
 					envir().setResultMsg(responseStr);
 				}
-				(*foundRequest->handler())(this, resultCode, resultString); /////after option send request ------
+				(*foundRequest->handler())(this, resultCode, resultString,
+						fcpObj); /////after option send request ------
 			} else {
 				// An error occurred parsing the response, so call the handler, indicating an error:
 				handleRequestError(foundRequest);
@@ -2195,23 +2207,23 @@ void RTSPClient::handleResponseBytes(int newBytesRead) {
 ////////// RTSPClient::RequestRecord implementation //////////
 
 RTSPClient::RequestRecord::RequestRecord(unsigned cseq, char const* commandName,
-		responseHandler* handler, MediaSession* session,
+		CommonPlay *cpObj, responseHandler* handler, MediaSession* session,
 		MediaSubsession* subsession, u_int32_t booleanFlags, double start,
 		double end, float scale, char const* contentStr) :
 		fNext(NULL), fCSeq(cseq), fCommandName(commandName), fSession(session), fSubsession(
 				subsession), fBooleanFlags(booleanFlags), fStart(start), fEnd(
 				end), fAbsStartTime(NULL), fAbsEndTime(NULL), fScale(scale), fContentStr(
-				strDup(contentStr)), fHandler(handler) {
+				strDup(contentStr)), fHandler(handler), fcpObj(cpObj) {
 }
 
 RTSPClient::RequestRecord::RequestRecord(unsigned cseq,
-		responseHandler* handler, char const* absStartTime,
+		responseHandler* handler, CommonPlay *cpObj, char const* absStartTime,
 		char const* absEndTime, float scale, MediaSession* session,
 		MediaSubsession* subsession) :
 		fNext(NULL), fCSeq(cseq), fCommandName("PLAY"), fSession(session), fSubsession(
 				subsession), fBooleanFlags(0), fStart(0.0f), fEnd(-1.0f), fAbsStartTime(
 				strDup(absStartTime)), fAbsEndTime(strDup(absEndTime)), fScale(
-				scale), fContentStr(NULL), fHandler(handler) {
+				scale), fContentStr(NULL), fHandler(handler), fcpObj(cpObj) {
 }
 
 RTSPClient::RequestRecord::~RequestRecord() {
@@ -2318,7 +2330,7 @@ RTSPClient* HandlerServerForREGISTERCommand::createNewRTSPClient(
 		char const* rtspURL, int verbosityLevel, char const* applicationName,
 		int socketNumToServer) {
 	// Default implementation: create a basic "RTSPClient":
-	return RTSPClient::createNew(envir(), rtspURL, verbosityLevel,
+	return RTSPClient::createNew(envir(), rtspURL, NULL, verbosityLevel,
 			applicationName, 0, socketNumToServer);
 }
 

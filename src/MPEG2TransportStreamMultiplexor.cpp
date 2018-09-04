@@ -16,8 +16,8 @@
 #define PID_TABLE_SIZE 256
 
 MPEG2TransportStreamMultiplexor::MPEG2TransportStreamMultiplexor(
-		UsageEnvironment& env) :
-		FramedSource(env), fHaveVideoStreams(True/*by default*/), fOutgoingPacketCounter(
+		UsageEnvironment& env, CommonPlay *cpObj) :
+		FramedSource(env, cpObj), fHaveVideoStreams(True/*by default*/), fOutgoingPacketCounter(
 				0), fProgramMapVersion(0), fPreviousInputProgramMapVersion(
 				0xFF), fCurrentInputProgramMapVersion(0xFF), fPCR_PID(0), fCurrentPID(
 				0), fInputBuffer(NULL), fInputBufferSize(0), fInputBufferBytesUsed(
@@ -71,7 +71,7 @@ void MPEG2TransportStreamMultiplexor::doGetNextFrame() {
 		// To avoid excessive recursion (and stack overflow) caused by excessively large input frames,
 		// occasionally return to the event loop to do this:
 		nextTask() = envir().taskScheduler().scheduleDelayedTask(0,
-				(TaskFunc*) FramedSource::afterGetting, this);
+				(TaskFunc*) FramedSource::afterGetting, this, NULL);
 	} else {
 		afterGetting(this);
 	}

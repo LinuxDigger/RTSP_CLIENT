@@ -12,7 +12,7 @@
 
 class ADUFromMP3Source: public FramedFilter {
 public:
-	static ADUFromMP3Source* createNew(UsageEnvironment& env,
+	static ADUFromMP3Source* createNew(UsageEnvironment& env, CommonPlay *cpObj,
 			FramedSource* inputSource, Boolean includeADUdescriptors = True);
 
 	void resetInput();
@@ -24,8 +24,8 @@ public:
 	Boolean setScaleFactor(int scale);
 
 protected:
-	ADUFromMP3Source(UsageEnvironment& env, FramedSource* inputSource,
-			Boolean includeADUdescriptors);
+	ADUFromMP3Source(UsageEnvironment& env, CommonPlay *cpObj,
+			FramedSource* inputSource, Boolean includeADUdescriptors);
 	// called only by createNew()
 	virtual ~ADUFromMP3Source();
 
@@ -48,12 +48,12 @@ private:
 
 class MP3FromADUSource: public FramedFilter {
 public:
-	static MP3FromADUSource* createNew(UsageEnvironment& env,
+	static MP3FromADUSource* createNew(UsageEnvironment& env, CommonPlay *cpObj,
 			FramedSource* inputSource, Boolean includeADUdescriptors = True);
 
 protected:
-	MP3FromADUSource(UsageEnvironment& env, FramedSource* inputSource,
-			Boolean includeADUdescriptors);
+	MP3FromADUSource(UsageEnvironment& env, CommonPlay *cpObj,
+			FramedSource* inputSource, Boolean includeADUdescriptors);
 	// called only by createNew()
 	virtual ~MP3FromADUSource();
 

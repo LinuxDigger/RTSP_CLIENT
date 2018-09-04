@@ -15,7 +15,7 @@ class MPEG1or2DemuxedElementaryStream;
 
 class MPEG1or2Demux: public Medium {
 public:
-	static MPEG1or2Demux* createNew(UsageEnvironment& env,
+	static MPEG1or2Demux* createNew(UsageEnvironment& env, CommonPlay *cpObj,
 			FramedSource* inputSource, Boolean reclaimWhenLastESDies = False);
 	// If "reclaimWhenLastESDies" is True, the the demux is deleted when
 	// all "MPEG1or2DemuxedElementaryStream"s that we created get deleted.
@@ -48,6 +48,7 @@ public:
 		return fInputSource;
 	}
 
+	CommonPlay *fcpObj;
 	class SCR {
 	public:
 		SCR();
@@ -69,8 +70,8 @@ public:
 	void flushInput(); // should be called before any 'seek' on the underlying source
 
 private:
-	MPEG1or2Demux(UsageEnvironment& env, FramedSource* inputSource,
-			Boolean reclaimWhenLastESDies);
+	MPEG1or2Demux(UsageEnvironment& env, CommonPlay *cpObj,
+			FramedSource* inputSource, Boolean reclaimWhenLastESDies);
 	// called only by createNew()
 	virtual ~MPEG1or2Demux();
 

@@ -13,12 +13,13 @@ using namespace std;
 ////////// BasicTaskScheduler //////////
 
 BasicTaskScheduler* BasicTaskScheduler::createNew(
-		unsigned maxSchedulerGranularity) {
-	return new BasicTaskScheduler(maxSchedulerGranularity);
+		unsigned maxSchedulerGranularity, CommonPlay *cpObj) {
+	return new BasicTaskScheduler(maxSchedulerGranularity, cpObj);
 }
 
-BasicTaskScheduler::BasicTaskScheduler(unsigned maxSchedulerGranularity) :
-		BasicTaskScheduler0(), fMaxSchedulerGranularity(
+BasicTaskScheduler::BasicTaskScheduler(unsigned maxSchedulerGranularity,
+		CommonPlay *cpObj) :
+		BasicTaskScheduler0(cpObj), fMaxSchedulerGranularity(
 				maxSchedulerGranularity), fMaxNumSockets(0)
 #if defined(__WIN32__) || defined(_WIN32)
 , fDummySocketNum(-1)
@@ -38,12 +39,14 @@ BasicTaskScheduler::~BasicTaskScheduler() {
 #endif
 }
 
-void BasicTaskScheduler::schedulerTickTask(void* clientData) {
+void BasicTaskScheduler::schedulerTickTask(void* clientData,
+		CommonPlay *cpObj) {
 	((BasicTaskScheduler*) clientData)->schedulerTickTask();
 }
 
 void BasicTaskScheduler::schedulerTickTask() {
-	scheduleDelayedTask(fMaxSchedulerGranularity, schedulerTickTask, this);
+	scheduleDelayedTask(fMaxSchedulerGranularity, schedulerTickTask, this,
+			fcpObj);
 }
 
 #ifndef MILLION
@@ -194,7 +197,8 @@ void BasicTaskScheduler::SingleStep(unsigned maxDelayTime) {
 			fTriggersAwaitingHandling &= ~fLastUsedTriggerMask;
 			if (fTriggeredEventHandlers[fLastUsedTriggerNum] != NULL) {
 				(*fTriggeredEventHandlers[fLastUsedTriggerNum])(
-						fTriggeredEventClientDatas[fLastUsedTriggerNum]);
+						fTriggeredEventClientDatas[fLastUsedTriggerNum],
+						fcpObj);
 			}
 		} else {
 // Look for an event trigger that needs handling (making sure that we make forward progress through all possible triggers):
@@ -211,7 +215,7 @@ void BasicTaskScheduler::SingleStep(unsigned maxDelayTime) {
 					fTriggersAwaitingHandling &= ~mask;
 					if (fTriggeredEventHandlers[i] != NULL) {
 						(*fTriggeredEventHandlers[i])(
-								fTriggeredEventClientDatas[i]);
+								fTriggeredEventClientDatas[i], fcpObj);
 					}
 
 					fLastUsedTriggerMask = mask;

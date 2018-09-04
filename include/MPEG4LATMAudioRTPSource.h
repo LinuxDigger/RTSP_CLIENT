@@ -13,7 +13,7 @@
 class MPEG4LATMAudioRTPSource: public MultiFramedRTPSource {
 public:
 	static MPEG4LATMAudioRTPSource*
-	createNew(UsageEnvironment& env, Groupsock* RTPgs,
+	createNew(UsageEnvironment& env, CommonPlay *cpObj, Groupsock* RTPgs,
 			unsigned char rtpPayloadFormat, unsigned rtpTimestampFrequency);
 
 	// By default, the LATM data length field is included at the beginning of each
@@ -28,8 +28,9 @@ protected:
 	virtual ~MPEG4LATMAudioRTPSource();
 
 private:
-	MPEG4LATMAudioRTPSource(UsageEnvironment& env, Groupsock* RTPgs,
-			unsigned char rtpPayloadFormat, unsigned rtpTimestampFrequency);
+	MPEG4LATMAudioRTPSource(UsageEnvironment& env, CommonPlay *cpObj,
+			Groupsock* RTPgs, unsigned char rtpPayloadFormat,
+			unsigned rtpTimestampFrequency);
 	// called only by createNew()
 
 private:

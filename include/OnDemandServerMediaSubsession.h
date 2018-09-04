@@ -16,7 +16,7 @@
 class OnDemandServerMediaSubsession: public ServerMediaSubsession {
 protected:
 	// we're a virtual base class
-	OnDemandServerMediaSubsession(UsageEnvironment& env,
+	OnDemandServerMediaSubsession(UsageEnvironment& env,CommonPlay *cpObj,
 			Boolean reuseFirstSource, portNumBits initialPortNum = 6970,
 			Boolean multiplexRTCPWithRTP = False);
 	virtual ~OnDemandServerMediaSubsession();

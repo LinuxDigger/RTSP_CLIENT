@@ -9,13 +9,13 @@
 
 H264VideoStreamDiscreteFramer*
 H264VideoStreamDiscreteFramer::createNew(UsageEnvironment& env,
-		FramedSource* inputSource) {
-	return new H264VideoStreamDiscreteFramer(env, inputSource);
+		CommonPlay *cpObj, FramedSource* inputSource) {
+	return new H264VideoStreamDiscreteFramer(env, cpObj, inputSource);
 }
 
 H264VideoStreamDiscreteFramer::H264VideoStreamDiscreteFramer(
-		UsageEnvironment& env, FramedSource* inputSource) :
-		H264or5VideoStreamDiscreteFramer(264, env, inputSource) {
+		UsageEnvironment& env, CommonPlay *cpObj, FramedSource* inputSource) :
+		H264or5VideoStreamDiscreteFramer(264, env, cpObj, inputSource) {
 }
 
 H264VideoStreamDiscreteFramer::~H264VideoStreamDiscreteFramer() {

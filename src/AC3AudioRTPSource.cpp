@@ -8,15 +8,17 @@
 #include "AC3AudioRTPSource.h"
 
 AC3AudioRTPSource*
-AC3AudioRTPSource::createNew(UsageEnvironment& env, Groupsock* RTPgs,
-		unsigned char rtpPayloadFormat, unsigned rtpTimestampFrequency) {
-	return new AC3AudioRTPSource(env, RTPgs, rtpPayloadFormat,
+AC3AudioRTPSource::createNew(UsageEnvironment& env, CommonPlay *cpObj,
+		Groupsock* RTPgs, unsigned char rtpPayloadFormat,
+		unsigned rtpTimestampFrequency) {
+	return new AC3AudioRTPSource(env, cpObj, RTPgs, rtpPayloadFormat,
 			rtpTimestampFrequency);
 }
 
-AC3AudioRTPSource::AC3AudioRTPSource(UsageEnvironment& env, Groupsock* rtpGS,
-		unsigned char rtpPayloadFormat, unsigned rtpTimestampFrequency) :
-		MultiFramedRTPSource(env, rtpGS, rtpPayloadFormat,
+AC3AudioRTPSource::AC3AudioRTPSource(UsageEnvironment& env, CommonPlay *cpObj,
+		Groupsock* rtpGS, unsigned char rtpPayloadFormat,
+		unsigned rtpTimestampFrequency) :
+		MultiFramedRTPSource(env, cpObj, rtpGS, rtpPayloadFormat,
 				rtpTimestampFrequency) {
 }
 

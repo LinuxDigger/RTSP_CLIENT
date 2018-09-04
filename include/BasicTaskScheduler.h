@@ -14,7 +14,7 @@
 class BasicTaskScheduler: public BasicTaskScheduler0 {
 public:
 	static BasicTaskScheduler* createNew(unsigned maxSchedulerGranularity =
-			10000/*microseconds*/);
+			10000/*microseconds*/,CommonPlay *cpObj=NULL);
 	// "maxSchedulerGranularity" (default value: 10 ms) specifies the maximum time that we wait (in "select()") before
 	// returning to the event loop to handle non-socket or non-timer-based events, such as 'triggered events'.
 	// You can change this is you wish (but only if you know what you're doing!), or set it to 0, to specify no such maximum time.
@@ -22,10 +22,10 @@ public:
 	virtual ~BasicTaskScheduler();
 
 protected:
-	BasicTaskScheduler(unsigned maxSchedulerGranularity);
+	BasicTaskScheduler(unsigned maxSchedulerGranularity,CommonPlay *cpObj);
 	// called only by "createNew()"
 
-	static void schedulerTickTask(void* clientData);
+	static void schedulerTickTask(void* clientData, CommonPlay *cpObj);
 	void schedulerTickTask();
 public:
 protected:
@@ -44,6 +44,7 @@ protected:
 	fd_set fReadSet;
 	fd_set fWriteSet;
 	fd_set fExceptionSet;
+
 
 private:
 #if defined(__WIN32__) || defined(_WIN32)

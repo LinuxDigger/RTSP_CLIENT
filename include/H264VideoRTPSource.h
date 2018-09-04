@@ -13,12 +13,12 @@
 class H264VideoRTPSource: public MultiFramedRTPSource {
 public:
 	static H264VideoRTPSource*
-	createNew(UsageEnvironment& env, Groupsock* RTPgs,
+	createNew(UsageEnvironment& env, CommonPlay *cpObj,Groupsock* RTPgs,
 			unsigned char rtpPayloadFormat, unsigned rtpTimestampFrequency =
 					90000);
 
 protected:
-	H264VideoRTPSource(UsageEnvironment& env, Groupsock* RTPgs,
+	H264VideoRTPSource(UsageEnvironment& env,CommonPlay *cpObj, Groupsock* RTPgs,
 			unsigned char rtpPayloadFormat, unsigned rtpTimestampFrequency);
 	// called only by createNew()
 

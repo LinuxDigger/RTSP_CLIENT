@@ -12,11 +12,11 @@
 
 class VP8VideoRTPSink: public VideoRTPSink {
 public:
-	static VP8VideoRTPSink* createNew(UsageEnvironment& env, Groupsock* RTPgs,
-			unsigned char rtpPayloadFormat);
+	static VP8VideoRTPSink* createNew(UsageEnvironment& env, CommonPlay *cpObj,
+			Groupsock* RTPgs, unsigned char rtpPayloadFormat);
 
 protected:
-	VP8VideoRTPSink(UsageEnvironment& env, Groupsock* RTPgs,
+	VP8VideoRTPSink(UsageEnvironment& env, CommonPlay *cpObj, Groupsock* RTPgs,
 			unsigned char rtpPayloadFormat);
 	// called only by createNew()
 

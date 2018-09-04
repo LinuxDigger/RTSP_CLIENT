@@ -13,7 +13,7 @@
 class TheoraVideoRTPSource: public MultiFramedRTPSource {
 public:
 	static TheoraVideoRTPSource*
-	createNew(UsageEnvironment& env, Groupsock* RTPgs,
+	createNew(UsageEnvironment& env,CommonPlay *cpObj, Groupsock* RTPgs,
 			unsigned char rtpPayloadFormat);
 
 	u_int32_t curPacketIdent() const {
@@ -21,7 +21,7 @@ public:
 	} // The current "Ident" field; only the low-order 24 bits are used
 
 protected:
-	TheoraVideoRTPSource(UsageEnvironment& env, Groupsock* RTPgs,
+	TheoraVideoRTPSource(UsageEnvironment& env,CommonPlay *cpObj, Groupsock* RTPgs,
 			unsigned char rtpPayloadFormat);
 	// called only by createNew()
 

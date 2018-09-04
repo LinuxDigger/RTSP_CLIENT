@@ -74,9 +74,9 @@ private:
 	void doInviteStateMachine(unsigned responseCode);
 	void doInviteStateTerminated(unsigned responseCode);
 	TaskToken fTimerA, fTimerB, fTimerD;
-	static void timerAHandler(void* clientData);
-	static void timerBHandler(void* clientData);
-	static void timerDHandler(void* clientData);
+	static void timerAHandler(void* clientData, CommonPlay *cpObj);
+	static void timerBHandler(void* clientData, CommonPlay *cpObj);
+	static void timerDHandler(void* clientData, CommonPlay *cpObj);
 	unsigned const fT1; // in microseconds
 	unsigned fTimerALen; // in microseconds; initially fT1, then doubles
 	unsigned fTimerACount;

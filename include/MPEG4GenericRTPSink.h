@@ -13,16 +13,17 @@
 class MPEG4GenericRTPSink: public MultiFramedRTPSink {
 public:
 	static MPEG4GenericRTPSink*
-	createNew(UsageEnvironment& env, Groupsock* RTPgs,
+	createNew(UsageEnvironment& env, CommonPlay *cpObj, Groupsock* RTPgs,
 			u_int8_t rtpPayloadFormat, u_int32_t rtpTimestampFrequency,
 			char const* sdpMediaTypeString, char const* mpeg4Mode,
 			char const* configString, unsigned numChannels = 1);
 
 protected:
-	MPEG4GenericRTPSink(UsageEnvironment& env, Groupsock* RTPgs,
-			u_int8_t rtpPayloadFormat, u_int32_t rtpTimestampFrequency,
-			char const* sdpMediaTypeString, char const* mpeg4Mode,
-			char const* configString, unsigned numChannels);
+	MPEG4GenericRTPSink(UsageEnvironment& env, CommonPlay *cpObj,
+			Groupsock* RTPgs, u_int8_t rtpPayloadFormat,
+			u_int32_t rtpTimestampFrequency, char const* sdpMediaTypeString,
+			char const* mpeg4Mode, char const* configString,
+			unsigned numChannels);
 	// called only by createNew()
 
 	virtual ~MPEG4GenericRTPSink();

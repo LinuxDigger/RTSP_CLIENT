@@ -12,7 +12,7 @@
 
 class SimpleRTPSource: public MultiFramedRTPSource {
 public:
-	static SimpleRTPSource* createNew(UsageEnvironment& env, Groupsock* RTPgs,
+	static SimpleRTPSource* createNew(UsageEnvironment& env, CommonPlay *cpObj,Groupsock* RTPgs,
 			unsigned char rtpPayloadFormat, unsigned rtpTimestampFrequency,
 			char const* mimeTypeString, unsigned offset = 0,
 			Boolean doNormalMBitRule = True);
@@ -24,7 +24,7 @@ protected:
 	virtual ~SimpleRTPSource();
 
 protected:
-	SimpleRTPSource(UsageEnvironment& env, Groupsock* RTPgs,
+	SimpleRTPSource(UsageEnvironment& env, CommonPlay *cpObj,Groupsock* RTPgs,
 			unsigned char rtpPayloadFormat, unsigned rtpTimestampFrequency,
 			char const* mimeTypeString, unsigned offset,
 			Boolean doNormalMBitRule);

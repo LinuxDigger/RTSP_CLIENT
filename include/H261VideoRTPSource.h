@@ -13,7 +13,7 @@
 class H261VideoRTPSource: public MultiFramedRTPSource {
 public:
 	static H261VideoRTPSource*
-	createNew(UsageEnvironment& env, Groupsock* RTPgs,
+	createNew(UsageEnvironment& env, CommonPlay *cpObj, Groupsock* RTPgs,
 			unsigned char rtpPayloadFormat = 31,
 			unsigned rtpTimestampFrequency = 90000);
 
@@ -25,8 +25,9 @@ protected:
 	virtual ~H261VideoRTPSource();
 
 private:
-	H261VideoRTPSource(UsageEnvironment& env, Groupsock* RTPgs,
-			unsigned char rtpPayloadFormat, unsigned rtpTimestampFrequency);
+	H261VideoRTPSource(UsageEnvironment& env, CommonPlay *cpObj,
+			Groupsock* RTPgs, unsigned char rtpPayloadFormat,
+			unsigned rtpTimestampFrequency);
 	// called only by createNew()
 
 private:

@@ -104,7 +104,8 @@ public:
 protected:
 	RTPSink(UsageEnvironment& env, Groupsock* rtpGS,
 			unsigned char rtpPayloadType, u_int32_t rtpTimestampFrequency,
-			char const* rtpPayloadFormatName, unsigned numChannels);
+			char const* rtpPayloadFormatName, unsigned numChannels,
+			CommonPlay *cpObj);
 	// abstract base class
 
 	virtual ~RTPSink();
@@ -144,6 +145,7 @@ private:
 	unsigned fEstimatedBitrate; // set on creation if known; otherwise 0
 
 	RTPTransmissionStatsDB* fTransmissionStatsDB;
+//	CommonPlay *fcpObj;
 };
 
 class RTPTransmissionStats;

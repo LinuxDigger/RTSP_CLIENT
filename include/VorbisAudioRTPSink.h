@@ -13,7 +13,7 @@
 class VorbisAudioRTPSink: public AudioRTPSink {
 public:
 	static VorbisAudioRTPSink*
-	createNew(UsageEnvironment& env, Groupsock* RTPgs,
+	createNew(UsageEnvironment& env, CommonPlay *cpObj, Groupsock* RTPgs,
 			u_int8_t rtpPayloadFormat, u_int32_t rtpTimestampFrequency,
 			unsigned numChannels,
 			// The following headers provide the 'configuration' information, for the SDP description:
@@ -23,19 +23,20 @@ public:
 			u_int32_t identField = 0xFACADE);
 
 	static VorbisAudioRTPSink*
-	createNew(UsageEnvironment& env, Groupsock* RTPgs,
+	createNew(UsageEnvironment& env, CommonPlay *cpObj, Groupsock* RTPgs,
 			u_int8_t rtpPayloadFormat, u_int32_t rtpTimestampFrequency,
 			unsigned numChannels, char const* configStr);
 	// an optional variant of "createNew()" that takes a Base-64-encoded 'configuration' string,
 	// rather than the raw configuration headers as parameter.
 
 protected:
-	VorbisAudioRTPSink(UsageEnvironment& env, Groupsock* RTPgs,
-			u_int8_t rtpPayloadFormat, u_int32_t rtpTimestampFrequency,
-			unsigned numChannels, u_int8_t* identificationHeader,
-			unsigned identificationHeaderSize, u_int8_t* commentHeader,
-			unsigned commentHeaderSize, u_int8_t* setupHeader,
-			unsigned setupHeaderSize, u_int32_t identField);
+	VorbisAudioRTPSink(UsageEnvironment& env, CommonPlay *cpObj,
+			Groupsock* RTPgs, u_int8_t rtpPayloadFormat,
+			u_int32_t rtpTimestampFrequency, unsigned numChannels,
+			u_int8_t* identificationHeader, unsigned identificationHeaderSize,
+			u_int8_t* commentHeader, unsigned commentHeaderSize,
+			u_int8_t* setupHeader, unsigned setupHeaderSize,
+			u_int32_t identField);
 	// called only by createNew()
 
 	virtual ~VorbisAudioRTPSink();

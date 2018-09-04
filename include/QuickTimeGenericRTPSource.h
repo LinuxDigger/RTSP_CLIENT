@@ -13,7 +13,7 @@
 class QuickTimeGenericRTPSource: public MultiFramedRTPSource {
 public:
 	static QuickTimeGenericRTPSource*
-	createNew(UsageEnvironment& env, Groupsock* RTPgs,
+	createNew(UsageEnvironment& env,CommonPlay *cpObj, Groupsock* RTPgs,
 			unsigned char rtpPayloadFormat, unsigned rtpTimestampFrequency,
 			char const* mimeTypeString);
 
@@ -33,7 +33,7 @@ protected:
 	virtual ~QuickTimeGenericRTPSource();
 
 private:
-	QuickTimeGenericRTPSource(UsageEnvironment& env, Groupsock* RTPgs,
+	QuickTimeGenericRTPSource(UsageEnvironment& env,CommonPlay *cpObj, Groupsock* RTPgs,
 			unsigned char rtpPayloadFormat, unsigned rtpTimestampFrequency,
 			char const* mimeTypeString);
 	// called only by createNew()

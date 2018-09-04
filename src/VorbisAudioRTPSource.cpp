@@ -30,16 +30,17 @@ private:
 ///////// VorbisAudioRTPSource implementation ////////
 
 VorbisAudioRTPSource*
-VorbisAudioRTPSource::createNew(UsageEnvironment& env, Groupsock* RTPgs,
-		unsigned char rtpPayloadFormat, unsigned rtpTimestampFrequency) {
-	return new VorbisAudioRTPSource(env, RTPgs, rtpPayloadFormat,
+VorbisAudioRTPSource::createNew(UsageEnvironment& env, CommonPlay *cpObj,
+		Groupsock* RTPgs, unsigned char rtpPayloadFormat,
+		unsigned rtpTimestampFrequency) {
+	return new VorbisAudioRTPSource(env, cpObj, RTPgs, rtpPayloadFormat,
 			rtpTimestampFrequency);
 }
 
 VorbisAudioRTPSource::VorbisAudioRTPSource(UsageEnvironment& env,
-		Groupsock* RTPgs, unsigned char rtpPayloadFormat,
+		CommonPlay *cpObj, Groupsock* RTPgs, unsigned char rtpPayloadFormat,
 		unsigned rtpTimestampFrequency) :
-		MultiFramedRTPSource(env, RTPgs, rtpPayloadFormat,
+		MultiFramedRTPSource(env, cpObj, RTPgs, rtpPayloadFormat,
 				rtpTimestampFrequency, new VorbisBufferedPacketFactory), fCurPacketIdent(
 				0) {
 }

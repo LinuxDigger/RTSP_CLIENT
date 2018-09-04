@@ -7,9 +7,9 @@
 
 #include "MP3ADURTPSink.h"
 
-MP3ADURTPSink::MP3ADURTPSink(UsageEnvironment& env, Groupsock* RTPgs,
-		unsigned char RTPPayloadType) :
-		AudioRTPSink(env, RTPgs, RTPPayloadType, 90000, "MPA-ROBUST"), fCurADUSize(
+MP3ADURTPSink::MP3ADURTPSink(UsageEnvironment& env, CommonPlay *cpObj,
+		Groupsock* RTPgs, unsigned char RTPPayloadType) :
+		AudioRTPSink(env, cpObj, RTPgs, RTPPayloadType, 90000, "MPA-ROBUST"), fCurADUSize(
 				0) {
 }
 
@@ -17,9 +17,9 @@ MP3ADURTPSink::~MP3ADURTPSink() {
 }
 
 MP3ADURTPSink*
-MP3ADURTPSink::createNew(UsageEnvironment& env, Groupsock* RTPgs,
-		unsigned char RTPPayloadType) {
-	return new MP3ADURTPSink(env, RTPgs, RTPPayloadType);
+MP3ADURTPSink::createNew(UsageEnvironment& env, CommonPlay *cpObj,
+		Groupsock* RTPgs, unsigned char RTPPayloadType) {
+	return new MP3ADURTPSink(env, cpObj, RTPgs, RTPPayloadType);
 }
 
 static void badDataSize(UsageEnvironment& env, unsigned numBytesInFrame) {

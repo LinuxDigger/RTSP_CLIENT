@@ -16,7 +16,7 @@ protected:
 			FILE* fid, unsigned bufferSize, char const* perFrameFileNamePrefix,
 			char const* sPropParameterSetsStr1,
 			char const* sPropParameterSetsStr2 = NULL,
-			char const* sPropParameterSetsStr3 = NULL);
+			char const* sPropParameterSetsStr3 = NULL,CommonPlay *cpObj=NULL);
 	// we're an abstract base class
 	virtual ~H264or5VideoFileSink();
 

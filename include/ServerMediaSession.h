@@ -15,7 +15,7 @@ class ServerMediaSubsession;
 
 class ServerMediaSession: public Medium {
 public:
-	static ServerMediaSession* createNew(UsageEnvironment& env,
+	static ServerMediaSession* createNew(UsageEnvironment& env,CommonPlay *cpObj,
 			char const* streamName = NULL, char const* info = NULL,
 			char const* description = NULL, Boolean isSSM = False,
 			char const* miscSDPLines = NULL);
@@ -67,9 +67,9 @@ public:
 	//   by calling "RTSPServer::closeAllClientSessionsForServerMediaSession()".
 
 protected:
-	ServerMediaSession(UsageEnvironment& env, char const* streamName,
-			char const* info, char const* description, Boolean isSSM,
-			char const* miscSDPLines);
+	ServerMediaSession(UsageEnvironment& env, CommonPlay *cpObj,
+			char const* streamName, char const* info, char const* description,
+			Boolean isSSM, char const* miscSDPLines);
 	// called only by "createNew()"
 
 	virtual ~ServerMediaSession();
@@ -94,6 +94,8 @@ private:
 	struct timeval fCreationTime;
 	unsigned fReferenceCount;
 	Boolean fDeleteWhenUnreferenced;
+public:
+	CommonPlay *fcpObj;
 };
 
 class ServerMediaSubsessionIterator {
@@ -177,7 +179,7 @@ public:
 
 protected:
 	// we're a virtual base class
-	ServerMediaSubsession(UsageEnvironment& env);
+	ServerMediaSubsession(UsageEnvironment& env, CommonPlay *cpObj);
 	virtual ~ServerMediaSubsession();
 
 	char const* rangeSDPLine() const;
@@ -194,6 +196,8 @@ private:
 
 	unsigned fTrackNumber; // within an enclosing ServerMediaSession
 	char const* fTrackId;
+protected:
+	CommonPlay *fcpObj;
 };
 
 #endif /* INCLUDE_SERVERMEDIASESSION_H_ */

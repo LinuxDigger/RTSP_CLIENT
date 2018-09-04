@@ -28,7 +28,7 @@ public:
 public:
 	// Redefined virtual functions:
 	virtual TaskToken scheduleDelayedTask(int64_t microseconds, TaskFunc* proc,
-			void* clientData);
+			void* clientData,CommonPlay *cpObj);
 	virtual void unscheduleDelayedTask(TaskToken& prevTask);
 
 	virtual void doEventLoop(char volatile* watchVariable);
@@ -39,7 +39,7 @@ public:
 			NULL);
 
 protected:
-	BasicTaskScheduler0();
+	BasicTaskScheduler0(CommonPlay *fcpObj);
 
 protected:
 	// To implement delayed operations:
@@ -55,6 +55,7 @@ protected:
 	TaskFunc* fTriggeredEventHandlers[MAX_NUM_EVENT_TRIGGERS];
 	void* fTriggeredEventClientDatas[MAX_NUM_EVENT_TRIGGERS];
 	unsigned fLastUsedTriggerNum; // in the range [0,MAX_NUM_EVENT_TRIGGERS)
+	CommonPlay *fcpObj;
 };
 
 #endif /* INCLUDE_BASICTASKSCHEDULER0_H_ */

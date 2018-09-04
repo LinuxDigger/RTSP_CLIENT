@@ -44,9 +44,9 @@ SIPClient::SIPClient(UsageEnvironment& env,
 		Medium(env), fT1(500000 /* 500 ms */), fDesiredAudioRTPPayloadFormat(
 				desiredAudioRTPPayloadFormat), fVerbosityLevel(verbosityLevel), fCSeq(
 				0), fUserAgentHeaderStr(NULL), fUserAgentHeaderStrLen(0), fURL(
-				NULL), fURLSize(0), fToTagStr(NULL), fToTagStrSize(0), fUserName(
-				NULL), fUserNameSize(0), fInviteSDPDescription(NULL), fInviteSDPDescriptionReturned(
-				NULL), fInviteCmd(NULL), fInviteCmdSize(0) {
+		NULL), fURLSize(0), fToTagStr(NULL), fToTagStrSize(0), fUserName(
+		NULL), fUserNameSize(0), fInviteSDPDescription(NULL), fInviteSDPDescriptionReturned(
+		NULL), fInviteCmd(NULL), fInviteCmdSize(0) {
 	if (mimeSubtype == NULL)
 		mimeSubtype = "";
 	fMIMESubtype = strDup(mimeSubtype);
@@ -209,7 +209,7 @@ char* SIPClient::invite1(Authenticator* authenticator) {
 		if (fMIMESubtypeSize > 0) {
 			char const* const rtpmapFmt = "a=rtpmap:%u %s/8000\r\n";
 			unsigned rtpmapFmtSize = strlen(rtpmapFmt) + 3 /* max char len */
-					+ fMIMESubtypeSize;
+			+ fMIMESubtypeSize;
 			rtpmapLine = new char[rtpmapFmtSize];
 			sprintf(rtpmapLine, rtpmapFmt, fDesiredAudioRTPPayloadFormat,
 					fMIMESubtype);
@@ -227,8 +227,8 @@ char* SIPClient::invite1(Authenticator* authenticator) {
 				"m=audio %u RTP/AVP %u\r\n"
 				"%s";
 		unsigned inviteSDPFmtSize = strlen(inviteSDPFmt) + 20 /* max int len */
-				+ 20 + fOurAddressStrSize + fApplicationNameSize
-				+ fOurAddressStrSize + 5 /* max short len */+ 3 /* max char len */
+		+ 20 + fOurAddressStrSize + fApplicationNameSize + fOurAddressStrSize
+				+ 5 /* max short len */+ 3 /* max char len */
 				+ rtpmapLineSize;
 		delete[] fInviteSDPDescription;
 		fInviteSDPDescription = new char[inviteSDPFmtSize];
@@ -276,8 +276,10 @@ char* SIPClient::invite1(Authenticator* authenticator) {
 				&inviteResponseHandler, this);
 		fTimerALen = 1 * fT1; // initially
 		fTimerACount = 0; // initially
-		fTimerA = sched.scheduleDelayedTask(fTimerALen, timerAHandler, this);
-		fTimerB = sched.scheduleDelayedTask(64 * fT1, timerBHandler, this);
+		fTimerA = sched.scheduleDelayedTask(fTimerALen, timerAHandler, this,
+		NULL);
+		fTimerB = sched.scheduleDelayedTask(64 * fT1, timerBHandler, this,
+		NULL);
 		fTimerD = NULL; // for now
 
 		if (!sendINVITE())
@@ -315,7 +317,7 @@ unsigned const timerAFires = 0xAAAAAAAA;
 unsigned const timerBFires = 0xBBBBBBBB;
 unsigned const timerDFires = 0xDDDDDDDD;
 
-void SIPClient::timerAHandler(void* clientData) {
+void SIPClient::timerAHandler(void* clientData, CommonPlay *cpObj) {
 	SIPClient* client = (SIPClient*) clientData;
 	if (client->fVerbosityLevel >= 1) {
 		client->envir() << "RETRANSMISSION " << ++client->fTimerACount
@@ -325,7 +327,7 @@ void SIPClient::timerAHandler(void* clientData) {
 	client->doInviteStateMachine(timerAFires);
 }
 
-void SIPClient::timerBHandler(void* clientData) {
+void SIPClient::timerBHandler(void* clientData, CommonPlay *cpObj) {
 	SIPClient* client = (SIPClient*) clientData;
 	if (client->fVerbosityLevel >= 1) {
 		client->envir() << "RETRANSMISSION TIMEOUT, after "
@@ -335,7 +337,7 @@ void SIPClient::timerBHandler(void* clientData) {
 	client->doInviteStateMachine(timerBFires);
 }
 
-void SIPClient::timerDHandler(void* clientData) {
+void SIPClient::timerDHandler(void* clientData, CommonPlay *cpObj) {
 	SIPClient* client = (SIPClient*) clientData;
 	if (client->fVerbosityLevel >= 1) {
 		client->envir() << "TIMER D EXPIRED\n";
@@ -351,8 +353,8 @@ void SIPClient::doInviteStateMachine(unsigned responseCode) {
 		if (responseCode == timerAFires) {
 			// Restart timer A (with double the timeout interval):
 			fTimerALen *= 2;
-			fTimerA = sched.scheduleDelayedTask(fTimerALen, timerAHandler,
-					this);
+			fTimerA = sched.scheduleDelayedTask(fTimerALen, timerAHandler, this,
+					NULL);
 
 			fInviteClientState = Calling;
 			if (!sendINVITE())
@@ -375,7 +377,7 @@ void SIPClient::doInviteStateMachine(unsigned responseCode) {
 			} else if (responseCode >= 300 && responseCode <= 699) {
 				fInviteClientState = Completed;
 				fTimerD = sched.scheduleDelayedTask(32000000, timerDHandler,
-						this);
+						this, NULL);
 				if (!sendACK())
 					doInviteStateTerminated(0);
 			}
@@ -393,7 +395,8 @@ void SIPClient::doInviteStateMachine(unsigned responseCode) {
 			// this isn't what the spec says, but it seems right...
 		} else if (responseCode >= 300 && responseCode <= 699) {
 			fInviteClientState = Completed;
-			fTimerD = sched.scheduleDelayedTask(32000000, timerDHandler, this);
+			fTimerD = sched.scheduleDelayedTask(32000000, timerDHandler, this,
+			NULL);
 			if (!sendACK())
 				doInviteStateTerminated(0);
 		}

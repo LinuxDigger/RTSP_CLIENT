@@ -7,16 +7,18 @@
 
 #include "GSMAudioRTPSink.h"
 
-GSMAudioRTPSink::GSMAudioRTPSink(UsageEnvironment& env, Groupsock* RTPgs) :
-		AudioRTPSink(env, RTPgs, 3, 8000, "GSM") {
+GSMAudioRTPSink::GSMAudioRTPSink(UsageEnvironment& env, CommonPlay *cpObj,
+		Groupsock* RTPgs) :
+		AudioRTPSink(env, cpObj, RTPgs, 3, 8000, "GSM") {
 }
 
 GSMAudioRTPSink::~GSMAudioRTPSink() {
 }
 
 GSMAudioRTPSink*
-GSMAudioRTPSink::createNew(UsageEnvironment& env, Groupsock* RTPgs) {
-	return new GSMAudioRTPSink(env, RTPgs);
+GSMAudioRTPSink::createNew(UsageEnvironment& env, CommonPlay *cpObj,
+		Groupsock* RTPgs) {
+	return new GSMAudioRTPSink(env, cpObj, RTPgs);
 }
 
 Boolean GSMAudioRTPSink::frameCanAppearAfterPacketStart(

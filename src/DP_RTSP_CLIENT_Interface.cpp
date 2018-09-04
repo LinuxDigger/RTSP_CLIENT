@@ -15,7 +15,8 @@
 #include "BasicTaskScheduler.h"
 #include "BasicTaskScheduler0.h"
 #include "EfficientAddOrUpdate.h"
-#include "GetFrameData.h"
+#include "CommonPlay.h"
+//#include "openRTSP.h"
 using namespace std;
 
 map<DP_U16, pthread_cond_t*> DP_RTSP_CLIENT_Client::mCliCondSet;
@@ -96,21 +97,23 @@ DP_S32 DP_RTSP_CLIENT_Client::DP_RTSP_CLIENT_Init(const DP_S8 *ps8URL,
 
 void* DP_RTSP_CLIENT_Client::sClientInit(void*args) {
 	ClientInitArgs_S *stCliArgs = (ClientInitArgs_S*) args;
+	CommonPlay cp;
 	UsageEnvironment* env;
-	TaskScheduler* scheduler = BasicTaskScheduler::createNew();
+	TaskScheduler* scheduler = BasicTaskScheduler::createNew(10000, &cp);
 	env = BasicUsageEnvironment::createNew(*scheduler, stCliArgs->clientID); //111id?
 
-	setEnvURL(*env, stCliArgs->ps8URL);
+	cp.setEnvURL(*env, stCliArgs->ps8URL);
 	//	char const* progName;
-	Medium* ourClient = createClient(*env, stCliArgs->ps8URL);
+//	openRTSP openRtsp;
+	Medium* ourClient = cp.createClient(*env, stCliArgs->ps8URL, &cp);
 	if (ourClient == NULL) {
-		shutdown();
+		cp.shutdown();
 	}
 	//mutex
 //	if (DP_RTSP_CLIENT_ClientNum++ > DP_RTSP_CLIENT_ClientMaxNum - 1) {
 //		return NULL;
 //	}
-	continueAfterClientCreation1();
+	cp.continueAfterClientCreation1();
 	env->taskScheduler().doEventLoop(); // does not return
 	return NULL;
 }

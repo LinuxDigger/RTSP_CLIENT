@@ -10,11 +10,12 @@
 
 #include "MediaSink.h"
 #include "DP_RTSP_CLIENT_CycleQueue.h"
+//class MediaSink;
 class FileSink: public MediaSink {
 public:
 	static FileSink* createNew(UsageEnvironment& env, char const* fileName,
 			unsigned bufferSize, unsigned short clientID,
-			Boolean oneFilePerFrame);
+			Boolean oneFilePerFrame, CommonPlay *cpObj);
 	// "bufferSize" should be at least as large as the largest expected
 	//   input frame.
 	// "oneFilePerFrame" - if True - specifies that each input frame will
@@ -28,7 +29,7 @@ public:
 
 protected:
 	FileSink(UsageEnvironment& env, FILE* fid, unsigned bufferSize,
-			char const* perFrameFileNamePrefix, unsigned short clientID);
+			char const* perFrameFileNamePrefix, unsigned short clientID, CommonPlay *cpObj);
 	// called only by createNew()
 	virtual ~FileSink();
 

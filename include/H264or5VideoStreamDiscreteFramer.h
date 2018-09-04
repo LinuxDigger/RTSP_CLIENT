@@ -13,7 +13,7 @@
 class H264or5VideoStreamDiscreteFramer: public H264or5VideoStreamFramer {
 protected:
 	H264or5VideoStreamDiscreteFramer(int hNumber, UsageEnvironment& env,
-			FramedSource* inputSource);
+			CommonPlay *cpObj, FramedSource* inputSource);
 	// we're an abstract base class
 	virtual ~H264or5VideoStreamDiscreteFramer();
 

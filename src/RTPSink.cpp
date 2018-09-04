@@ -35,8 +35,8 @@ Boolean RTPSink::isRTPSink() const {
 
 RTPSink::RTPSink(UsageEnvironment& env, Groupsock* rtpGS,
 		unsigned char rtpPayloadType, unsigned rtpTimestampFrequency,
-		char const* rtpPayloadFormatName, unsigned numChannels) :
-		MediaSink(env), fRTPInterface(this, rtpGS), fRTPPayloadType(
+		char const* rtpPayloadFormatName, unsigned numChannels, CommonPlay *cpObj) :
+		MediaSink(env,cpObj), fRTPInterface(this, rtpGS), fRTPPayloadType(
 				rtpPayloadType), fPacketCount(0), fOctetCount(0), fTotalOctetCount(
 				0), fTimestampFrequency(rtpTimestampFrequency), fNextTimestampHasBeenPreset(
 				False), fEnableRTCPReports(True), fNumChannels(numChannels), fEstimatedBitrate(

@@ -13,8 +13,9 @@
 H264or5VideoFileSink::H264or5VideoFileSink(UsageEnvironment& env,
 		unsigned short clientID, FILE* fid, unsigned bufferSize,
 		char const* perFrameFileNamePrefix, char const* sPropParameterSetsStr1,
-		char const* sPropParameterSetsStr2, char const* sPropParameterSetsStr3) :
-		FileSink(env, fid, bufferSize, perFrameFileNamePrefix, clientID), fHaveWrittenFirstFrame(
+		char const* sPropParameterSetsStr2, char const* sPropParameterSetsStr3,
+		CommonPlay *cpObj) :
+		FileSink(env, fid, bufferSize, perFrameFileNamePrefix, clientID,cpObj), fHaveWrittenFirstFrame(
 				False) {
 	fSPropParameterSetsStr[0] = sPropParameterSetsStr1;
 	fSPropParameterSetsStr[1] = sPropParameterSetsStr2;

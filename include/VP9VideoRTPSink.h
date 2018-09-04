@@ -8,32 +8,28 @@
 #ifndef INCLUDE_VP9VIDEORTPSINK_H_
 #define INCLUDE_VP9VIDEORTPSINK_H_
 
-
 #include "VideoRTPSink.h"
 
 class VP9VideoRTPSink: public VideoRTPSink {
 public:
-  static VP9VideoRTPSink* createNew(UsageEnvironment& env, Groupsock* RTPgs, unsigned char rtpPayloadFormat);
+	static VP9VideoRTPSink* createNew(UsageEnvironment& env, CommonPlay *cpObj,
+			Groupsock* RTPgs, unsigned char rtpPayloadFormat);
 
 protected:
-  VP9VideoRTPSink(UsageEnvironment& env, Groupsock* RTPgs, unsigned char rtpPayloadFormat);
+	VP9VideoRTPSink(UsageEnvironment& env, CommonPlay *cpObj, Groupsock* RTPgs,
+			unsigned char rtpPayloadFormat);
 	// called only by createNew()
 
-  virtual ~VP9VideoRTPSink();
+	virtual ~VP9VideoRTPSink();
 
-private: // redefined virtual functions:
-  virtual void doSpecialFrameHandling(unsigned fragmentationOffset,
-                                      unsigned char* frameStart,
-                                      unsigned numBytesInFrame,
-                                      struct timeval framePresentationTime,
-                                      unsigned numRemainingBytes);
-  virtual
-  Boolean frameCanAppearAfterPacketStart(unsigned char const* frameStart,
-					 unsigned numBytesInFrame) const;
-  virtual unsigned specialHeaderSize() const;
+private:
+	// redefined virtual functions:
+	virtual void doSpecialFrameHandling(unsigned fragmentationOffset,
+			unsigned char* frameStart, unsigned numBytesInFrame,
+			struct timeval framePresentationTime, unsigned numRemainingBytes);
+	virtual Boolean frameCanAppearAfterPacketStart(
+			unsigned char const* frameStart, unsigned numBytesInFrame) const;
+	virtual unsigned specialHeaderSize() const;
 };
-
-
-
 
 #endif /* INCLUDE_VP9VIDEORTPSINK_H_ */

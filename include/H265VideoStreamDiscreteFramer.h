@@ -13,10 +13,11 @@
 class H265VideoStreamDiscreteFramer: public H264or5VideoStreamDiscreteFramer {
 public:
 	static H265VideoStreamDiscreteFramer*
-	createNew(UsageEnvironment& env, FramedSource* inputSource);
+	createNew(UsageEnvironment& env, CommonPlay *cpObj,
+			FramedSource* inputSource);
 
 protected:
-	H265VideoStreamDiscreteFramer(UsageEnvironment& env,
+	H265VideoStreamDiscreteFramer(UsageEnvironment& env, CommonPlay *cpObj,
 			FramedSource* inputSource);
 	// called only by createNew()
 	virtual ~H265VideoStreamDiscreteFramer();

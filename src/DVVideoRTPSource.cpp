@@ -8,15 +8,17 @@
 #include "DVVideoRTPSource.h"
 
 DVVideoRTPSource*
-DVVideoRTPSource::createNew(UsageEnvironment& env, Groupsock* RTPgs,
-		unsigned char rtpPayloadFormat, unsigned rtpTimestampFrequency) {
-	return new DVVideoRTPSource(env, RTPgs, rtpPayloadFormat,
+DVVideoRTPSource::createNew(UsageEnvironment& env, CommonPlay *cpObj,
+		Groupsock* RTPgs, unsigned char rtpPayloadFormat,
+		unsigned rtpTimestampFrequency) {
+	return new DVVideoRTPSource(env, cpObj, RTPgs, rtpPayloadFormat,
 			rtpTimestampFrequency);
 }
 
-DVVideoRTPSource::DVVideoRTPSource(UsageEnvironment& env, Groupsock* rtpGS,
-		unsigned char rtpPayloadFormat, unsigned rtpTimestampFrequency) :
-		MultiFramedRTPSource(env, rtpGS, rtpPayloadFormat,
+DVVideoRTPSource::DVVideoRTPSource(UsageEnvironment& env, CommonPlay *cpObj,
+		Groupsock* rtpGS, unsigned char rtpPayloadFormat,
+		unsigned rtpTimestampFrequency) :
+		MultiFramedRTPSource(env, cpObj, rtpGS, rtpPayloadFormat,
 				rtpTimestampFrequency) {
 }
 

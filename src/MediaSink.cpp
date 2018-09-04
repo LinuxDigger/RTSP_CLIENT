@@ -11,8 +11,9 @@
 
 ////////// MediaSink //////////
 
-MediaSink::MediaSink(UsageEnvironment& env) :
-		Medium(env), fSource(NULL), fAfterFunc(), fAfterClientData() {
+MediaSink::MediaSink(UsageEnvironment& env, CommonPlay *cpObj) :
+		Medium(env), fSource(NULL), fAfterFunc(), fAfterClientData(), fcpObj(
+				cpObj) {
 }
 
 MediaSink::~MediaSink() {
@@ -46,7 +47,7 @@ Boolean MediaSink::sourceIsCompatibleWithUs(MediaSource& source) {
 }
 
 Boolean MediaSink::startPlaying(MediaSource& source,
-		afterPlayingFunc* afterFunc, void* afterClientData) {
+		afterPlayingFunc* afterFunc, void* afterClientData, CommonPlay *cpObj) {
 	// Make sure we're not already being played:
 	if (fSource != NULL) {
 		envir().setResultMsg("This sink is already being played");
@@ -63,6 +64,7 @@ Boolean MediaSink::startPlaying(MediaSource& source,
 
 	fAfterFunc = afterFunc;
 	fAfterClientData = afterClientData;
+	fcpObj = cpObj;
 	return continuePlaying();
 }
 
@@ -89,7 +91,7 @@ void MediaSink::onSourceClosure() {
 
 	fSource = NULL; // indicates that we can be played again
 	if (fAfterFunc != NULL) {
-		(*fAfterFunc)(fAfterClientData);
+		(*fAfterFunc)(fAfterClientData, fcpObj);
 	}
 }
 

@@ -14,7 +14,7 @@
 class MPEG4GenericRTPSource: public MultiFramedRTPSource {
 public:
   static MPEG4GenericRTPSource*
-  createNew(UsageEnvironment& env, Groupsock* RTPgs,
+  createNew(UsageEnvironment& env, CommonPlay *cpObj,Groupsock* RTPgs,
 	    unsigned char rtpPayloadFormat,
 	    unsigned rtpTimestampFrequency,
 	    char const* mediumName,
@@ -29,7 +29,7 @@ protected:
   virtual ~MPEG4GenericRTPSource();
 
 private:
-  MPEG4GenericRTPSource(UsageEnvironment& env, Groupsock* RTPgs,
+  MPEG4GenericRTPSource(UsageEnvironment& env, CommonPlay *cpObj,Groupsock* RTPgs,
 			unsigned char rtpPayloadFormat,
 			unsigned rtpTimestampFrequency,
 			char const* mediumName,

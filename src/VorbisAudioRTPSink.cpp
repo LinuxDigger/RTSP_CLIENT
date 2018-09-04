@@ -10,19 +10,19 @@
 #include "VorbisAudioRTPSource.h" // for parseVorbisOrTheoraConfigStr()
 
 VorbisAudioRTPSink* VorbisAudioRTPSink::createNew(UsageEnvironment& env,
-		Groupsock* RTPgs, u_int8_t rtpPayloadFormat,
+		CommonPlay *cpObj, Groupsock* RTPgs, u_int8_t rtpPayloadFormat,
 		u_int32_t rtpTimestampFrequency, unsigned numChannels,
 		u_int8_t* identificationHeader, unsigned identificationHeaderSize,
 		u_int8_t* commentHeader, unsigned commentHeaderSize,
 		u_int8_t* setupHeader, unsigned setupHeaderSize, u_int32_t identField) {
-	return new VorbisAudioRTPSink(env, RTPgs, rtpPayloadFormat,
+	return new VorbisAudioRTPSink(env, cpObj, RTPgs, rtpPayloadFormat,
 			rtpTimestampFrequency, numChannels, identificationHeader,
 			identificationHeaderSize, commentHeader, commentHeaderSize,
 			setupHeader, setupHeaderSize, identField);
 }
 
 VorbisAudioRTPSink* VorbisAudioRTPSink::createNew(UsageEnvironment& env,
-		Groupsock* RTPgs, u_int8_t rtpPayloadFormat,
+		CommonPlay *cpObj, Groupsock* RTPgs, u_int8_t rtpPayloadFormat,
 		u_int32_t rtpTimestampFrequency, unsigned numChannels,
 		char const* configStr) {
 	// Begin by decoding and unpacking the configuration string:
@@ -38,7 +38,7 @@ VorbisAudioRTPSink* VorbisAudioRTPSink::createNew(UsageEnvironment& env,
 			identificationHeaderSize, commentHeader, commentHeaderSize,
 			setupHeader, setupHeaderSize, identField);
 
-	VorbisAudioRTPSink* resultSink = new VorbisAudioRTPSink(env, RTPgs,
+	VorbisAudioRTPSink* resultSink = new VorbisAudioRTPSink(env, cpObj, RTPgs,
 			rtpPayloadFormat, rtpTimestampFrequency, numChannels,
 			identificationHeader, identificationHeaderSize, commentHeader,
 			commentHeaderSize, setupHeader, setupHeaderSize, identField);
@@ -49,13 +49,13 @@ VorbisAudioRTPSink* VorbisAudioRTPSink::createNew(UsageEnvironment& env,
 	return resultSink;
 }
 
-VorbisAudioRTPSink::VorbisAudioRTPSink(UsageEnvironment& env, Groupsock* RTPgs,
-		u_int8_t rtpPayloadFormat, u_int32_t rtpTimestampFrequency,
-		unsigned numChannels, u_int8_t* identificationHeader,
-		unsigned identificationHeaderSize, u_int8_t* commentHeader,
-		unsigned commentHeaderSize, u_int8_t* setupHeader,
-		unsigned setupHeaderSize, u_int32_t identField) :
-		AudioRTPSink(env, RTPgs, rtpPayloadFormat, rtpTimestampFrequency,
+VorbisAudioRTPSink::VorbisAudioRTPSink(UsageEnvironment& env, CommonPlay *cpObj,
+		Groupsock* RTPgs, u_int8_t rtpPayloadFormat,
+		u_int32_t rtpTimestampFrequency, unsigned numChannels,
+		u_int8_t* identificationHeader, unsigned identificationHeaderSize,
+		u_int8_t* commentHeader, unsigned commentHeaderSize,
+		u_int8_t* setupHeader, unsigned setupHeaderSize, u_int32_t identField) :
+		AudioRTPSink(env, cpObj, RTPgs, rtpPayloadFormat, rtpTimestampFrequency,
 				"VORBIS", numChannels), fIdent(identField), fFmtpSDPLine(NULL) {
 	if (identificationHeaderSize >= 28) {
 		// Get the 'bitrate' values from this header, and use them to set our estimated bitrate:

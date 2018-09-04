@@ -14,7 +14,7 @@
 class MPEG4ESVideoRTPSource: public MultiFramedRTPSource {
 public:
   static MPEG4ESVideoRTPSource*
-  createNew(UsageEnvironment& env, Groupsock* RTPgs,
+  createNew(UsageEnvironment& env, CommonPlay *cpObj,Groupsock* RTPgs,
 	    unsigned char rtpPayloadFormat,
 	    unsigned rtpTimestampFrequency);
 
@@ -22,7 +22,7 @@ protected:
   virtual ~MPEG4ESVideoRTPSource();
 
 private:
-  MPEG4ESVideoRTPSource(UsageEnvironment& env, Groupsock* RTPgs,
+  MPEG4ESVideoRTPSource(UsageEnvironment& env,CommonPlay *cpObj, Groupsock* RTPgs,
 			unsigned char rtpPayloadFormat,
 			unsigned rtpTimestampFrequency);
       // called only by createNew()

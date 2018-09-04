@@ -62,9 +62,9 @@ public:
 
 ////////// MPEG1or2Demux implementation //////////
 
-MPEG1or2Demux::MPEG1or2Demux(UsageEnvironment& env, FramedSource* inputSource,
-		Boolean reclaimWhenLastESDies) :
-		Medium(env), fInputSource(inputSource), fMPEGversion(0), fNextAudioStreamNumber(
+MPEG1or2Demux::MPEG1or2Demux(UsageEnvironment& env, CommonPlay *cpObj,
+		FramedSource* inputSource, Boolean reclaimWhenLastESDies) :
+		Medium(env), fcpObj(cpObj), fInputSource(inputSource), fMPEGversion(0), fNextAudioStreamNumber(
 				0), fNextVideoStreamNumber(0), fReclaimWhenLastESDies(
 				reclaimWhenLastESDies), fNumOutstandingESs(0), fNumPendingReads(
 				0), fHaveUndeliveredData(False) {
@@ -85,10 +85,11 @@ MPEG1or2Demux::~MPEG1or2Demux() {
 }
 
 MPEG1or2Demux* MPEG1or2Demux::createNew(UsageEnvironment& env,
-		FramedSource* inputSource, Boolean reclaimWhenLastESDies) {
+		CommonPlay *cpObj, FramedSource* inputSource,
+		Boolean reclaimWhenLastESDies) {
 	// Need to add source type checking here???  #####
 
-	return new MPEG1or2Demux(env, inputSource, reclaimWhenLastESDies);
+	return new MPEG1or2Demux(env, cpObj, inputSource, reclaimWhenLastESDies);
 }
 
 MPEG1or2Demux::SCR::SCR() :
@@ -110,7 +111,8 @@ MPEG1or2DemuxedElementaryStream*
 MPEG1or2Demux::newElementaryStream(u_int8_t streamIdTag) {
 	++fNumOutstandingESs;
 	fOutput[streamIdTag].isPotentiallyReadable = True;
-	return new MPEG1or2DemuxedElementaryStream(envir(), streamIdTag, *this);
+	return new MPEG1or2DemuxedElementaryStream(envir(), fcpObj, streamIdTag,
+			*this);
 }
 
 MPEG1or2DemuxedElementaryStream* MPEG1or2Demux::newAudioStream() {

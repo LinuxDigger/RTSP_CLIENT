@@ -118,15 +118,15 @@ private:
 
 ////////// ADUFromMP3Source //////////
 
-ADUFromMP3Source::ADUFromMP3Source(UsageEnvironment& env,
+ADUFromMP3Source::ADUFromMP3Source(UsageEnvironment& env, CommonPlay *cpObj,
 		FramedSource* inputSource, Boolean includeADUdescriptors) :
-		FramedFilter(env, inputSource), fAreEnqueueingMP3Frame(False), fSegments(
+		FramedFilter(env, cpObj, inputSource), fAreEnqueueingMP3Frame(False), fSegments(
 				new SegmentQueue(True /* because we're MP3->ADU */,
 						False /*no descriptors in incoming frames*/)), fIncludeADUdescriptors(
 				includeADUdescriptors), fTotalDataSizeBeforePreviousRead(0), fScale(
 				1), fFrameCounter(0) {
-}
 
+}
 ADUFromMP3Source::~ADUFromMP3Source() {
 	delete fSegments;
 }
@@ -136,14 +136,15 @@ char const* ADUFromMP3Source::MIMEtype() const {
 }
 
 ADUFromMP3Source* ADUFromMP3Source::createNew(UsageEnvironment& env,
-		FramedSource* inputSource, Boolean includeADUdescriptors) {
+		CommonPlay *cpObj, FramedSource* inputSource,
+		Boolean includeADUdescriptors) {
 	// The source must be a MPEG audio source:
 	if (strcmp(inputSource->MIMEtype(), "audio/MPEG") != 0) {
 		env.setResultMsg(inputSource->name(), " is not an MPEG audio source");
 		return NULL;
 	}
 
-	return new ADUFromMP3Source(env, inputSource, includeADUdescriptors);
+	return new ADUFromMP3Source(env, cpObj, inputSource, includeADUdescriptors);
 }
 
 void ADUFromMP3Source::resetInput() {
@@ -275,9 +276,9 @@ Boolean ADUFromMP3Source::doGetNextFrame1() {
 
 ////////// MP3FromADUSource //////////
 
-MP3FromADUSource::MP3FromADUSource(UsageEnvironment& env,
+MP3FromADUSource::MP3FromADUSource(UsageEnvironment& env, CommonPlay *cpObj,
 		FramedSource* inputSource, Boolean includeADUdescriptors) :
-		FramedFilter(env, inputSource), fAreEnqueueingADU(False), fSegments(
+		FramedFilter(env, cpObj, inputSource), fAreEnqueueingADU(False), fSegments(
 				new SegmentQueue(False /* because we're ADU->MP3 */,
 						includeADUdescriptors)) {
 }
@@ -291,14 +292,15 @@ char const* MP3FromADUSource::MIMEtype() const {
 }
 
 MP3FromADUSource* MP3FromADUSource::createNew(UsageEnvironment& env,
-		FramedSource* inputSource, Boolean includeADUdescriptors) {
+		CommonPlay *cpObj, FramedSource* inputSource,
+		Boolean includeADUdescriptors) {
 	// The source must be an MP3 ADU source:
 	if (strcmp(inputSource->MIMEtype(), "audio/MPA-ROBUST") != 0) {
 		env.setResultMsg(inputSource->name(), " is not an MP3 ADU source");
 		return NULL;
 	}
 
-	return new MP3FromADUSource(env, inputSource, includeADUdescriptors);
+	return new MP3FromADUSource(env, cpObj, inputSource, includeADUdescriptors);
 }
 
 void MP3FromADUSource::doGetNextFrame() {
@@ -576,7 +578,7 @@ Boolean SegmentQueue::sqAfterGettingCommon(Segment& seg,
 	// 'ancillary data' that may be present at the end of the ADU:
 	if (!fDirectionIsToADU) {
 		unsigned newADUSize = numBytesRead - seg.descriptorSize - 4/*header size*/
-				- seg.sideInfoSize;
+		- seg.sideInfoSize;
 		if (newADUSize > seg.aduSize)
 			seg.aduSize = newADUSize;
 	}
@@ -632,7 +634,7 @@ Boolean SegmentQueue::insertDummyBeforeTail(unsigned backpointer) {
 		return False;
 
 	unsigned dummyNumBytesRead = oldTailSeg.descriptorSize + 4/*header size*/
-			+ oldTailSeg.sideInfoSize;
+	+ oldTailSeg.sideInfoSize;
 	return sqAfterGettingCommon(oldTailSeg, dummyNumBytesRead);
 }
 

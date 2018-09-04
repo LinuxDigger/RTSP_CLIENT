@@ -11,11 +11,11 @@
 #include "strDup.h"
 
 MPEG4GenericRTPSink::MPEG4GenericRTPSink(UsageEnvironment& env,
-		Groupsock* RTPgs, u_int8_t rtpPayloadFormat,
+		CommonPlay *cpObj, Groupsock* RTPgs, u_int8_t rtpPayloadFormat,
 		u_int32_t rtpTimestampFrequency, char const* sdpMediaTypeString,
 		char const* mpeg4Mode, char const* configString, unsigned numChannels) :
-		MultiFramedRTPSink(env, RTPgs, rtpPayloadFormat, rtpTimestampFrequency,
-				"MPEG4-GENERIC", numChannels), fSDPMediaTypeString(
+		MultiFramedRTPSink(env, cpObj, RTPgs, rtpPayloadFormat,
+				rtpTimestampFrequency, "MPEG4-GENERIC", numChannels), fSDPMediaTypeString(
 				strDup(sdpMediaTypeString)), fMPEG4Mode(strDup(mpeg4Mode)), fConfigString(
 				strDup(configString)) {
 	// Check whether "mpeg4Mode" is one that we handle:
@@ -62,11 +62,11 @@ MPEG4GenericRTPSink::~MPEG4GenericRTPSink() {
 }
 
 MPEG4GenericRTPSink*
-MPEG4GenericRTPSink::createNew(UsageEnvironment& env, Groupsock* RTPgs,
-		u_int8_t rtpPayloadFormat, u_int32_t rtpTimestampFrequency,
-		char const* sdpMediaTypeString, char const* mpeg4Mode,
-		char const* configString, unsigned numChannels) {
-	return new MPEG4GenericRTPSink(env, RTPgs, rtpPayloadFormat,
+MPEG4GenericRTPSink::createNew(UsageEnvironment& env, CommonPlay *cpObj,
+		Groupsock* RTPgs, u_int8_t rtpPayloadFormat,
+		u_int32_t rtpTimestampFrequency, char const* sdpMediaTypeString,
+		char const* mpeg4Mode, char const* configString, unsigned numChannels) {
+	return new MPEG4GenericRTPSink(env, cpObj, RTPgs, rtpPayloadFormat,
 			rtpTimestampFrequency, sdpMediaTypeString, mpeg4Mode, configString,
 			numChannels);
 }

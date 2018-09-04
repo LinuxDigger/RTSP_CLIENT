@@ -11,6 +11,7 @@
 #include "NetCommon.h"
 #include "Boolean.h"
 #include "TaskScheduler.h"
+
 class UsageEnvironment {
 public:
 	Boolean reclaim();

@@ -35,17 +35,17 @@ private:
 ////////// QuickTimeGenericRTPSource //////////
 
 QuickTimeGenericRTPSource*
-QuickTimeGenericRTPSource::createNew(UsageEnvironment& env, Groupsock* RTPgs,
-		unsigned char rtpPayloadFormat, unsigned rtpTimestampFrequency,
-		char const* mimeTypeString) {
-	return new QuickTimeGenericRTPSource(env, RTPgs, rtpPayloadFormat,
+QuickTimeGenericRTPSource::createNew(UsageEnvironment& env, CommonPlay *cpObj,
+		Groupsock* RTPgs, unsigned char rtpPayloadFormat,
+		unsigned rtpTimestampFrequency, char const* mimeTypeString) {
+	return new QuickTimeGenericRTPSource(env, cpObj, RTPgs, rtpPayloadFormat,
 			rtpTimestampFrequency, mimeTypeString);
 }
 
 QuickTimeGenericRTPSource::QuickTimeGenericRTPSource(UsageEnvironment& env,
-		Groupsock* RTPgs, unsigned char rtpPayloadFormat,
+		CommonPlay *cpObj, Groupsock* RTPgs, unsigned char rtpPayloadFormat,
 		unsigned rtpTimestampFrequency, char const* mimeTypeString) :
-		MultiFramedRTPSource(env, RTPgs, rtpPayloadFormat,
+		MultiFramedRTPSource(env, cpObj, RTPgs, rtpPayloadFormat,
 				rtpTimestampFrequency, new QTGenericBufferedPacketFactory), fMIMEtypeString(
 				strDup(mimeTypeString)) {
 	qtState.PCK = 0;

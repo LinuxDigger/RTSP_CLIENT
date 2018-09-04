@@ -26,8 +26,8 @@ int TimeCode::operator==(TimeCode const& arg2) {
 ////////// MPEGVideoStreamFramer implementation //////////
 
 MPEGVideoStreamFramer::MPEGVideoStreamFramer(UsageEnvironment& env,
-		FramedSource* inputSource) :
-		FramedFilter(env, inputSource), fFrameRate(
+		CommonPlay *cpObj, FramedSource* inputSource) :
+		FramedFilter(env, cpObj, inputSource), fFrameRate(
 				0.0) /* until we learn otherwise */, fParser(NULL) {
 	reset();
 }

@@ -15,7 +15,7 @@ BasicUDPSink* BasicUDPSink::createNew(UsageEnvironment& env, Groupsock* gs,
 
 BasicUDPSink::BasicUDPSink(UsageEnvironment& env, Groupsock* gs,
 		unsigned maxPayloadSize) :
-		MediaSink(env), fGS(gs), fMaxPayloadSize(maxPayloadSize) {
+		MediaSink(env, NULL), fGS(gs), fMaxPayloadSize(maxPayloadSize) {
 	fOutputBuffer = new unsigned char[fMaxPayloadSize];
 }
 
@@ -78,7 +78,7 @@ void BasicUDPSink::afterGettingFrame1(unsigned frameSize,
 
 	// Delay this amount of time:
 	nextTask() = envir().taskScheduler().scheduleDelayedTask(uSecondsToGo,
-			(TaskFunc*) sendNext, this);
+			(TaskFunc*) sendNext, this, fcpObj);
 }
 
 // The following is called after each delay between packet sends:

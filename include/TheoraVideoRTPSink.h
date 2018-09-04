@@ -13,7 +13,7 @@
 class TheoraVideoRTPSink: public VideoRTPSink {
 public:
 	static TheoraVideoRTPSink*
-	createNew(UsageEnvironment& env, Groupsock* RTPgs,
+	createNew(UsageEnvironment& env, CommonPlay *cpObj, Groupsock* RTPgs,
 			u_int8_t rtpPayloadFormat,
 			// The following headers provide the 'configuration' information, for the SDP description:
 			u_int8_t* identificationHeader, unsigned identificationHeaderSize,
@@ -22,17 +22,18 @@ public:
 			u_int32_t identField = 0xFACADE);
 
 	static TheoraVideoRTPSink*
-	createNew(UsageEnvironment& env, Groupsock* RTPgs,
+	createNew(UsageEnvironment& env, CommonPlay *cpObj, Groupsock* RTPgs,
 			u_int8_t rtpPayloadFormat, char const* configStr);
 	// an optional variant of "createNew()" that takes a Base-64-encoded 'configuration' string,
 	// rather than the raw configuration headers as parameter.
 
 protected:
-	TheoraVideoRTPSink(UsageEnvironment& env, Groupsock* RTPgs,
-			u_int8_t rtpPayloadFormat, u_int8_t* identificationHeader,
-			unsigned identificationHeaderSize, u_int8_t* commentHeader,
-			unsigned commentHeaderSize, u_int8_t* setupHeader,
-			unsigned setupHeaderSize, u_int32_t identField);
+	TheoraVideoRTPSink(UsageEnvironment& env, CommonPlay *cpObj,
+			Groupsock* RTPgs, u_int8_t rtpPayloadFormat,
+			u_int8_t* identificationHeader, unsigned identificationHeaderSize,
+			u_int8_t* commentHeader, unsigned commentHeaderSize,
+			u_int8_t* setupHeader, unsigned setupHeaderSize,
+			u_int32_t identField);
 	// called only by createNew()
 
 	virtual ~TheoraVideoRTPSink();

@@ -25,7 +25,7 @@ public:
 	// The frame header for the most recently read frame (RFC 4867, sec. 5.3)
 
 protected:
-	AMRAudioSource(UsageEnvironment& env, Boolean isWideband,
+	AMRAudioSource(UsageEnvironment& env, CommonPlay *cpObj,Boolean isWideband,
 			unsigned numChannels);
 	// virtual base class
 	virtual ~AMRAudioSource();

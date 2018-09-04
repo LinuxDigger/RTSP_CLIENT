@@ -17,8 +17,9 @@ void FramedFilter::detachInputSource() {
 	}
 }
 
-FramedFilter::FramedFilter(UsageEnvironment& env, FramedSource* inputSource) :
-		FramedSource(env), fInputSource(inputSource) {
+FramedFilter::FramedFilter(UsageEnvironment& env, CommonPlay *cpObj,
+		FramedSource* inputSource) :
+		FramedSource(env, cpObj), fInputSource(inputSource) {
 }
 
 FramedFilter::~FramedFilter() {

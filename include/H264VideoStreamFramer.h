@@ -13,12 +13,13 @@
 class H264VideoStreamFramer: public H264or5VideoStreamFramer {
 public:
 	static H264VideoStreamFramer* createNew(UsageEnvironment& env,
-			FramedSource* inputSource,
+			CommonPlay *cpObj, FramedSource* inputSource,
 			Boolean includeStartCodeInOutput = False);
 
 protected:
-	H264VideoStreamFramer(UsageEnvironment& env, FramedSource* inputSource,
-			Boolean createParser, Boolean includeStartCodeInOutput);
+	H264VideoStreamFramer(UsageEnvironment& env, CommonPlay *cpObj,
+			FramedSource* inputSource, Boolean createParser,
+			Boolean includeStartCodeInOutput);
 	// called only by "createNew()"
 	virtual ~H264VideoStreamFramer();
 

@@ -13,7 +13,7 @@
 
 class VideoRTPSink: public MultiFramedRTPSink {
 protected:
-  VideoRTPSink(UsageEnvironment& env,
+  VideoRTPSink(UsageEnvironment& env, CommonPlay *cpObj,
 	       Groupsock* rtpgs, unsigned char rtpPayloadType,
 	       unsigned rtpTimestampFrequency,
 	       char const* rtpPayloadFormatName);

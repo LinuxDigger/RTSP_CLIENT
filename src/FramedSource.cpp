@@ -12,9 +12,10 @@ using namespace std;
 
 ////////// FramedSource //////////
 
-FramedSource::FramedSource(UsageEnvironment& env) :
+FramedSource::FramedSource(UsageEnvironment& env, CommonPlay *cpObj) :
 		MediaSource(env), fTo(0), fMaxSize(0), fFrameSize(0), fNumTruncatedBytes(
-				0), fDurationInMicroseconds(0), fAfterGettingFunc(NULL), fAfterGettingClientData(
+				0), fDurationInMicroseconds(0), fcpObj(cpObj), fAfterGettingFunc(
+				NULL), fAfterGettingClientData(
 		NULL), fOnCloseFunc(NULL), fOnCloseClientData(NULL), fIsCurrentlyAwaitingData(
 				False) {
 	fPresentationTime.tv_sec = fPresentationTime.tv_usec = 0; // initially

@@ -15,7 +15,7 @@ RTSPRegisterOrDeregisterSender::RTSPRegisterOrDeregisterSender(
 		UsageEnvironment& env, char const* remoteClientNameOrAddress,
 		portNumBits remoteClientPortNum, Authenticator* authenticator,
 		int verbosityLevel, char const* applicationName) :
-		RTSPClient(env, NULL, verbosityLevel, applicationName, 0, -1), fRemoteClientPortNum(
+		RTSPClient(env, NULL, verbosityLevel, applicationName, 0, -1, NULL), fRemoteClientPortNum(
 				remoteClientPortNum) {
 	// Set up a connection to the remote client.  To do this, we create a fake "rtsp://" URL for it:
 	char const* fakeRTSPURLFmt = "rtsp://%s:%u/";
@@ -38,7 +38,7 @@ RTSPRegisterOrDeregisterSender::RequestRecord_REGISTER_or_DEREGISTER::RequestRec
 		unsigned cseq, char const* cmdName,
 		RTSPClient::responseHandler* rtspResponseHandler,
 		char const* rtspURLToRegisterOrDeregister, char const* proxyURLSuffix) :
-		RTSPClient::RequestRecord(cseq, cmdName, rtspResponseHandler), fRTSPURLToRegisterOrDeregister(
+		RTSPClient::RequestRecord(cseq, cmdName, NULL, rtspResponseHandler), fRTSPURLToRegisterOrDeregister(
 				strDup(rtspURLToRegisterOrDeregister)), fProxyURLSuffix(
 				strDup(proxyURLSuffix)) {
 }
@@ -120,7 +120,7 @@ Boolean RTSPRegisterSender::setRequestFields(RequestRecord* request,
 		char const* transportHeaderFmt =
 				"Transport: %spreferred_delivery_protocol=%s%s\r\n";
 		unsigned transportHeaderSize = strlen(transportHeaderFmt) + 100/*conservative*/
-				+ strlen(proxyURLSuffixParameterStr);
+		+ strlen(proxyURLSuffixParameterStr);
 		char* transportHeaderStr = new char[transportHeaderSize];
 		sprintf(transportHeaderStr, transportHeaderFmt,
 				request_REGISTER->reuseConnection() ? "reuse_connection; " : "",

@@ -57,9 +57,9 @@ private:
 ////////// MultiFramedRTPSource implementation //////////
 
 MultiFramedRTPSource::MultiFramedRTPSource(UsageEnvironment& env,
-		Groupsock* RTPgs, unsigned char rtpPayloadFormat,
+		CommonPlay *cpObj, Groupsock* RTPgs, unsigned char rtpPayloadFormat,
 		unsigned rtpTimestampFrequency, BufferedPacketFactory* packetFactory) :
-		RTPSource(env, RTPgs, rtpPayloadFormat, rtpTimestampFrequency) {
+		RTPSource(env, RTPgs, rtpPayloadFormat, rtpTimestampFrequency, cpObj) {
 	reset();
 	fReorderingBuffer = new ReorderingPacketBuffer(packetFactory);
 
@@ -202,7 +202,7 @@ void MultiFramedRTPSource::doGetNextFrame1() {
 			} else {
 				// Special case: Call our 'after getting' function via the event loop.
 				nextTask() = envir().taskScheduler().scheduleDelayedTask(0,
-						(TaskFunc*) FramedSource::afterGetting, this);
+						(TaskFunc*) FramedSource::afterGetting, this, fcpObj);
 			}
 		} else {
 			// This packet contained fragmented data, and does not complete
@@ -480,7 +480,7 @@ void BufferedPacket::use(unsigned char* to, unsigned toSize,
 	++fUseCount;
 
 	rtpSeqNo = fRTPSeqNo;
-	rtpTimestamp = fRTPTimestamp;//right
+	rtpTimestamp = fRTPTimestamp; //right
 	presentationTime = fPresentationTime;
 	hasBeenSyncedUsingRTCP = fHasBeenSyncedUsingRTCP;
 	rtpMarkerBit = fRTPMarkerBit;

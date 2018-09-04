@@ -11,17 +11,18 @@
 #include "VorbisAudioRTPSink.h" // for generateVorbisOrTheoraConfigStr()
 
 TheoraVideoRTPSink* TheoraVideoRTPSink::createNew(UsageEnvironment& env,
-		Groupsock* RTPgs, u_int8_t rtpPayloadFormat,
+		CommonPlay *cpObj, Groupsock* RTPgs, u_int8_t rtpPayloadFormat,
 		u_int8_t* identificationHeader, unsigned identificationHeaderSize,
 		u_int8_t* commentHeader, unsigned commentHeaderSize,
 		u_int8_t* setupHeader, unsigned setupHeaderSize, u_int32_t identField) {
-	return new TheoraVideoRTPSink(env, RTPgs, rtpPayloadFormat,
+	return new TheoraVideoRTPSink(env, cpObj, RTPgs, rtpPayloadFormat,
 			identificationHeader, identificationHeaderSize, commentHeader,
 			commentHeaderSize, setupHeader, setupHeaderSize, identField);
 }
 
 TheoraVideoRTPSink* TheoraVideoRTPSink::createNew(UsageEnvironment& env,
-		Groupsock* RTPgs, u_int8_t rtpPayloadFormat, char const* configStr) {
+		CommonPlay *cpObj, Groupsock* RTPgs, u_int8_t rtpPayloadFormat,
+		char const* configStr) {
 	// Begin by decoding and unpacking the configuration string:
 	u_int8_t* identificationHeader;
 	unsigned identificationHeaderSize;
@@ -35,7 +36,7 @@ TheoraVideoRTPSink* TheoraVideoRTPSink::createNew(UsageEnvironment& env,
 			identificationHeaderSize, commentHeader, commentHeaderSize,
 			setupHeader, setupHeaderSize, identField);
 
-	TheoraVideoRTPSink* resultSink = new TheoraVideoRTPSink(env, RTPgs,
+	TheoraVideoRTPSink* resultSink = new TheoraVideoRTPSink(env, cpObj, RTPgs,
 			rtpPayloadFormat, identificationHeader, identificationHeaderSize,
 			commentHeader, commentHeaderSize, setupHeader, setupHeaderSize,
 			identField);
@@ -46,12 +47,12 @@ TheoraVideoRTPSink* TheoraVideoRTPSink::createNew(UsageEnvironment& env,
 	return resultSink;
 }
 
-TheoraVideoRTPSink::TheoraVideoRTPSink(UsageEnvironment& env, Groupsock* RTPgs,
-		u_int8_t rtpPayloadFormat, u_int8_t* identificationHeader,
-		unsigned identificationHeaderSize, u_int8_t* commentHeader,
-		unsigned commentHeaderSize, u_int8_t* setupHeader,
-		unsigned setupHeaderSize, u_int32_t identField) :
-		VideoRTPSink(env, RTPgs, rtpPayloadFormat, 90000, "THEORA"), fIdent(
+TheoraVideoRTPSink::TheoraVideoRTPSink(UsageEnvironment& env, CommonPlay *cpObj,
+		Groupsock* RTPgs, u_int8_t rtpPayloadFormat,
+		u_int8_t* identificationHeader, unsigned identificationHeaderSize,
+		u_int8_t* commentHeader, unsigned commentHeaderSize,
+		u_int8_t* setupHeader, unsigned setupHeaderSize, u_int32_t identField) :
+		VideoRTPSink(env, cpObj, RTPgs, rtpPayloadFormat, 90000, "THEORA"), fIdent(
 				identField), fFmtpSDPLine(NULL) {
 	static const char *pf_to_str[] = { "YCbCr-4:2:0", "Reserved", "YCbCr-4:2:2",
 			"YCbCr-4:4:4", };

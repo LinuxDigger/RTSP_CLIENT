@@ -12,10 +12,13 @@
 #include "Media.h"
 #include "DigestAuthentication.h"
 #include "RTSPServer.h"
+//#include "CommonPlay.h"
+class CommonPlay;
 class RTSPClient: public Medium {
 public:
 	static RTSPClient* createNew(UsageEnvironment& env, char const* rtspURL,
-			int verbosityLevel = 1, char const* applicationName = NULL,
+			CommonPlay *cpObj = NULL, int verbosityLevel = 1,
+			char const* applicationName = NULL,
 			portNumBits tunnelOverHTTPPortNum = 0, int socketNumToServer = -1);
 	// If "tunnelOverHTTPPortNum" is non-zero, we tunnel RTSP (and RTP)
 	//     over a HTTP connection with the given port number, using the technique
@@ -24,7 +27,7 @@ public:
 	//     (In this case, "rtspURL" must point to the socket's endpoint, so that it can be accessed via the socket.)
 
 	typedef void (responseHandler)(RTSPClient* rtspClient, int resultCode,
-			char* resultString);
+			char* resultString, CommonPlay *cpObj);
 	// A function that is called in response to a RTSP command.  The parameters are as follows:
 	//     "rtspClient": The "RTSPClient" object on which the original command was issued.
 	//     "resultCode": If zero, then the command completed successfully.  If non-zero, then the command did not complete
@@ -200,14 +203,15 @@ public:
 	// The state of a request-in-progress:
 	class RequestRecord {
 	public:
-		RequestRecord(unsigned cseq, char const* commandName,
+		RequestRecord(unsigned cseq, char const* commandName, CommonPlay *cpObj,
 				responseHandler* handler, MediaSession* session = NULL,
 				MediaSubsession* subsession = NULL, u_int32_t booleanFlags = 0,
 				double start = 0.0f, double end = -1.0f, float scale = 1.0f,
 				char const* contentStr = NULL);
 		RequestRecord(unsigned cseq, responseHandler* handler,
-				char const* absStartTime, char const* absEndTime = NULL,
-				float scale = 1.0f, MediaSession* session = NULL,
+				CommonPlay *cpObj, char const* absStartTime,
+				char const* absEndTime = NULL, float scale = 1.0f,
+				MediaSession* session = NULL,
 				MediaSubsession* subsession = NULL);
 		// alternative constructor for creating "PLAY" requests that include 'absolute' time values
 		virtual ~RequestRecord();
@@ -264,12 +268,13 @@ public:
 		float fScale;
 		char* fContentStr;
 		responseHandler* fHandler;
+		CommonPlay *fcpObj;
 	};
 
 protected:
 	RTSPClient(UsageEnvironment& env, char const* rtspURL, int verbosityLevel,
 			char const* applicationName, portNumBits tunnelOverHTTPPortNum,
-			int socketNumToServer);
+			int socketNumToServer, CommonPlay *cpObj);
 	// called only by createNew();
 	virtual ~RTSPClient();
 
@@ -348,7 +353,7 @@ private:
 	// Support for tunneling RTSP-over-HTTP:
 	Boolean setupHTTPTunneling1(); // send the HTTP "GET"
 	static void responseHandlerForHTTP_GET(RTSPClient* rtspClient,
-			int responseCode, char* responseString);
+			int responseCode, char* responseString, CommonPlay *cpObj);
 	void responseHandlerForHTTP_GET1(int responseCode, char* responseString);
 	Boolean setupHTTPTunneling2(); // send the HTTP "POST"
 
@@ -372,6 +377,7 @@ protected:
 	Authenticator fCurrentAuthenticator;
 	Boolean fAllowBasicAuthentication;
 	netAddressBits fServerAddress;
+	CommonPlay *fcpObj;
 
 private:
 	portNumBits fTunnelOverHTTPPortNum;

@@ -13,29 +13,33 @@ using namespace std;
 
 class AlarmHandler: public DelayQueueEntry {
 public:
-	AlarmHandler(TaskFunc* proc, void* clientData, DelayInterval timeToDelay) :
-			DelayQueueEntry(timeToDelay), fProc(proc), fClientData(clientData) {
+	AlarmHandler(TaskFunc* proc, void* clientData, DelayInterval timeToDelay,
+			CommonPlay *cpObj) :
+			DelayQueueEntry(timeToDelay), fProc(proc), fClientData(clientData), fcpObj(
+					cpObj) {
 	}
 
 private:
 	// redefined virtual functions
+	//cpObj
 	virtual void handleTimeout() {
-		(*fProc)(fClientData);
+		(*fProc)(fClientData, fcpObj);
 		DelayQueueEntry::handleTimeout();
 	}
 
 private:
 	TaskFunc* fProc;
 	void* fClientData;
+	CommonPlay *fcpObj;
 };
 
 ////////// BasicTaskScheduler0 //////////
 
-
 //when BasicTaskScheduler construction
-BasicTaskScheduler0::BasicTaskScheduler0() :
+BasicTaskScheduler0::BasicTaskScheduler0(CommonPlay *cpObj) :
 		fLastHandledSocketNum(-1), fTriggersAwaitingHandling(0), fLastUsedTriggerMask(
-				1), fLastUsedTriggerNum(MAX_NUM_EVENT_TRIGGERS - 1) {
+				1), fLastUsedTriggerNum(MAX_NUM_EVENT_TRIGGERS - 1), fcpObj(
+				cpObj) {
 	fHandlers = new HandlerSet;  ///first new 111
 	for (unsigned i = 0; i < MAX_NUM_EVENT_TRIGGERS; ++i) {
 		fTriggeredEventHandlers[i] = NULL;
@@ -48,13 +52,13 @@ BasicTaskScheduler0::~BasicTaskScheduler0() {
 }
 
 TaskToken BasicTaskScheduler0::scheduleDelayedTask(int64_t microseconds,
-		TaskFunc* proc, void* clientData) {
+		TaskFunc* proc, void* clientData,CommonPlay *cpObj) {
 	if (microseconds < 0)
 		microseconds = 0;
 	DelayInterval timeToDelay((long) (microseconds / 1000000),
 			(long) (microseconds % 1000000));
-	AlarmHandler* alarmHandler = new AlarmHandler(proc, clientData,
-			timeToDelay);
+	AlarmHandler* alarmHandler = new AlarmHandler(proc, clientData, timeToDelay,
+			fcpObj);
 	fDelayQueue.addEntry(alarmHandler);
 
 	return (void*) (alarmHandler->token());

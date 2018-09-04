@@ -12,9 +12,9 @@
 using namespace std;
 
 OnDemandServerMediaSubsession::OnDemandServerMediaSubsession(
-		UsageEnvironment& env, Boolean reuseFirstSource,
+		UsageEnvironment& env, CommonPlay *cpObj, Boolean reuseFirstSource,
 		portNumBits initialPortNum, Boolean multiplexRTCPWithRTP) :
-		ServerMediaSubsession(env), fSDPLines(NULL), fReuseFirstSource(
+		ServerMediaSubsession(env, cpObj), fSDPLines(NULL), fReuseFirstSource(
 				reuseFirstSource), fMultiplexRTCPWithRTP(multiplexRTCPWithRTP), fLastStreamToken(
 		NULL), fAppHandlerTask(NULL), fAppHandlerClientData(NULL) {
 	fDestinationsHashTable = HashTable::create(ONE_WORD_HASH_KEYS);
@@ -490,7 +490,7 @@ void OnDemandServerMediaSubsession::setSDPLinesFromRTPSink(RTPSink* rtpSink,
 
 ////////// StreamState implementation //////////
 
-static void afterPlayingStreamState(void* clientData) {
+static void afterPlayingStreamState(void* clientData, CommonPlay *cpObj) {
 	StreamState* streamState = (StreamState*) clientData;
 	if (streamState->streamDuration() == 0.0) {
 		// When the input stream ends, tear it down.  This will cause a RTCP "BYE"
@@ -576,14 +576,15 @@ void StreamState::startPlaying(Destinations* dests, unsigned clientSessionId,
 		fRTCPInstance->sendReport();
 	}
 
+	/////////NULL
 	if (!fAreCurrentlyPlaying && fMediaSource != NULL) {
 		if (fRTPSink != NULL) {
-			fRTPSink->startPlaying(*fMediaSource, afterPlayingStreamState,
-					this);
+			fRTPSink->startPlaying(*fMediaSource, afterPlayingStreamState, this,
+			NULL);
 			fAreCurrentlyPlaying = True;
 		} else if (fUDPSink != NULL) {
-			fUDPSink->startPlaying(*fMediaSource, afterPlayingStreamState,
-					this);
+			fUDPSink->startPlaying(*fMediaSource, afterPlayingStreamState, this,
+			NULL);
 			fAreCurrentlyPlaying = True;
 		}
 	}

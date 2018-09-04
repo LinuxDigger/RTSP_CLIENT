@@ -10,17 +10,19 @@
 #include "strDup.h"
 
 SimpleRTPSource*
-SimpleRTPSource::createNew(UsageEnvironment& env, Groupsock* RTPgs,
-		unsigned char rtpPayloadFormat, unsigned rtpTimestampFrequency,
-		char const* mimeTypeString, unsigned offset, Boolean doNormalMBitRule) {
-	return new SimpleRTPSource(env, RTPgs, rtpPayloadFormat,
+SimpleRTPSource::createNew(UsageEnvironment& env, CommonPlay *cpObj,
+		Groupsock* RTPgs, unsigned char rtpPayloadFormat,
+		unsigned rtpTimestampFrequency, char const* mimeTypeString,
+		unsigned offset, Boolean doNormalMBitRule) {
+	return new SimpleRTPSource(env, cpObj, RTPgs, rtpPayloadFormat,
 			rtpTimestampFrequency, mimeTypeString, offset, doNormalMBitRule);
 }
 
-SimpleRTPSource::SimpleRTPSource(UsageEnvironment& env, Groupsock* RTPgs,
-		unsigned char rtpPayloadFormat, unsigned rtpTimestampFrequency,
-		char const* mimeTypeString, unsigned offset, Boolean doNormalMBitRule) :
-		MultiFramedRTPSource(env, RTPgs, rtpPayloadFormat,
+SimpleRTPSource::SimpleRTPSource(UsageEnvironment& env, CommonPlay *cpObj,
+		Groupsock* RTPgs, unsigned char rtpPayloadFormat,
+		unsigned rtpTimestampFrequency, char const* mimeTypeString,
+		unsigned offset, Boolean doNormalMBitRule) :
+		MultiFramedRTPSource(env, cpObj, RTPgs, rtpPayloadFormat,
 				rtpTimestampFrequency), fMIMEtypeString(strDup(mimeTypeString)), fOffset(
 				offset) {
 	fUseMBitForFrameEnd = doNormalMBitRule

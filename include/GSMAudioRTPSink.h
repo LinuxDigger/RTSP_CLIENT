@@ -8,25 +8,23 @@
 #ifndef INCLUDE_GSMAUDIORTPSINK_H_
 #define INCLUDE_GSMAUDIORTPSINK_H_
 
-
 #include "AudioRTPSink.h"
 
 class GSMAudioRTPSink: public AudioRTPSink {
 public:
-  static GSMAudioRTPSink* createNew(UsageEnvironment& env, Groupsock* RTPgs);
+	static GSMAudioRTPSink* createNew(UsageEnvironment& env, CommonPlay *cpObj,
+			Groupsock* RTPgs);
 
 protected:
-  GSMAudioRTPSink(UsageEnvironment& env, Groupsock* RTPgs);
+	GSMAudioRTPSink(UsageEnvironment& env, CommonPlay *cpObj, Groupsock* RTPgs);
 	// called only by createNew()
 
-  virtual ~GSMAudioRTPSink();
+	virtual ~GSMAudioRTPSink();
 
-private: // redefined virtual functions:
-  virtual
-  Boolean frameCanAppearAfterPacketStart(unsigned char const* frameStart,
-					 unsigned numBytesInFrame) const;
+private:
+	// redefined virtual functions:
+	virtual Boolean frameCanAppearAfterPacketStart(
+			unsigned char const* frameStart, unsigned numBytesInFrame) const;
 };
-
-
 
 #endif /* INCLUDE_GSMAUDIORTPSINK_H_ */

@@ -7,18 +7,18 @@
 
 #include "VP9VideoRTPSink.h"
 
-VP9VideoRTPSink::VP9VideoRTPSink(UsageEnvironment& env, Groupsock* RTPgs,
-		unsigned char rtpPayloadFormat) :
-		VideoRTPSink(env, RTPgs, rtpPayloadFormat, 90000, "VP9") {
+VP9VideoRTPSink::VP9VideoRTPSink(UsageEnvironment& env, CommonPlay *cpObj,
+		Groupsock* RTPgs, unsigned char rtpPayloadFormat) :
+		VideoRTPSink(env, cpObj, RTPgs, rtpPayloadFormat, 90000, "VP9") {
 }
 
 VP9VideoRTPSink::~VP9VideoRTPSink() {
 }
 
 VP9VideoRTPSink*
-VP9VideoRTPSink::createNew(UsageEnvironment& env, Groupsock* RTPgs,
-		unsigned char rtpPayloadFormat) {
-	return new VP9VideoRTPSink(env, RTPgs, rtpPayloadFormat);
+VP9VideoRTPSink::createNew(UsageEnvironment& env, CommonPlay *cpObj,
+		Groupsock* RTPgs, unsigned char rtpPayloadFormat) {
+	return new VP9VideoRTPSink(env, cpObj, RTPgs, rtpPayloadFormat);
 }
 
 Boolean VP9VideoRTPSink::frameCanAppearAfterPacketStart(

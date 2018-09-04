@@ -13,7 +13,7 @@
 class SimpleRTPSink: public MultiFramedRTPSink {
 public:
 	static SimpleRTPSink*
-	createNew(UsageEnvironment& env, Groupsock* RTPgs,
+	createNew(UsageEnvironment& env, CommonPlay *cpObj, Groupsock* RTPgs,
 			unsigned char rtpPayloadFormat, unsigned rtpTimestampFrequency,
 			char const* sdpMediaTypeString, char const* rtpPayloadFormatName,
 			unsigned numChannels = 1, Boolean allowMultipleFramesPerPacket =
@@ -27,7 +27,7 @@ public:
 	} // hack for optionally setting the RTP 'M' bit from outside the class
 
 protected:
-	SimpleRTPSink(UsageEnvironment& env, Groupsock* RTPgs,
+	SimpleRTPSink(UsageEnvironment& env, CommonPlay *cpObj, Groupsock* RTPgs,
 			unsigned char rtpPayloadFormat, unsigned rtpTimestampFrequency,
 			char const* sdpMediaTypeString, char const* rtpPayloadFormatName,
 			unsigned numChannels, Boolean allowMultipleFramesPerPacket,

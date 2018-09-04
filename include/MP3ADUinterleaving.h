@@ -33,7 +33,8 @@ private:
 
 class MP3ADUinterleaverBase: public FramedFilter {
 protected:
-	MP3ADUinterleaverBase(UsageEnvironment& env, FramedSource* inputSource);
+	MP3ADUinterleaverBase(UsageEnvironment& env, CommonPlay *cpObj,
+			FramedSource* inputSource);
 	// abstract base class
 	virtual ~MP3ADUinterleaverBase();
 
@@ -53,11 +54,12 @@ protected:
 class MP3ADUinterleaver: public MP3ADUinterleaverBase {
 public:
 	static MP3ADUinterleaver* createNew(UsageEnvironment& env,
-			Interleaving const& interleaving, FramedSource* inputSource);
+			CommonPlay *cpObj, Interleaving const& interleaving,
+			FramedSource* inputSource);
 
 protected:
-	MP3ADUinterleaver(UsageEnvironment& env, Interleaving const& interleaving,
-			FramedSource* inputSource);
+	MP3ADUinterleaver(UsageEnvironment& env, CommonPlay *cpObj,
+			Interleaving const& interleaving, FramedSource* inputSource);
 	// called only by createNew()
 	virtual ~MP3ADUinterleaver();
 
@@ -83,10 +85,11 @@ private:
 class MP3ADUdeinterleaver: public MP3ADUinterleaverBase {
 public:
 	static MP3ADUdeinterleaver* createNew(UsageEnvironment& env,
-			FramedSource* inputSource);
+			CommonPlay *cpObj, FramedSource* inputSource);
 
 protected:
-	MP3ADUdeinterleaver(UsageEnvironment& env, FramedSource* inputSource);
+	MP3ADUdeinterleaver(UsageEnvironment& env, CommonPlay *cpObj,
+			FramedSource* inputSource);
 	// called only by createNew()
 	virtual ~MP3ADUdeinterleaver();
 

@@ -14,7 +14,7 @@
 class DVVideoRTPSource: public MultiFramedRTPSource {
 public:
   static DVVideoRTPSource*
-  createNew(UsageEnvironment& env, Groupsock* RTPgs,
+  createNew(UsageEnvironment& env, CommonPlay *cpObj, Groupsock* RTPgs,
 	    unsigned char rtpPayloadFormat,
 	    unsigned rtpTimestampFrequency);
 
@@ -22,7 +22,7 @@ protected:
   virtual ~DVVideoRTPSource();
 
 private:
-  DVVideoRTPSource(UsageEnvironment& env, Groupsock* RTPgs,
+  DVVideoRTPSource(UsageEnvironment& env, CommonPlay *cpObj, Groupsock* RTPgs,
 		   unsigned char rtpPayloadFormat,
 		   unsigned rtpTimestampFrequency);
       // called only by createNew()

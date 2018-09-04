@@ -9,8 +9,8 @@
 #include "MPEG1or2VideoStreamFramer.h"
 
 MPEG1or2VideoRTPSink::MPEG1or2VideoRTPSink(UsageEnvironment& env,
-		Groupsock* RTPgs) :
-		VideoRTPSink(env, RTPgs, 32, 90000, "MPV"), fPreviousFrameWasSlice(
+		CommonPlay *cpObj, Groupsock* RTPgs) :
+		VideoRTPSink(env, cpObj, RTPgs, 32, 90000, "MPV"), fPreviousFrameWasSlice(
 				false), fSequenceHeaderPresent(false), fPacketBeginsSlice(
 				false), fPacketEndsSlice(false) {
 	fPictureState.temporal_reference = 0;
@@ -21,8 +21,9 @@ MPEG1or2VideoRTPSink::~MPEG1or2VideoRTPSink() {
 }
 
 MPEG1or2VideoRTPSink*
-MPEG1or2VideoRTPSink::createNew(UsageEnvironment& env, Groupsock* RTPgs) {
-	return new MPEG1or2VideoRTPSink(env, RTPgs);
+MPEG1or2VideoRTPSink::createNew(UsageEnvironment& env, CommonPlay *cpObj,
+		Groupsock* RTPgs) {
+	return new MPEG1or2VideoRTPSink(env, cpObj, RTPgs);
 }
 
 Boolean MPEG1or2VideoRTPSink::sourceIsCompatibleWithUs(MediaSource& source) {

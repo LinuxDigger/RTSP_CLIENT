@@ -29,7 +29,8 @@ public:
 	void flushInput(); // called if there is a discontinuity (seeking) in the input
 
 protected:
-	MPEGVideoStreamFramer(UsageEnvironment& env, FramedSource* inputSource);
+	MPEGVideoStreamFramer(UsageEnvironment& env, CommonPlay *cpObj,
+			FramedSource* inputSource);
 	// we're an abstract base class
 	virtual ~MPEGVideoStreamFramer();
 
