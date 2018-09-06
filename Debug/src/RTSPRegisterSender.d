@@ -1,4 +1,7 @@
 src/RTSPRegisterSender.o: ../src/RTSPRegisterSender.cpp \
+ /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/X86/include/Rtsp_server.h \
+ /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/X86/include/Rtsp_sys.h \
+ /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/X86/include/Rtsp_sys.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/RTSPRegisterSender.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/RTSPClient.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/MediaSession.h \
@@ -28,6 +31,12 @@ src/RTSPRegisterSender.o: ../src/RTSPRegisterSender.cpp \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/ServerMediaSession.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/strDup.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/GroupsockHelper.h
+
+/home/jhb/nfs/TerminalC++Workspace/RTSP_Client/X86/include/Rtsp_server.h:
+
+/home/jhb/nfs/TerminalC++Workspace/RTSP_Client/X86/include/Rtsp_sys.h:
+
+/home/jhb/nfs/TerminalC++Workspace/RTSP_Client/X86/include/Rtsp_sys.h:
 
 /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/RTSPRegisterSender.h:
 

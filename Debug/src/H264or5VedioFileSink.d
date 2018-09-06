@@ -1,4 +1,7 @@
 src/H264or5VedioFileSink.o: ../src/H264or5VedioFileSink.cpp \
+ /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/X86/include/Rtsp_server.h \
+ /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/X86/include/Rtsp_sys.h \
+ /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/X86/include/Rtsp_sys.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/H264or5VideoFileSink.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/FileSink.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/MediaSink.h \
@@ -23,6 +26,12 @@ src/H264or5VedioFileSink.o: ../src/H264or5VedioFileSink.cpp \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/NetAddress.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/GroupEId.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/RTPInterface.h
+
+/home/jhb/nfs/TerminalC++Workspace/RTSP_Client/X86/include/Rtsp_server.h:
+
+/home/jhb/nfs/TerminalC++Workspace/RTSP_Client/X86/include/Rtsp_sys.h:
+
+/home/jhb/nfs/TerminalC++Workspace/RTSP_Client/X86/include/Rtsp_sys.h:
 
 /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/H264or5VideoFileSink.h:
 

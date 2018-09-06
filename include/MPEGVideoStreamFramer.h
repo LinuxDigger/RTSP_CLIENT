@@ -47,7 +47,7 @@ private:
 private:
 	void reset();
 
-	static void continueReadProcessing(void* clientData, unsigned char* ptr,
+	static void continueReadProcessing(void* clientData, DP_U8* ptr,
 			unsigned size, struct timeval presentationTime);
 	void continueReadProcessing();
 

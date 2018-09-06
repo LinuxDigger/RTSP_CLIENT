@@ -104,7 +104,7 @@ protected:
 	Boolean parseSDPAttribute_range(char const* sdpLine);
 	Boolean parseSDPAttribute_source_filter(char const* sdpLine);
 
-	static char* lookupPayloadFormat(unsigned char rtpPayloadType,
+	static char* lookupPayloadFormat(DP_U8 rtpPayloadType,
 			unsigned& rtpTimestampFrequency, unsigned& numChannels);
 	static unsigned guessRTPTimestampFrequency(char const* mediumName,
 			char const* codecName);
@@ -158,7 +158,7 @@ public:
 	unsigned short clientPortNum() const {
 		return fClientPortNum;
 	}
-	unsigned char rtpPayloadFormat() const {
+	DP_U8 rtpPayloadFormat() const {
 		return fRTPPayloadFormat;
 	}
 	char const* savedSDPLines() const {
@@ -313,7 +313,7 @@ public:
 	// Public fields that external callers can use to keep state.
 	// (They are responsible for all storage management on these fields)
 	unsigned short serverPortNum; // in host byte order (used by RTSP)
-	unsigned char rtpChannelId, rtcpChannelId; // used by RTSP (for RTP/TCP)
+	DP_U8 rtpChannelId, rtcpChannelId; // used by RTSP (for RTP/TCP)
 	MediaSink* sink; // callers can use this to keep track of who's playing us
 	void* miscPtr; // callers can use this for whatever they want
 
@@ -372,7 +372,7 @@ protected:
 	char* fConnectionEndpointName; // may also be set by RTSP SETUP response
 	unsigned short fClientPortNum; // in host byte order
 	// This field is also set by initiate()
-	unsigned char fRTPPayloadFormat;
+	DP_U8 fRTPPayloadFormat;
 	char* fSavedSDPLines;
 	char* fMediumName;
 	char* fCodecName;

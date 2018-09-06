@@ -94,8 +94,8 @@ public:
 		GenericMediaServer& fOurServer;
 		int fOurSocket;
 		struct sockaddr_in fClientAddr;
-		unsigned char fRequestBuffer[REQUEST_BUFFER_SIZE];
-		unsigned char fResponseBuffer[RESPONSE_BUFFER_SIZE];
+		DP_U8 fRequestBuffer[REQUEST_BUFFER_SIZE];
+		DP_U8 fResponseBuffer[RESPONSE_BUFFER_SIZE];
 		unsigned fRequestBytesAlreadySeen, fRequestBufferBytesLeft;
 	};
 

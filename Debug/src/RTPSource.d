@@ -1,4 +1,7 @@
 src/RTPSource.o: ../src/RTPSource.cpp \
+ /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/X86/include/Rtsp_server.h \
+ /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/X86/include/Rtsp_sys.h \
+ /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/X86/include/Rtsp_sys.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/RTPSource.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/FramedSource.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/MediaSource.h \
@@ -16,6 +19,12 @@ src/RTPSource.o: ../src/RTPSource.cpp \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/GroupEId.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/RTPInterface.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/GroupsockHelper.h
+
+/home/jhb/nfs/TerminalC++Workspace/RTSP_Client/X86/include/Rtsp_server.h:
+
+/home/jhb/nfs/TerminalC++Workspace/RTSP_Client/X86/include/Rtsp_sys.h:
+
+/home/jhb/nfs/TerminalC++Workspace/RTSP_Client/X86/include/Rtsp_sys.h:
 
 /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/RTPSource.h:
 

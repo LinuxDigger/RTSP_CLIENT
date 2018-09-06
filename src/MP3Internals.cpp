@@ -214,7 +214,7 @@ unsigned MP3FrameParams::computeSideInfoSize() {
 }
 
 unsigned ComputeFrameSize(unsigned bitrate, unsigned samplingFreq,
-		Boolean usePadding, Boolean isMPEG2, unsigned char layer) {
+		Boolean usePadding, Boolean isMPEG2, DP_U8 layer) {
 	if (samplingFreq == 0)
 		return 0;
 	unsigned const bitrateMultiplier = (layer == 1) ? 12000 * 4 : 144000;
@@ -229,7 +229,7 @@ unsigned ComputeFrameSize(unsigned bitrate, unsigned samplingFreq,
 
 #define TRUNC_FAIRLY
 static unsigned updateSideInfoSizes(MP3SideInfo& sideInfo, Boolean isMPEG2,
-		unsigned char const* mainDataPtr, unsigned allowedNumBits,
+		DP_U8 const* mainDataPtr, unsigned allowedNumBits,
 		unsigned& part23Length0a, unsigned& part23Length0aTruncation,
 		unsigned& part23Length0b, unsigned& part23Length0bTruncation,
 		unsigned& part23Length1a, unsigned& part23Length1aTruncation,
@@ -289,7 +289,7 @@ static unsigned updateSideInfoSizes(MP3SideInfo& sideInfo, Boolean isMPEG2,
 	return p23L0 + p23L1;
 }
 
-Boolean GetADUInfoFromMP3Frame(unsigned char const* framePtr,
+Boolean GetADUInfoFromMP3Frame(DP_U8 const* framePtr,
 		unsigned totFrameSize, unsigned& hdr, unsigned& frameSize,
 		MP3SideInfo& sideInfo, unsigned& sideInfoSize, unsigned& backpointer,
 		unsigned& aduSize) {
@@ -605,7 +605,7 @@ static void putSideInfo2(BitVector& bv, MP3SideInfo const& si,
 }
 
 static void PutMP3SideInfoIntoFrame(MP3SideInfo const& si,
-		MP3FrameParams const& fr, unsigned char* framePtr) {
+		MP3FrameParams const& fr, DP_U8* framePtr) {
 	if (fr.hasCRC)
 		framePtr += 2; // skip CRC
 
@@ -618,7 +618,7 @@ static void PutMP3SideInfoIntoFrame(MP3SideInfo const& si,
 	}
 }
 
-Boolean ZeroOutMP3SideInfo(unsigned char* framePtr, unsigned totFrameSize,
+Boolean ZeroOutMP3SideInfo(DP_U8* framePtr, unsigned totFrameSize,
 		unsigned newBackpointer) {
 	if (totFrameSize < 4)
 		return False; // there's not enough data
@@ -658,11 +658,11 @@ static unsigned MP3BitrateToBitrateIndex(unsigned bitrate /* in kbps */,
 	return 14;
 }
 
-static void outputHeader(unsigned char* toPtr, unsigned hdr) {
-	toPtr[0] = (unsigned char) (hdr >> 24);
-	toPtr[1] = (unsigned char) (hdr >> 16);
-	toPtr[2] = (unsigned char) (hdr >> 8);
-	toPtr[3] = (unsigned char) (hdr);
+static void outputHeader(DP_U8* toPtr, unsigned hdr) {
+	toPtr[0] = (DP_U8) (hdr >> 24);
+	toPtr[1] = (DP_U8) (hdr >> 16);
+	toPtr[2] = (DP_U8) (hdr >> 8);
+	toPtr[3] = (DP_U8) (hdr);
 }
 
 static void assignADUBackpointer(MP3FrameParams const& fr, unsigned aduSize,
@@ -688,8 +688,8 @@ static void assignADUBackpointer(MP3FrameParams const& fr, unsigned aduSize,
 	}
 }
 
-unsigned TranscodeMP3ADU(unsigned char const* fromPtr, unsigned fromSize,
-		unsigned toBitrate, unsigned char* toPtr, unsigned toMaxSize,
+unsigned TranscodeMP3ADU(DP_U8 const* fromPtr, unsigned fromSize,
+		unsigned toBitrate, DP_U8* toPtr, unsigned toMaxSize,
 		unsigned& availableBytesForBackpointer) {
 	// Begin by parsing the input ADU's parameters:
 	unsigned hdr, inFrameSize, inSideInfoSize, backpointer, inAduSize;
@@ -786,7 +786,7 @@ unsigned TranscodeMP3ADU(unsigned char const* fromPtr, unsigned fromSize,
 	toBitOffset += part23Length1b;
 
 	/* zero out any remaining bits (probably unnecessary, but...) */
-	unsigned char const zero = '\0';
+	DP_U8 const zero = '\0';
 	shiftBits(toPtr, toBitOffset, &zero, 0, actualOutAduSize * 8 - numAduBits);
 
 	return 4 + outFr.sideInfoSize + actualOutAduSize;

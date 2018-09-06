@@ -22,7 +22,7 @@ GSMAudioRTPSink::createNew(UsageEnvironment& env, CommonPlay *cpObj,
 }
 
 Boolean GSMAudioRTPSink::frameCanAppearAfterPacketStart(
-		unsigned char const* /*frameStart*/,
+		DP_U8 const* /*frameStart*/,
 		unsigned /*numBytesInFrame*/) const {
 	// Allow at most 5 frames in a single packet:
 	return numFramesUsedSoFar() < 5;

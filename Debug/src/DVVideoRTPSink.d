@@ -1,4 +1,7 @@
 src/DVVideoRTPSink.o: ../src/DVVideoRTPSink.cpp \
+ /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/X86/include/Rtsp_server.h \
+ /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/X86/include/Rtsp_sys.h \
+ /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/X86/include/Rtsp_sys.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/DVVideoRTPSink.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/VideoRTPSink.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/MultiFramedRTPSink.h \
@@ -21,6 +24,12 @@ src/DVVideoRTPSink.o: ../src/DVVideoRTPSink.cpp \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/GroupEId.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/DVVideoStreamFramer.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/FramedFilter.h
+
+/home/jhb/nfs/TerminalC++Workspace/RTSP_Client/X86/include/Rtsp_server.h:
+
+/home/jhb/nfs/TerminalC++Workspace/RTSP_Client/X86/include/Rtsp_sys.h:
+
+/home/jhb/nfs/TerminalC++Workspace/RTSP_Client/X86/include/Rtsp_sys.h:
 
 /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/DVVideoRTPSink.h:
 

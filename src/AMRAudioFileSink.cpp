@@ -73,7 +73,7 @@ void AMRAudioFileSink::afterGettingFrame(unsigned frameSize,
 			headerBuffer[headerLength++] = source->numChannels();
 		}
 
-		addData((unsigned char*) headerBuffer, headerLength, presentationTime);
+		addData((DP_U8*) headerBuffer, headerLength, presentationTime);
 	}
 	fHaveWrittenHeader = True;
 

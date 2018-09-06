@@ -20,7 +20,7 @@ public:
 			unsigned numTruncatedBytes, struct timeval presentationTime,
 			unsigned durationInMicroseconds);
 	typedef void (onCloseFunc)(void* clientData);
-	void getNextFrame(unsigned char* to, unsigned maxSize,
+	void getNextFrame(DP_U8* to, unsigned maxSize,
 			afterGettingFunc* afterGettingFunc, void* afterGettingClientData,
 			onCloseFunc* onCloseFunc, void* onCloseClientData);
 
@@ -54,7 +54,7 @@ protected:
 
 protected:
 	// The following variables are typically accessed/set by doGetNextFrame()
-	unsigned char* fTo; // in
+	DP_U8* fTo; // in
 	unsigned fMaxSize; // in
 	unsigned fFrameSize; // out
 	unsigned fNumTruncatedBytes; // out

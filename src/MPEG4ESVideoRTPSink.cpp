@@ -11,7 +11,7 @@
 #include "strDup.h"
 
 MPEG4ESVideoRTPSink::MPEG4ESVideoRTPSink(UsageEnvironment& env,
-		CommonPlay *cpObj, Groupsock* RTPgs, unsigned char rtpPayloadFormat,
+		CommonPlay *cpObj, Groupsock* RTPgs, DP_U8 rtpPayloadFormat,
 		u_int32_t rtpTimestampFrequency, u_int8_t profileAndLevelIndication,
 		char const* configStr) :
 		VideoRTPSink(env, cpObj, RTPgs, rtpPayloadFormat, rtpTimestampFrequency,
@@ -27,7 +27,7 @@ MPEG4ESVideoRTPSink::~MPEG4ESVideoRTPSink() {
 
 MPEG4ESVideoRTPSink*
 MPEG4ESVideoRTPSink::createNew(UsageEnvironment& env, CommonPlay *cpObj,
-		Groupsock* RTPgs, unsigned char rtpPayloadFormat,
+		Groupsock* RTPgs, DP_U8 rtpPayloadFormat,
 		u_int32_t rtpTimestampFrequency) {
 	return new MPEG4ESVideoRTPSink(env, cpObj, RTPgs, rtpPayloadFormat,
 			rtpTimestampFrequency);
@@ -35,7 +35,7 @@ MPEG4ESVideoRTPSink::createNew(UsageEnvironment& env, CommonPlay *cpObj,
 
 MPEG4ESVideoRTPSink*
 MPEG4ESVideoRTPSink::createNew(UsageEnvironment& env, CommonPlay *cpObj,
-		Groupsock* RTPgs, unsigned char rtpPayloadFormat,
+		Groupsock* RTPgs, DP_U8 rtpPayloadFormat,
 		u_int32_t rtpTimestampFrequency, u_int8_t profileAndLevelIndication,
 		char const* configStr) {
 	return new MPEG4ESVideoRTPSink(env, cpObj, RTPgs, rtpPayloadFormat,
@@ -50,7 +50,7 @@ Boolean MPEG4ESVideoRTPSink::sourceIsCompatibleWithUs(MediaSource& source) {
 #define VOP_START_CODE                    0x000001B6
 
 void MPEG4ESVideoRTPSink::doSpecialFrameHandling(unsigned fragmentationOffset,
-		unsigned char* frameStart, unsigned numBytesInFrame,
+		DP_U8* frameStart, unsigned numBytesInFrame,
 		struct timeval framePresentationTime, unsigned numRemainingBytes) {
 	if (fragmentationOffset == 0) {
 		// Begin by inspecting the 4-byte code at the start of the frame:
@@ -83,7 +83,7 @@ Boolean MPEG4ESVideoRTPSink::allowFragmentationAfterStart() const {
 }
 
 Boolean MPEG4ESVideoRTPSink::frameCanAppearAfterPacketStart(
-		unsigned char const* /*frameStart*/,
+		DP_U8 const* /*frameStart*/,
 		unsigned /*numBytesInFrame*/) const {
 	// Once we've packed a VOP into the packet, then no other
 	// frame can be packed into it:
@@ -95,7 +95,7 @@ char const* MPEG4ESVideoRTPSink::auxSDPLine() {
 	// otherwise parameters from our framer source (in case they've changed since the last time that
 	// we were called):
 	unsigned configLength = fNumConfigBytes;
-	unsigned char* config = fConfigBytes;
+	DP_U8* config = fConfigBytes;
 	if (fProfileAndLevelIndication == 0 || config == NULL) {
 		// We need to get this information from our framer source:
 		MPEG4VideoStreamFramer* framerSource = (MPEG4VideoStreamFramer*) fSource;

@@ -13,7 +13,7 @@
 
 
 void updateSideInfoForHuffman(MP3SideInfo& sideInfo, Boolean isMPEG2,
-		unsigned char const* mainDataPtr, unsigned p23L0, unsigned p23L1,
+		DP_U8 const* mainDataPtr, unsigned p23L0, unsigned p23L1,
 		unsigned& part23Length0a, unsigned& part23Length0aTruncation,
 		unsigned& part23Length0b, unsigned& part23Length0bTruncation,
 		unsigned& part23Length1a, unsigned& part23Length1aTruncation,
@@ -35,11 +35,11 @@ public:
 
 /* forward */
 void MP3HuffmanDecode(MP3SideInfo::gr_info_s_t* gr, Boolean isMPEG2,
-		unsigned char const* fromBasePtr, unsigned fromBitOffset,
+		DP_U8 const* fromBasePtr, unsigned fromBitOffset,
 		unsigned fromLength, unsigned& scaleFactorsLength,
 		MP3HuffmanEncodingInfo& hei);
 
-extern unsigned char huffdec[]; // huffman table datas
+extern DP_U8 huffdec[]; // huffman table datas
 
 // The following are used if we process Huffman-decoded values
 #ifdef FOUR_BYTE_SAMPLES
@@ -55,8 +55,8 @@ extern unsigned char huffdec[]; // huffman table datas
 
 #ifdef DO_HUFFMAN_ENCODING
 unsigned MP3HuffmanEncode(MP3SideInfo::gr_info_s_t const* gr,
-		unsigned char const* fromPtr,
-		unsigned char* toPtr, unsigned toBitOffset,
+		DP_U8 const* fromPtr,
+		DP_U8* toPtr, unsigned toBitOffset,
 		unsigned numHuffBits);
 #endif
 

@@ -11,7 +11,9 @@
 #include "FileSink.h"
 using namespace std;
 
-CommonPlay::CommonPlay() :
+map<unsigned short, MediaSubsessionIterator*> CommonPlay::mSetupIter;
+
+CommonPlay::CommonPlay(unsigned short cliID) :
 		progName(NULL), env(NULL), ourClient(NULL), ourAuthenticator(NULL), streamURL(
 		NULL), session(NULL), sessionTimerTask(NULL), sessionTimeoutBrokenServerTask(
 		NULL), arrivalCheckTimerTask(NULL), interPacketGapCheckTimerTask(
@@ -39,7 +41,9 @@ CommonPlay::CommonPlay() :
 		NULL), allowProxyServers(False), controlConnectionUsesTCP(True), supportCodecSelection(
 				False), clientProtocolName("RTSP"), areAlreadyShuttingDown(
 				False), shutdownExitCode(), ourSIPClient(), statusCode() {
-
+	//(MediaSubsessionIterator)
+	MediaSubsessionIterator *setupIter = NULL;
+	efficientAddOrUpdate(mSetupIter, cliID, setupIter);
 }
 
 CommonPlay::~CommonPlay() {
@@ -77,7 +81,7 @@ void CommonPlay::continueAfterOPTIONS(RTSPClient*, int resultCode,
 	cpObj->getSDPDescription(continueAfterDESCRIBE);
 }
 
-void CommonPlay::setEnvURL(UsageEnvironment& envv, const char*URL) {
+void CommonPlay::setEnvURL(UsageEnvironment& envv,  const char*URL) {
 	env = &envv;
 	streamURL = URL;
 }
@@ -335,8 +339,11 @@ void CommonPlay::createOutputFiles(char const* periodicFilenameSuffix) {
 				if (strcmp(subsession->codecName(), "H264") == 0) {
 					// For H.264 video stream, we use a special sink that adds 'start codes',
 					// and (at the start) the SPS and PPS NAL units:
-					fileSink = H264VideoFileSink::createNew(*env, outFileName,
-							subsession->fmtp_spropparametersets(),
+//					cout
+//							<< "env->_cliIDVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV: "
+//							<< env->_cliID << endl;
+					fileSink = H264VideoFileSink::createNew(*env, env->_cliID,
+							outFileName, subsession->fmtp_spropparametersets(),
 							fileSinkBufferSize, oneFilePerFrame);
 				} else if (strcmp(subsession->codecName(), "H265") == 0) {
 					// For H.265 video stream, we use a special sink that adds 'start codes',
@@ -367,8 +374,9 @@ void CommonPlay::createOutputFiles(char const* periodicFilenameSuffix) {
 						subsession->fmtp_config());
 			} else if (fileSink == NULL) {
 				// Normal case:
+
 				fileSink = FileSink::createNew(*env, outFileName,
-						fileSinkBufferSize, 0, oneFilePerFrame, this);
+						fileSinkBufferSize, env->_cliID, oneFilePerFrame, this);
 			}
 			subsession->sink = fileSink;
 
@@ -392,7 +400,7 @@ void CommonPlay::createOutputFiles(char const* periodicFilenameSuffix) {
 					// from the SDP description contains useful VOL etc. headers.
 					// Insert this data at the front of the output file:
 					unsigned configLen;
-					unsigned char* configData = parseGeneralConfigStr(
+					DP_U8* configData = parseGeneralConfigStr(
 							subsession->fmtp_config(), configLen);
 					struct timeval timeNow;
 					gettimeofday(&timeNow, NULL);
@@ -435,12 +443,14 @@ void CommonPlay::createPeriodicOutputFiles() {
 
 void CommonPlay::setupStreams() {
 	cout
-			<< "setup stream ======================================================================= / create file "
-			<< endl;
-	static MediaSubsessionIterator* setupIter = NULL;
-	if (setupIter == NULL)
-		setupIter = new MediaSubsessionIterator(*session);
-	while ((subsession = setupIter->next()) != NULL) {
+			<< "setup stream ======================================================================= / create file env cliID: "
+			<< env->_cliID << endl;
+//	static MediaSubsessionIterator* setupIter = NULL;
+
+//	MediaSubsessionIterator* setupIter = NULL; // enter a inf loop
+	if (mSetupIter[env->_cliID] == NULL)
+		mSetupIter[env->_cliID] = new MediaSubsessionIterator(*session);
+	while ((subsession = mSetupIter[env->_cliID]->next()) != NULL) {
 		// We have another subsession left to set up:
 		if (subsession->clientPortNum() == 0)
 			continue; // port # was not set
@@ -453,7 +463,8 @@ void CommonPlay::setupStreams() {
 
 //second this
 // We're done setting up subsessions.
-	delete setupIter;
+	delete mSetupIter[env->_cliID];
+	mSetupIter.erase(env->_cliID);
 	if (!madeProgress)
 		shutdown();
 
@@ -957,6 +968,9 @@ void CommonPlay::shutdown(int exitCode) {
 
 void CommonPlay::continueAfterTEARDOWN(RTSPClient*, int /*resultCode*/,
 		char* resultString, CommonPlay *cpObj) {
+	cout
+			<< "continueAfterTEARDOWNTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTmSetupIter : "
+			<< CommonPlay::mSetupIter.size() << endl;
 	delete[] resultString;
 
 // Now that we've stopped any more incoming data from arriving, close our output files:

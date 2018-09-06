@@ -1,4 +1,7 @@
 src/TheoraVideoRTPSink.o: ../src/TheoraVideoRTPSink.cpp \
+ /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/X86/include/Rtsp_server.h \
+ /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/X86/include/Rtsp_sys.h \
+ /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/X86/include/Rtsp_sys.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/TheoraVideoRTPSink.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/VideoRTPSink.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/MultiFramedRTPSink.h \
@@ -25,6 +28,12 @@ src/TheoraVideoRTPSink.o: ../src/TheoraVideoRTPSink.cpp \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/RTPSource.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/VorbisAudioRTPSink.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/AudioRTPSink.h
+
+/home/jhb/nfs/TerminalC++Workspace/RTSP_Client/X86/include/Rtsp_server.h:
+
+/home/jhb/nfs/TerminalC++Workspace/RTSP_Client/X86/include/Rtsp_sys.h:
+
+/home/jhb/nfs/TerminalC++Workspace/RTSP_Client/X86/include/Rtsp_sys.h:
 
 /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/TheoraVideoRTPSink.h:
 

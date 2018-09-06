@@ -14,14 +14,14 @@ class AC3AudioRTPSource: public MultiFramedRTPSource {
 public:
 	static AC3AudioRTPSource*
 	createNew(UsageEnvironment& env, CommonPlay *cpObj, Groupsock* RTPgs,
-			unsigned char rtpPayloadFormat, unsigned rtpTimestampFrequency);
+			DP_U8 rtpPayloadFormat, unsigned rtpTimestampFrequency);
 
 protected:
 	virtual ~AC3AudioRTPSource();
 
 private:
 	AC3AudioRTPSource(UsageEnvironment& env, CommonPlay *cpObj, Groupsock* RTPgs,
-			unsigned char rtpPayloadFormat, unsigned rtpTimestampFrequency);
+			DP_U8 rtpPayloadFormat, unsigned rtpTimestampFrequency);
 	// called only by createNew()
 
 private:

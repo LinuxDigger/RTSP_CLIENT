@@ -24,7 +24,7 @@ public:
 
 protected:
 	MultiFramedRTPSink(UsageEnvironment& env, CommonPlay *cpObj,
-			Groupsock* rtpgs, unsigned char rtpPayloadType,
+			Groupsock* rtpgs, DP_U8 rtpPayloadType,
 			unsigned rtpTimestampFrequency, char const* rtpPayloadFormatName,
 			unsigned numChannels = 1);
 	// we're a virtual base class
@@ -32,7 +32,7 @@ protected:
 	virtual ~MultiFramedRTPSink();
 
 	virtual void doSpecialFrameHandling(unsigned fragmentationOffset,
-			unsigned char* frameStart, unsigned numBytesInFrame,
+			DP_U8* frameStart, unsigned numBytesInFrame,
 			struct timeval framePresentationTime, unsigned numRemainingBytes);
 	// perform any processing specific to the particular payload format
 	virtual Boolean allowFragmentationAfterStart() const;
@@ -42,7 +42,7 @@ protected:
 	// whether other frames can be packed into a packet following the
 	// final fragment of a previous, fragmented frame (by default: False)
 	virtual Boolean frameCanAppearAfterPacketStart(
-			unsigned char const* frameStart, unsigned numBytesInFrame) const;
+			DP_U8 const* frameStart, unsigned numBytesInFrame) const;
 	// whether this frame can appear in position >1 in a pkt (default: True)
 	virtual unsigned specialHeaderSize() const;
 	// returns the size of any special header used (following the RTP header) (default: 0)
@@ -69,11 +69,11 @@ protected:
 	void setTimestamp(struct timeval framePresentationTime);
 	void setSpecialHeaderWord(unsigned word, /* 32 bits, in host order */
 	unsigned wordPosition = 0);
-	void setSpecialHeaderBytes(unsigned char const* bytes, unsigned numBytes,
+	void setSpecialHeaderBytes(DP_U8 const* bytes, unsigned numBytes,
 			unsigned bytePosition = 0);
 	void setFrameSpecificHeaderWord(unsigned word, /* 32 bits, in host order */
 	unsigned wordPosition = 0);
-	void setFrameSpecificHeaderBytes(unsigned char const* bytes,
+	void setFrameSpecificHeaderBytes(DP_U8 const* bytes,
 			unsigned numBytes, unsigned bytePosition = 0);
 	void setFramePadding(unsigned numPaddingBytes);
 	unsigned numFramesUsedSoFar() const {

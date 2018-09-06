@@ -177,7 +177,7 @@ void MPEG2TransportStreamFramer::afterGettingFrame1(unsigned frameSize,
 }
 
 Boolean MPEG2TransportStreamFramer::updateTSPacketDurationEstimate(
-		unsigned char* pkt, double timeNow) {
+		DP_U8* pkt, double timeNow) {
 	// Sanity check: Make sure we start with the sync byte:
 	if (pkt[0] != TRANSPORT_SYNC_BYTE) {
 		envir() << "Missing sync byte!\n";

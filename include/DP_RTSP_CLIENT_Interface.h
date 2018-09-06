@@ -95,7 +95,7 @@ public:
 			DP_RTSP_CLIENT_ClientMaxNum);
 
 	//u32FrmNums:min :1 or 0 max :256
-	DP_S32 DP_RTSP_CLIENT_Init(const DP_S8 *ps8URL,
+	DP_S32 DP_RTSP_CLIENT_Init(const char *ps8URL,
 			DP_RTSP_CLIENT_STREAM_TYPE_E enStreamType,
 			DP_RTSP_CLIENT_NET_PROTOCOL_E enNetProtocol, DP_U16 u32FrmNums,
 			DP_U8 *pu8UsrName, DP_U8 *pu8UsrPassword);
@@ -125,7 +125,7 @@ private:
 	Mutex _mutex;
 
 	typedef struct _ClientInitArgs_S {
-		_ClientInitArgs_S(DP_U16 cliID, const DP_S8 *URL,
+		_ClientInitArgs_S(DP_U16 cliID, const char *URL,
 				DP_RTSP_CLIENT_STREAM_TYPE_E streamType,
 				DP_RTSP_CLIENT_NET_PROTOCOL_E netProtocol, DP_U16 frmNums,
 				DP_U8 *usrName, DP_U8 *usrPassword, DP_RTSP_CLIENT_Client *cli) :
@@ -134,7 +134,7 @@ private:
 						usrPassword), client(cli) {
 		}
 		DP_U16 clientID;
-		const DP_S8 *ps8URL;
+		const char *ps8URL;
 		DP_RTSP_CLIENT_STREAM_TYPE_E enStreamType;
 		DP_RTSP_CLIENT_NET_PROTOCOL_E enNetProtocol;
 		DP_U16 u32FrmNums;

@@ -45,7 +45,7 @@ private:
 	int fHNumber;
 	unsigned fInputBufferSize;
 	unsigned fMaxOutputPacketSize;
-	unsigned char* fInputBuffer;
+	DP_U8* fInputBuffer;
 	unsigned fNumValidDataBytes;
 	unsigned fCurDataOffset;
 	unsigned fSaveNumTruncatedBytes;
@@ -55,7 +55,7 @@ private:
 ////////// H264or5VideoRTPSink implementation //////////
 
 H264or5VideoRTPSink::H264or5VideoRTPSink(int hNumber, UsageEnvironment& env,
-		CommonPlay *cpObj, Groupsock* RTPgs, unsigned char rtpPayloadFormat,
+		CommonPlay *cpObj, Groupsock* RTPgs, DP_U8 rtpPayloadFormat,
 		u_int8_t const* vps, unsigned vpsSize, u_int8_t const* sps,
 		unsigned spsSize, u_int8_t const* pps, unsigned ppsSize) :
 		VideoRTPSink(env, cpObj, RTPgs, rtpPayloadFormat, 90000,
@@ -117,7 +117,7 @@ Boolean H264or5VideoRTPSink::continuePlaying() {
 }
 
 void H264or5VideoRTPSink::doSpecialFrameHandling(
-		unsigned /*fragmentationOffset*/, unsigned char* /*frameStart*/,
+		unsigned /*fragmentationOffset*/, DP_U8* /*frameStart*/,
 		unsigned /*numBytesInFrame*/, struct timeval framePresentationTime,
 		unsigned /*numRemainingBytes*/) {
 	// Set the RTP 'M' (marker) bit iff
@@ -138,7 +138,7 @@ void H264or5VideoRTPSink::doSpecialFrameHandling(
 }
 
 Boolean H264or5VideoRTPSink::frameCanAppearAfterPacketStart(
-		unsigned char const* /*frameStart*/,
+		DP_U8 const* /*frameStart*/,
 		unsigned /*numBytesInFrame*/) const {
 	return False;
 }
@@ -150,7 +150,7 @@ H264or5Fragmenter::H264or5Fragmenter(int hNumber, UsageEnvironment& env,
 		unsigned maxOutputPacketSize) :
 		FramedFilter(env, cpObj, inputSource), fHNumber(hNumber), fInputBufferSize(
 				inputBufferMax + 1), fMaxOutputPacketSize(maxOutputPacketSize) {
-	fInputBuffer = new unsigned char[fInputBufferSize];
+	fInputBuffer = new DP_U8[fInputBufferSize];
 	reset();
 }
 

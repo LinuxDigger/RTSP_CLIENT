@@ -27,11 +27,11 @@ private:
 	virtual Boolean sourceIsCompatibleWithUs(MediaSource& source);
 
 	virtual void doSpecialFrameHandling(unsigned fragmentationOffset,
-			unsigned char* frameStart, unsigned numBytesInFrame,
+			DP_U8* frameStart, unsigned numBytesInFrame,
 			struct timeval framePresentationTime, unsigned numRemainingBytes);
 	virtual Boolean allowFragmentationAfterStart() const;
 	virtual Boolean frameCanAppearAfterPacketStart(
-			unsigned char const* frameStart, unsigned numBytesInFrame) const;
+			DP_U8 const* frameStart, unsigned numBytesInFrame) const;
 	virtual unsigned specialHeaderSize() const;
 
 private:
@@ -42,8 +42,8 @@ private:
 	// already has this info itself.
 	struct {
 		unsigned temporal_reference;
-		unsigned char picture_coding_type;
-		unsigned char vector_code_bits; // FBV,BFC,FFV,FFC from RFC 2250, sec. 3.4
+		DP_U8 picture_coding_type;
+		DP_U8 vector_code_bits; // FBV,BFC,FFV,FFC from RFC 2250, sec. 3.4
 	} fPictureState;
 	Boolean fPreviousFrameWasSlice;
 	// used to implement frameCanAppearAfterPacketStart()

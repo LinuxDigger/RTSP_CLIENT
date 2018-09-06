@@ -77,7 +77,7 @@ void MPEG2TransportStreamMultiplexor::doGetNextFrame() {
 	}
 }
 
-void MPEG2TransportStreamMultiplexor::handleNewBuffer(unsigned char* buffer,
+void MPEG2TransportStreamMultiplexor::handleNewBuffer(DP_U8* buffer,
 		unsigned bufferSize, int mpegVersion, MPEG1or2Demux::SCR scr,
 		int16_t PID) {
 	if (bufferSize < 4)
@@ -139,7 +139,7 @@ void MPEG2TransportStreamMultiplexor::handleNewBuffer(unsigned char* buffer,
 }
 
 void MPEG2TransportStreamMultiplexor::deliverDataToClient(u_int8_t pid,
-		unsigned char* buffer, unsigned bufferSize,
+		DP_U8* buffer, unsigned bufferSize,
 		unsigned& startPositionInBuffer) {
 	// Construct a new Transport packet, and deliver it to the client:
 	if (fMaxSize < TRANSPORT_PACKET_SIZE) {
@@ -189,7 +189,7 @@ void MPEG2TransportStreamMultiplexor::deliverDataToClient(u_int8_t pid,
 		//         == TRANSPORT_PACKET_SIZE
 
 		// Fill in the header of the Transport Stream packet:
-		unsigned char* header = fTo;
+		DP_U8* header = fTo;
 		*header++ = 0x47; // sync_byte
 		*header++ = (startPositionInBuffer == 0) ? 0x40 : 0x00;
 		// transport_error_indicator, payload_unit_start_indicator, transport_priority,
@@ -247,10 +247,10 @@ void MPEG2TransportStreamMultiplexor::deliverDataToClient(u_int8_t pid,
 void MPEG2TransportStreamMultiplexor::deliverPATPacket() {
 	// First, create a new buffer for the PAT packet:
 	unsigned const patSize = TRANSPORT_PACKET_SIZE - 4; // allow for the 4-byte header
-	unsigned char* patBuffer = new unsigned char[patSize];
+	DP_U8* patBuffer = new DP_U8[patSize];
 
 	// and fill it in:
-	unsigned char* pat = patBuffer;
+	DP_U8* pat = patBuffer;
 	*pat++ = 0; // pointer_field
 	*pat++ = 0; // table_id
 	*pat++ = 0xB0; // section_syntax_indicator; 0; reserved, section_length (high)
@@ -290,14 +290,14 @@ void MPEG2TransportStreamMultiplexor::deliverPMTPacket(Boolean hasChanged) {
 
 	// First, create a new buffer for the PMT packet:
 	unsigned const pmtSize = TRANSPORT_PACKET_SIZE - 4; // allow for the 4-byte header
-	unsigned char* pmtBuffer = new unsigned char[pmtSize];
+	DP_U8* pmtBuffer = new DP_U8[pmtSize];
 
 	// and fill it in:
-	unsigned char* pmt = pmtBuffer;
+	DP_U8* pmt = pmtBuffer;
 	*pmt++ = 0; // pointer_field
 	*pmt++ = 2; // table_id
 	*pmt++ = 0xB0; // section_syntax_indicator; 0; reserved, section_length (high)
-	unsigned char* section_lengthPtr = pmt; // save for later
+	DP_U8* section_lengthPtr = pmt; // save for later
 	*pmt++ = 0; // section_length (low) (fill in later)
 	*pmt++ = OUR_PROGRAM_NUMBER >> 8;
 	*pmt++ = OUR_PROGRAM_NUMBER; // program_number

@@ -7,7 +7,7 @@
 
 #include "H265ParserSPS.h"
 
-bool ParseSequenceParameterSet(unsigned char * data, int size,
+bool ParseSequenceParameterSet(DP_U8 * data, int size,
 		vc_params_t& params) {
 	if (size < 20) {
 		return false;

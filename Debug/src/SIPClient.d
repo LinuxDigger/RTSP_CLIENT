@@ -1,4 +1,7 @@
 src/SIPClient.o: ../src/SIPClient.cpp \
+ /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/X86/include/Rtsp_server.h \
+ /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/X86/include/Rtsp_sys.h \
+ /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/X86/include/Rtsp_sys.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/SIPClient.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/NetAddress.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/NetCommon.h \
@@ -15,6 +18,12 @@ src/SIPClient.o: ../src/SIPClient.cpp \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/liveMedia_version.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/GroupsockHelper.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/strDup.h
+
+/home/jhb/nfs/TerminalC++Workspace/RTSP_Client/X86/include/Rtsp_server.h:
+
+/home/jhb/nfs/TerminalC++Workspace/RTSP_Client/X86/include/Rtsp_sys.h:
+
+/home/jhb/nfs/TerminalC++Workspace/RTSP_Client/X86/include/Rtsp_sys.h:
 
 /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/SIPClient.h:
 

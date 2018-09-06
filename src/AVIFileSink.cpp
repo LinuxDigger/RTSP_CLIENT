@@ -21,7 +21,7 @@ public:
 	SubsessionBuffer(unsigned bufferSize) :
 			fBufferSize(bufferSize) {
 		reset();
-		fData = new unsigned char[bufferSize];
+		fData = new DP_U8[bufferSize];
 	}
 	virtual ~SubsessionBuffer() {
 		delete[] fData;
@@ -33,10 +33,10 @@ public:
 		fBytesInUse += numBytes;
 	}
 
-	unsigned char* dataStart() {
+	DP_U8* dataStart() {
 		return &fData[0];
 	}
-	unsigned char* dataEnd() {
+	DP_U8* dataEnd() {
 		return &fData[fBytesInUse];
 	}
 	unsigned bytesInUse() const {
@@ -56,7 +56,7 @@ public:
 private:
 	unsigned fBufferSize;
 	struct timeval fPresentationTime;
-	unsigned char* fData;
+	DP_U8* fData;
 	unsigned fBytesInUse;
 };
 
@@ -268,7 +268,7 @@ Boolean AVIFileSink::continuePlaying() {
 			continue;
 
 		haveActiveSubsessions = True;
-		unsigned char* toPtr = ioState->fBuffer->dataEnd();
+		DP_U8* toPtr = ioState->fBuffer->dataEnd();
 		unsigned toSize = ioState->fBuffer->bytesAvailable();
 		subsessionSource->getNextFrame(toPtr, toSize, afterGettingFrame,
 				ioState, onSourceClosure, ioState);
@@ -525,7 +525,7 @@ void AVISubsessionIOState::afterGettingFrame(unsigned packetDataSize,
 }
 
 void AVISubsessionIOState::useFrame(SubsessionBuffer& buffer) {
-	unsigned char* const frameSource = buffer.dataStart();
+	DP_U8* const frameSource = buffer.dataStart();
 	unsigned const frameSize = buffer.bytesInUse();
 	struct timeval const& presentationTime = buffer.presentationTime();
 	if (fPrevPresentationTime.tv_usec != 0
@@ -547,7 +547,7 @@ void AVISubsessionIOState::useFrame(SubsessionBuffer& buffer) {
 		// We need to swap the 16-bit audio samples from big-endian
 		// to little-endian order, before writing them to a file:
 		for (unsigned i = 0; i < frameSize; i += 2) {
-			unsigned char tmp = frameSource[i];
+			DP_U8 tmp = frameSource[i];
 			frameSource[i] = frameSource[i + 1];
 			frameSource[i + 1] = tmp;
 		}
@@ -598,8 +598,8 @@ unsigned AVIFileSink::addWord(unsigned word) {
 
 unsigned AVIFileSink::addHalfWord(unsigned short halfWord) {
 	// Add "halfWord" to the file in little-endian order:
-	addByte((unsigned char) halfWord);
-	addByte((unsigned char) (halfWord >> 8));
+	addByte((DP_U8) halfWord);
+	addByte((DP_U8) (halfWord >> 8));
 
 	return 2;
 }

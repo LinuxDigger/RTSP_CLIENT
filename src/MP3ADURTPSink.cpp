@@ -8,7 +8,7 @@
 #include "MP3ADURTPSink.h"
 
 MP3ADURTPSink::MP3ADURTPSink(UsageEnvironment& env, CommonPlay *cpObj,
-		Groupsock* RTPgs, unsigned char RTPPayloadType) :
+		Groupsock* RTPgs, DP_U8 RTPPayloadType) :
 		AudioRTPSink(env, cpObj, RTPgs, RTPPayloadType, 90000, "MPA-ROBUST"), fCurADUSize(
 				0) {
 }
@@ -18,7 +18,7 @@ MP3ADURTPSink::~MP3ADURTPSink() {
 
 MP3ADURTPSink*
 MP3ADURTPSink::createNew(UsageEnvironment& env, CommonPlay *cpObj,
-		Groupsock* RTPgs, unsigned char RTPPayloadType) {
+		Groupsock* RTPgs, DP_U8 RTPPayloadType) {
 	return new MP3ADURTPSink(env, cpObj, RTPgs, RTPPayloadType);
 }
 
@@ -28,7 +28,7 @@ static void badDataSize(UsageEnvironment& env, unsigned numBytesInFrame) {
 }
 
 void MP3ADURTPSink::doSpecialFrameHandling(unsigned fragmentationOffset,
-		unsigned char* frameStart, unsigned numBytesInFrame,
+		DP_U8* frameStart, unsigned numBytesInFrame,
 		struct timeval framePresentationTime, unsigned numRemainingBytes) {
 	// If this is the first (or only) fragment of an ADU, then
 	// check the "ADU descriptor" (that should be at the front) for validity:
@@ -74,7 +74,7 @@ void MP3ADURTPSink::doSpecialFrameHandling(unsigned fragmentationOffset,
 	} else {
 		// This is the second (or subsequent) fragment.
 		// Insert a new ADU descriptor:
-		unsigned char aduDescriptor[2];
+		DP_U8 aduDescriptor[2];
 		aduDescriptor[0] = 0xC0 | (fCurADUSize >> 8);
 		aduDescriptor[1] = fCurADUSize & 0xFF;
 		setSpecialHeaderBytes(aduDescriptor, 2);

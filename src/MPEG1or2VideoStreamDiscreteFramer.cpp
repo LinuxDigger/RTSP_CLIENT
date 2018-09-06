@@ -128,7 +128,7 @@ void MPEG1or2VideoStreamDiscreteFramer::afterGettingFrame1(unsigned frameSize,
 			++i;
 			unsigned short temporal_reference = (fTo[i] << 2)
 					| (fTo[i + 1] >> 6);
-			unsigned char picture_coding_type = (fTo[i + 1] & 0x38) >> 3;
+			DP_U8 picture_coding_type = (fTo[i + 1] & 0x38) >> 3;
 
 			// If this is not an "I" frame, but we were asked for "I" frames only, then try again:
 			if (fIFramesOnly && picture_coding_type != 1) {

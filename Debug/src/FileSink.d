@@ -1,4 +1,7 @@
 src/FileSink.o: ../src/FileSink.cpp \
+ /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/X86/include/Rtsp_server.h \
+ /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/X86/include/Rtsp_sys.h \
+ /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/X86/include/Rtsp_sys.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/FileSink.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/MediaSink.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/FramedSource.h \
@@ -20,7 +23,14 @@ src/FileSink.o: ../src/FileSink.cpp \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/DP_RTSP_CLIENT_Interface.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/EfficientAddOrUpdate.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/EfficientAddOrUpdate.hpp \
- /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/Mutex.h
+ /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/Mutex.h \
+ /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/X86/include/Rtsp_server.h
+
+/home/jhb/nfs/TerminalC++Workspace/RTSP_Client/X86/include/Rtsp_server.h:
+
+/home/jhb/nfs/TerminalC++Workspace/RTSP_Client/X86/include/Rtsp_sys.h:
+
+/home/jhb/nfs/TerminalC++Workspace/RTSP_Client/X86/include/Rtsp_sys.h:
 
 /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/FileSink.h:
 
@@ -65,3 +75,5 @@ src/FileSink.o: ../src/FileSink.cpp \
 /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/EfficientAddOrUpdate.hpp:
 
 /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/Mutex.h:
+
+/home/jhb/nfs/TerminalC++Workspace/RTSP_Client/X86/include/Rtsp_server.h:

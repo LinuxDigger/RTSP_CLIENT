@@ -553,7 +553,7 @@ void RTSPServer::RTSPClientConnection::handleHTTPCmd_TunnelingGET(
 }
 
 Boolean RTSPServer::RTSPClientConnection::handleHTTPCmd_TunnelingPOST(
-		char const* sessionCookie, unsigned char const* extraData,
+		char const* sessionCookie, DP_U8 const* extraData,
 		unsigned extraDataSize) {
 	// Use the "sessionCookie" string to look up the separate "RTSPClientConnection" object that should have been used to handle
 	// an earlier HTTP "GET" request:
@@ -652,7 +652,7 @@ void RTSPServer::RTSPClientConnection::handleRequestBytes(int newBytesRead) {
 		}
 
 		Boolean endOfMsg = False;
-		unsigned char* ptr = &fRequestBuffer[fRequestBytesAlreadySeen];
+		DP_U8* ptr = &fRequestBuffer[fRequestBytesAlreadySeen];
 #ifdef DEBUG
 		ptr[newBytesRead] = '\0';
 		fprintf(stderr, "RTSPClientConnection[%p]::handleRequestBytes() %s %d new bytes:%s\n",
@@ -680,7 +680,7 @@ void RTSPServer::RTSPClientConnection::handleRequestBytes(int newBytesRead) {
 			if (numBytesToDecode > 0) {
 				ptr[newBytesRead] = '\0';
 				unsigned decodedSize;
-				unsigned char* decodedBytes = base64Decode(
+				DP_U8* decodedBytes = base64Decode(
 						(char const*) (ptr - fBase64RemainderCount),
 						numBytesToDecode, decodedSize);
 #ifdef DEBUG
@@ -690,7 +690,7 @@ void RTSPServer::RTSPClientConnection::handleRequestBytes(int newBytesRead) {
 #endif
 
 				// Copy the new decoded bytes in place of the old ones (we can do this because there are fewer decoded bytes than original):
-				unsigned char* to = ptr - fBase64RemainderCount;
+				DP_U8* to = ptr - fBase64RemainderCount;
 				for (unsigned i = 0; i < decodedSize; ++i)
 					*to++ = decodedBytes[i];
 
@@ -706,7 +706,7 @@ void RTSPServer::RTSPClientConnection::handleRequestBytes(int newBytesRead) {
 			fBase64RemainderCount = newBase64RemainderCount;
 		}
 
-		unsigned char* tmpPtr = fLastCRLF + 2;
+		DP_U8* tmpPtr = fLastCRLF + 2;
 		if (fBase64RemainderCount == 0) { // no more Base-64 bytes remain to be read/decoded
 			// Look for the end of the message: <CR><LF><CR><LF>
 			if (tmpPtr < fRequestBuffer)
@@ -892,7 +892,7 @@ void RTSPServer::RTSPClientConnection::handleRequestBytes(int newBytesRead) {
 				} else if (strcmp(cmdName, "POST") == 0) {
 					// We might have received additional data following the HTTP "POST" command - i.e., the first Base64-encoded RTSP command.
 					// Check for this, and handle it if it exists:
-					unsigned char const* extraData = fLastCRLF + 4;
+					DP_U8 const* extraData = fLastCRLF + 4;
 					unsigned extraDataSize =
 							&fRequestBuffer[fRequestBytesAlreadySeen]
 									- extraData;
@@ -1142,7 +1142,7 @@ void RTSPServer::RTSPClientConnection::setRTSPResponse(char const* responseStr,
 }
 
 void RTSPServer::RTSPClientConnection::changeClientInputSocket(int newSocketNum,
-		unsigned char const* extraData, unsigned extraDataSize) {
+		DP_U8 const* extraData, unsigned extraDataSize) {
 	envir().taskScheduler().disableBackgroundHandling(fClientInputSocket);
 	fClientInputSocket = newSocketNum;
 	envir().taskScheduler().setBackgroundHandling(fClientInputSocket,
@@ -1152,7 +1152,7 @@ void RTSPServer::RTSPClientConnection::changeClientInputSocket(int newSocketNum,
 	if (extraDataSize > 0
 			&& extraDataSize
 					<= fRequestBufferBytesLeft/*sanity check; should always be true*/) {
-		unsigned char* ptr = &fRequestBuffer[fRequestBytesAlreadySeen];
+		DP_U8* ptr = &fRequestBuffer[fRequestBytesAlreadySeen];
 		for (unsigned i = 0; i < extraDataSize; ++i) {
 			ptr[i] = extraData[i];
 		}
@@ -1216,8 +1216,8 @@ static void parseTransportHeader(char const* buf, StreamingMode& streamingMode,
 		char*& streamingModeString, char*& destinationAddressStr,
 		u_int8_t& destinationTTL, portNumBits& clientRTPPortNum, // if UDP
 		portNumBits& clientRTCPPortNum, // if UDP
-		unsigned char& rtpChannelId, // if TCP
-		unsigned char& rtcpChannelId // if TCP
+		DP_U8& rtpChannelId, // if TCP
+		DP_U8& rtcpChannelId // if TCP
 		) {
 	// Initialize the result parameters to default values:
 	streamingMode = RTP_UDP;
@@ -1266,8 +1266,8 @@ static void parseTransportHeader(char const* buf, StreamingMode& streamingMode,
 			clientRTPPortNum = p1;
 			clientRTCPPortNum = streamingMode == RAW_UDP ? 0 : p1 + 1;
 		} else if (sscanf(field, "interleaved=%u-%u", &rtpCid, &rtcpCid) == 2) {
-			rtpChannelId = (unsigned char) rtpCid;
-			rtcpChannelId = (unsigned char) rtcpCid;
+			rtpChannelId = (DP_U8) rtpCid;
+			rtcpChannelId = (DP_U8) rtcpCid;
 		}
 
 		fields += strlen(field);
@@ -1405,7 +1405,7 @@ void RTSPServer::RTSPClientSession::handleCmd_SETUP(
 		char* clientsDestinationAddressStr;
 		u_int8_t clientsDestinationTTL;
 		portNumBits clientRTPPortNum, clientRTCPPortNum;
-		unsigned char rtpChannelId, rtcpChannelId;
+		DP_U8 rtpChannelId, rtcpChannelId;
 		parseTransportHeader(fullRequestStr, streamingMode, streamingModeString,
 				clientsDestinationAddressStr, clientsDestinationTTL,
 				clientRTPPortNum, clientRTCPPortNum, rtpChannelId,

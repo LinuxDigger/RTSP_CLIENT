@@ -31,9 +31,9 @@ protected:
 private:
 	// redefined virtual functions:
 	virtual Boolean frameCanAppearAfterPacketStart(
-			unsigned char const* frameStart, unsigned numBytesInFrame) const;
+			DP_U8 const* frameStart, unsigned numBytesInFrame) const;
 	virtual void doSpecialFrameHandling(unsigned fragmentationOffset,
-			unsigned char* frameStart, unsigned numBytesInFrame,
+			DP_U8* frameStart, unsigned numBytesInFrame,
 			struct timeval framePresentationTime, unsigned numRemainingBytes);
 	virtual unsigned specialHeaderSize() const;
 

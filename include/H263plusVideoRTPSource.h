@@ -16,14 +16,14 @@ class H263plusVideoRTPSource: public MultiFramedRTPSource {
 public:
   static H263plusVideoRTPSource*
   createNew(UsageEnvironment& env,CommonPlay *cpObj, Groupsock* RTPgs,
-	    unsigned char rtpPayloadFormat,
+	    DP_U8 rtpPayloadFormat,
 	    unsigned rtpTimestampFrequency = 90000);
 
   // A data structure that stores copies of the special header bytes
   // from the most recent frame's RTP packets:
-  unsigned char fNumSpecialHeaders;
+  DP_U8 fNumSpecialHeaders;
   unsigned fSpecialHeaderBytesLength;
-  unsigned char fSpecialHeaderBytes[SPECIAL_HEADER_BUFFER_SIZE];
+  DP_U8 fSpecialHeaderBytes[SPECIAL_HEADER_BUFFER_SIZE];
   unsigned fPacketSizes[256];
 
 protected:
@@ -31,7 +31,7 @@ protected:
 
 private:
   H263plusVideoRTPSource(UsageEnvironment& env,CommonPlay *cpObj, Groupsock* RTPgs,
-			 unsigned char rtpPayloadFormat,
+			 DP_U8 rtpPayloadFormat,
 			 unsigned rtpTimestampFrequency);
       // called only by createNew()
 

@@ -16,7 +16,7 @@ public:
 
 private:
 	// redefined virtual functions
-	virtual unsigned nextEnclosedFrameSize(unsigned char*& framePtr,
+	virtual unsigned nextEnclosedFrameSize(DP_U8*& framePtr,
 			unsigned dataSize);
 };
 
@@ -30,12 +30,12 @@ private:
 
 TheoraVideoRTPSource*
 TheoraVideoRTPSource::createNew(UsageEnvironment& env, CommonPlay *cpObj,
-		Groupsock* RTPgs, unsigned char rtpPayloadFormat) {
+		Groupsock* RTPgs, DP_U8 rtpPayloadFormat) {
 	return new TheoraVideoRTPSource(env, cpObj, RTPgs, rtpPayloadFormat);
 }
 
 TheoraVideoRTPSource::TheoraVideoRTPSource(UsageEnvironment& env,
-		CommonPlay *cpObj, Groupsock* RTPgs, unsigned char rtpPayloadFormat) :
+		CommonPlay *cpObj, Groupsock* RTPgs, DP_U8 rtpPayloadFormat) :
 		MultiFramedRTPSource(env, cpObj, RTPgs, rtpPayloadFormat, 90000,
 				new TheoraBufferedPacketFactory), fCurPacketIdent(0) {
 }
@@ -45,7 +45,7 @@ TheoraVideoRTPSource::~TheoraVideoRTPSource() {
 
 Boolean TheoraVideoRTPSource::processSpecialHeader(BufferedPacket* packet,
 		unsigned& resultSpecialHeaderSize) {
-	unsigned char* headerStart = packet->data();
+	DP_U8* headerStart = packet->data();
 	unsigned packetSize = packet->dataSize();
 
 	resultSpecialHeaderSize = 4;
@@ -80,7 +80,7 @@ TheoraBufferedPacket::TheoraBufferedPacket() {
 TheoraBufferedPacket::~TheoraBufferedPacket() {
 }
 
-unsigned TheoraBufferedPacket::nextEnclosedFrameSize(unsigned char*& framePtr,
+unsigned TheoraBufferedPacket::nextEnclosedFrameSize(DP_U8*& framePtr,
 		unsigned dataSize) {
 	if (dataSize < 2) {
 		// There's not enough space for a 2-byte header.  TARFU!  Just return the data that's left:

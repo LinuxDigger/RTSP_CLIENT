@@ -7,12 +7,12 @@
 
 #include "BitVector.h"
 
-BitVector::BitVector(unsigned char* baseBytePtr, unsigned baseBitOffset,
+BitVector::BitVector(DP_U8* baseBytePtr, unsigned baseBitOffset,
 		unsigned totNumBits) {
 	setup(baseBytePtr, baseBitOffset, totNumBits);
 }
 
-void BitVector::setup(unsigned char* baseBytePtr, unsigned baseBitOffset,
+void BitVector::setup(DP_U8* baseBytePtr, unsigned baseBitOffset,
 		unsigned totNumBits) {
 	fBaseBytePtr = baseBytePtr;
 	fBaseBitOffset = baseBitOffset;
@@ -20,7 +20,7 @@ void BitVector::setup(unsigned char* baseBytePtr, unsigned baseBitOffset,
 	fCurBitIndex = 0;
 }
 
-static unsigned char const singleBitMask[8] = { 0x80, 0x40, 0x20, 0x10, 0x08,
+static DP_U8 const singleBitMask[8] = { 0x80, 0x40, 0x20, 0x10, 0x08,
 		0x04, 0x02, 0x01 };
 
 #define MAX_LENGTH 32
@@ -29,7 +29,7 @@ void BitVector::putBits(unsigned from, unsigned numBits) {
 	if (numBits == 0)
 		return;
 
-	unsigned char tmpBuf[4];
+	DP_U8 tmpBuf[4];
 	unsigned overflowingBits = 0;
 
 	if (numBits > MAX_LENGTH) {
@@ -40,10 +40,10 @@ void BitVector::putBits(unsigned from, unsigned numBits) {
 		overflowingBits = numBits - (fTotNumBits - fCurBitIndex);
 	}
 
-	tmpBuf[0] = (unsigned char) (from >> 24);
-	tmpBuf[1] = (unsigned char) (from >> 16);
-	tmpBuf[2] = (unsigned char) (from >> 8);
-	tmpBuf[3] = (unsigned char) from;
+	tmpBuf[0] = (DP_U8) (from >> 24);
+	tmpBuf[1] = (DP_U8) (from >> 16);
+	tmpBuf[2] = (DP_U8) (from >> 8);
+	tmpBuf[3] = (DP_U8) from;
 
 	shiftBits(fBaseBytePtr, fBaseBitOffset + fCurBitIndex, /* to */
 	tmpBuf, MAX_LENGTH - numBits, /* from */
@@ -57,7 +57,7 @@ void BitVector::put1Bit(unsigned bit) {
 		return;
 	} else {
 		unsigned totBitOffset = fBaseBitOffset + fCurBitIndex++;
-		unsigned char mask = singleBitMask[totBitOffset % 8];
+		DP_U8 mask = singleBitMask[totBitOffset % 8];
 		if (bit) {
 			fBaseBytePtr[totBitOffset / 8] |= mask;
 		} else {
@@ -70,7 +70,7 @@ unsigned BitVector::getBits(unsigned numBits) {
 	if (numBits == 0)
 		return 0;
 
-	unsigned char tmpBuf[4];
+	DP_U8 tmpBuf[4];
 	unsigned overflowingBits = 0;
 
 	if (numBits > MAX_LENGTH) {
@@ -100,7 +100,7 @@ unsigned BitVector::get1Bit() {
 		return 0;
 	} else {
 		unsigned totBitOffset = fBaseBitOffset + fCurBitIndex++;
-		unsigned char curFromByte = fBaseBytePtr[totBitOffset / 8];
+		DP_U8 curFromByte = fBaseBytePtr[totBitOffset / 8];
 		unsigned result = (curFromByte >> (7 - (totBitOffset % 8))) & 0x01;
 		return result;
 	}
@@ -136,22 +136,22 @@ int BitVector::get_expGolombSigned() {
 	}
 }
 
-void shiftBits(unsigned char* toBasePtr, unsigned toBitOffset,
-		unsigned char const* fromBasePtr, unsigned fromBitOffset,
+void shiftBits(DP_U8* toBasePtr, unsigned toBitOffset,
+		DP_U8 const* fromBasePtr, unsigned fromBitOffset,
 		unsigned numBits) {
 	if (numBits == 0)
 		return;
 
 	/* Note that from and to may overlap, if from>to */
-	unsigned char const* fromBytePtr = fromBasePtr + fromBitOffset / 8;
+	DP_U8 const* fromBytePtr = fromBasePtr + fromBitOffset / 8;
 	unsigned fromBitRem = fromBitOffset % 8;
-	unsigned char* toBytePtr = toBasePtr + toBitOffset / 8;
+	DP_U8* toBytePtr = toBasePtr + toBitOffset / 8;
 	unsigned toBitRem = toBitOffset % 8;
 
 	while (numBits-- > 0) {
-		unsigned char fromBitMask = singleBitMask[fromBitRem];
-		unsigned char fromBit = (*fromBytePtr) & fromBitMask;
-		unsigned char toBitMask = singleBitMask[toBitRem];
+		DP_U8 fromBitMask = singleBitMask[fromBitRem];
+		DP_U8 fromBit = (*fromBytePtr) & fromBitMask;
+		DP_U8 toBitMask = singleBitMask[toBitRem];
 
 		if (fromBit != 0) {
 			*toBytePtr |= toBitMask;

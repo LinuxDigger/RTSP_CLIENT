@@ -1,4 +1,7 @@
 src/DP_RTSP_CLIENT_Interface.o: ../src/DP_RTSP_CLIENT_Interface.cpp \
+ /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/X86/include/Rtsp_server.h \
+ /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/X86/include/Rtsp_sys.h \
+ /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/X86/include/Rtsp_sys.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/DP_RTSP_CLIENT_Interface.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/DP_RTSP_CLIENT_GlobDefine.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/DP_RTSP_CLIENT_CycleQueue.h \
@@ -56,6 +59,12 @@ src/DP_RTSP_CLIENT_Interface.o: ../src/DP_RTSP_CLIENT_Interface.cpp \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/H265VideoFileSink.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/OggFileSink.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/DP_RTSP_CLIENT_Interface.h
+
+/home/jhb/nfs/TerminalC++Workspace/RTSP_Client/X86/include/Rtsp_server.h:
+
+/home/jhb/nfs/TerminalC++Workspace/RTSP_Client/X86/include/Rtsp_sys.h:
+
+/home/jhb/nfs/TerminalC++Workspace/RTSP_Client/X86/include/Rtsp_sys.h:
 
 /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/DP_RTSP_CLIENT_Interface.h:
 

@@ -1,4 +1,7 @@
 src/RTSPServer.o: ../src/RTSPServer.cpp \
+ /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/X86/include/Rtsp_server.h \
+ /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/X86/include/Rtsp_sys.h \
+ /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/X86/include/Rtsp_sys.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/RTSPServer.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/GenericMediaServer.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/Media.h \
@@ -31,6 +34,12 @@ src/RTSPServer.o: ../src/RTSPServer.cpp \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/Base64.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/GroupsockHelper.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/strDup.h
+
+/home/jhb/nfs/TerminalC++Workspace/RTSP_Client/X86/include/Rtsp_server.h:
+
+/home/jhb/nfs/TerminalC++Workspace/RTSP_Client/X86/include/Rtsp_sys.h:
+
+/home/jhb/nfs/TerminalC++Workspace/RTSP_Client/X86/include/Rtsp_sys.h:
 
 /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/RTSPServer.h:
 

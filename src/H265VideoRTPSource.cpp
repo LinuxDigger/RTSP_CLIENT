@@ -16,7 +16,7 @@ public:
 
 private:
 	// redefined virtual functions
-	virtual unsigned nextEnclosedFrameSize(unsigned char*& framePtr,
+	virtual unsigned nextEnclosedFrameSize(DP_U8*& framePtr,
 			unsigned dataSize);
 private:
 	H265VideoRTPSource& fOurSource;
@@ -32,14 +32,14 @@ private:
 
 H265VideoRTPSource*
 H265VideoRTPSource::createNew(UsageEnvironment& env, CommonPlay *cpObj,
-		Groupsock* RTPgs, unsigned char rtpPayloadFormat,
+		Groupsock* RTPgs, DP_U8 rtpPayloadFormat,
 		Boolean expectDONFields, unsigned rtpTimestampFrequency) {
 	return new H265VideoRTPSource(env, cpObj, RTPgs, rtpPayloadFormat,
 			expectDONFields, rtpTimestampFrequency);
 }
 
 H265VideoRTPSource::H265VideoRTPSource(UsageEnvironment& env, CommonPlay *cpObj,
-		Groupsock* RTPgs, unsigned char rtpPayloadFormat,
+		Groupsock* RTPgs, DP_U8 rtpPayloadFormat,
 		Boolean expectDONFields, unsigned rtpTimestampFrequency) :
 		MultiFramedRTPSource(env, cpObj, RTPgs, rtpPayloadFormat,
 				rtpTimestampFrequency, new H265BufferedPacketFactory), fExpectDONFields(
@@ -52,7 +52,7 @@ H265VideoRTPSource::~H265VideoRTPSource() {
 
 Boolean H265VideoRTPSource::processSpecialHeader(BufferedPacket* packet,
 		unsigned& resultSpecialHeaderSize) {
-	unsigned char* headerStart = packet->data();
+	DP_U8* headerStart = packet->data();
 	unsigned packetSize = packet->dataSize();
 	u_int16_t DONL = 0;
 	unsigned numBytesToSkip;
@@ -164,7 +164,7 @@ H265BufferedPacket::H265BufferedPacket(H265VideoRTPSource& ourSource) :
 H265BufferedPacket::~H265BufferedPacket() {
 }
 
-unsigned H265BufferedPacket::nextEnclosedFrameSize(unsigned char*& framePtr,
+unsigned H265BufferedPacket::nextEnclosedFrameSize(DP_U8*& framePtr,
 		unsigned dataSize) {
 	unsigned resultNALUSize = 0; // if an error occurs
 

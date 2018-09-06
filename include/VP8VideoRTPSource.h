@@ -14,12 +14,12 @@ class VP8VideoRTPSource: public MultiFramedRTPSource {
 public:
 	static VP8VideoRTPSource*
 	createNew(UsageEnvironment& env,CommonPlay *cpObj, Groupsock* RTPgs,
-			unsigned char rtpPayloadFormat, unsigned rtpTimestampFrequency =
+			DP_U8 rtpPayloadFormat, unsigned rtpTimestampFrequency =
 					90000);
 
 protected:
 	VP8VideoRTPSource(UsageEnvironment& env, CommonPlay *cpObj,Groupsock* RTPgs,
-			unsigned char rtpPayloadFormat, unsigned rtpTimestampFrequency);
+			DP_U8 rtpPayloadFormat, unsigned rtpTimestampFrequency);
 	// called only by createNew()
 
 	virtual ~VP8VideoRTPSource();

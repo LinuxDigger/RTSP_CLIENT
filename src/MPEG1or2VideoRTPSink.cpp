@@ -36,7 +36,7 @@ Boolean MPEG1or2VideoRTPSink::allowFragmentationAfterStart() const {
 }
 
 Boolean MPEG1or2VideoRTPSink::frameCanAppearAfterPacketStart(
-		unsigned char const* frameStart, unsigned numBytesInFrame) const {
+		DP_U8 const* frameStart, unsigned numBytesInFrame) const {
 	// A 'frame' (which in this context can mean a header or a slice as well as a
 	// complete picture) can appear at other than the first position in a packet
 	// in all situations, EXCEPT when it follows the end of (i.e., the last slice
@@ -55,7 +55,7 @@ Boolean MPEG1or2VideoRTPSink::frameCanAppearAfterPacketStart(
 #define PICTURE_START_CODE               0x00000100
 
 void MPEG1or2VideoRTPSink::doSpecialFrameHandling(unsigned fragmentationOffset,
-		unsigned char* frameStart, unsigned numBytesInFrame,
+		DP_U8* frameStart, unsigned numBytesInFrame,
 		struct timeval framePresentationTime, unsigned numRemainingBytes) {
 	Boolean thisFrameIsASlice = False; // until we learn otherwise
 	if (isFirstFrameInPacket()) {
@@ -80,14 +80,14 @@ void MPEG1or2VideoRTPSink::doSpecialFrameHandling(unsigned fragmentationOffset,
 				return; // shouldn't happen
 			unsigned next4Bytes = (frameStart[4] << 24) | (frameStart[5] << 16)
 					| (frameStart[6] << 8) | frameStart[7];
-			unsigned char byte8 = numBytesInFrame == 8 ? 0 : frameStart[8];
+			DP_U8 byte8 = numBytesInFrame == 8 ? 0 : frameStart[8];
 
 			fPictureState.temporal_reference = (next4Bytes & 0xFFC00000)
 					>> (32 - 10);
 			fPictureState.picture_coding_type = (next4Bytes & 0x00380000)
 					>> (32 - (10 + 3));
 
-			unsigned char FBV, BFC, FFV, FFC;
+			DP_U8 FBV, BFC, FFV, FFC;
 			FBV = BFC = FFV = FFC = 0;
 			switch (fPictureState.picture_coding_type) {
 			case 3:
@@ -102,7 +102,7 @@ void MPEG1or2VideoRTPSink::doSpecialFrameHandling(unsigned fragmentationOffset,
 			fPictureState.vector_code_bits = (FBV << 7) | (BFC << 4)
 					| (FFV << 3) | FFC;
 		} else if ((startCode & 0xFFFFFF00) == 0x00000100) {
-			unsigned char lastCodeByte = startCode & 0xFF;
+			DP_U8 lastCodeByte = startCode & 0xFF;
 
 			if (lastCodeByte <= 0xAF) {
 				// This is (the start of) a slice

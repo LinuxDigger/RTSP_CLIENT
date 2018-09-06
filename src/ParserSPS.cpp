@@ -11,7 +11,7 @@
 #include <iostream>
 using namespace std;
 
-unsigned int Ue(unsigned char *pBuff, unsigned int nLen,
+unsigned int Ue(DP_U8 *pBuff, unsigned int nLen,
 		unsigned int &nStartBit) {
 	//计算0bit的个数
 	unsigned int nZeroNum = 0;
@@ -37,7 +37,7 @@ unsigned int Ue(unsigned char *pBuff, unsigned int nLen,
 	return (1 << nZeroNum) - 1 + dwRet;
 }
 
-int Se(unsigned char *pBuff, unsigned int nLen, unsigned int &nStartBit) {
+int Se(DP_U8 *pBuff, unsigned int nLen, unsigned int &nStartBit) {
 	int UeVal = Ue(pBuff, nLen, nStartBit);
 	double k = UeVal;
 	int nValue = ceil(k / 2); //ceil函数：ceil函数的作用是求不小于给定实数的最小整数。ceil(2)=ceil(1.2)=cei(1.5)=2.00
@@ -47,7 +47,7 @@ int Se(unsigned char *pBuff, unsigned int nLen, unsigned int &nStartBit) {
 }
 
 //ok
-unsigned long u(unsigned int BitCount, unsigned char * buf,
+unsigned long u(unsigned int BitCount, DP_U8 * buf,
 		unsigned int &nStartBit) {
 	unsigned long dwRet = 0;
 	for (unsigned int i = 0; i < BitCount; i++) {
@@ -67,9 +67,9 @@ unsigned long u(unsigned int BitCount, unsigned char * buf,
  *
  * @无返回值
  */
-void de_emulation_prevention(unsigned char * buf, unsigned int* buf_size) {
+void de_emulation_prevention(DP_U8 * buf, unsigned int* buf_size) {
 	int i = 0, j = 0;
-	unsigned char * tmp_ptr = NULL;
+	DP_U8 * tmp_ptr = NULL;
 	unsigned int tmp_buf_size = 0;
 	int val = 0;
 
@@ -90,7 +90,7 @@ void de_emulation_prevention(unsigned char * buf, unsigned int* buf_size) {
 	}
 }
 
-bool h264_decode_sps(unsigned char * buf, unsigned int nLen, int &width,
+bool h264_decode_sps(DP_U8 * buf, unsigned int nLen, int &width,
 		int &height, int &fps) {
 	unsigned int StartBit = 0;
 	fps = 0;

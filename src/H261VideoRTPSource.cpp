@@ -9,14 +9,14 @@
 
 H261VideoRTPSource*
 H261VideoRTPSource::createNew(UsageEnvironment& env, CommonPlay *cpObj,
-		Groupsock* RTPgs, unsigned char rtpPayloadFormat,
+		Groupsock* RTPgs, DP_U8 rtpPayloadFormat,
 		unsigned rtpTimestampFrequency) {
 	return new H261VideoRTPSource(env, cpObj, RTPgs, rtpPayloadFormat,
 			rtpTimestampFrequency);
 }
 
 H261VideoRTPSource::H261VideoRTPSource(UsageEnvironment& env, CommonPlay *cpObj,
-		Groupsock* RTPgs, unsigned char rtpPayloadFormat,
+		Groupsock* RTPgs, DP_U8 rtpPayloadFormat,
 		unsigned rtpTimestampFrequency) :
 		MultiFramedRTPSource(env, cpObj, RTPgs, rtpPayloadFormat,
 				rtpTimestampFrequency), fLastSpecialHeader(0) {
@@ -31,7 +31,7 @@ Boolean H261VideoRTPSource::processSpecialHeader(BufferedPacket* packet,
 	if (packet->dataSize() < 4)
 		return False;
 
-	unsigned char* headerStart = packet->data();
+	DP_U8* headerStart = packet->data();
 	fLastSpecialHeader = (headerStart[0] << 24) | (headerStart[1] << 16)
 			| (headerStart[2] << 8) | headerStart[3];
 

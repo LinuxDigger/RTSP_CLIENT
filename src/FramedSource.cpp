@@ -45,7 +45,7 @@ Boolean FramedSource::lookupByName(UsageEnvironment& env,
 	return True;
 }
 
-void FramedSource::getNextFrame(unsigned char* to, unsigned maxSize,
+void FramedSource::getNextFrame(DP_U8* to, unsigned maxSize,
 		afterGettingFunc* afterGettingFunc, void* afterGettingClientData,
 		onCloseFunc* onCloseFunc, void* onCloseClientData) {
 	// Make sure we're not already being read:

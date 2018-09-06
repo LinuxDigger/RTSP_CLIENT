@@ -31,7 +31,7 @@ protected:
 
 protected: // redefined virtual functions:
   virtual Boolean continuePlaying();
-  virtual void addData(unsigned char const* data, unsigned dataSize,
+  virtual void addData(DP_U8 const* data, unsigned dataSize,
 		       struct timeval presentationTime);
   virtual void afterGettingFrame(unsigned frameSize, unsigned numTruncatedBytes,
 				 struct timeval presentationTime);
@@ -57,7 +57,7 @@ private:
 
   // Because the last Ogg page before EOF needs to have a special 'eos' bit set in the header,
   // we need to defer the writing of each incoming frame.  To do this, we maintain a 2nd buffer:
-  unsigned char* fAltBuffer;
+  DP_U8* fAltBuffer;
   unsigned fAltFrameSize, fAltNumTruncatedBytes;
   struct timeval fAltPresentationTime;
 };

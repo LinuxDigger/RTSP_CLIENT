@@ -9,14 +9,14 @@
 
 H263plusVideoRTPSource*
 H263plusVideoRTPSource::createNew(UsageEnvironment& env, CommonPlay *cpObj,
-		Groupsock* RTPgs, unsigned char rtpPayloadFormat,
+		Groupsock* RTPgs, DP_U8 rtpPayloadFormat,
 		unsigned rtpTimestampFrequency) {
 	return new H263plusVideoRTPSource(env, cpObj, RTPgs, rtpPayloadFormat,
 			rtpTimestampFrequency);
 }
 
 H263plusVideoRTPSource::H263plusVideoRTPSource(UsageEnvironment& env,
-		CommonPlay *cpObj, Groupsock* RTPgs, unsigned char rtpPayloadFormat,
+		CommonPlay *cpObj, Groupsock* RTPgs, DP_U8 rtpPayloadFormat,
 		unsigned rtpTimestampFrequency) :
 		MultiFramedRTPSource(env, cpObj, RTPgs, rtpPayloadFormat,
 				rtpTimestampFrequency), fNumSpecialHeaders(0), fSpecialHeaderBytesLength(
@@ -28,7 +28,7 @@ H263plusVideoRTPSource::~H263plusVideoRTPSource() {
 
 Boolean H263plusVideoRTPSource::processSpecialHeader(BufferedPacket* packet,
 		unsigned& resultSpecialHeaderSize) {
-	unsigned char* headerStart = packet->data();
+	DP_U8* headerStart = packet->data();
 	unsigned packetSize = packet->dataSize();
 
 	// The H.263+ payload header is at least 2 bytes in size.
@@ -37,11 +37,11 @@ Boolean H263plusVideoRTPSource::processSpecialHeader(BufferedPacket* packet,
 	if (packetSize < expectedHeaderSize)
 		return False;
 
-	//unsigned char RR = headerStart[0]>>3;
+	//DP_U8 RR = headerStart[0]>>3;
 	Boolean P = (headerStart[0] & 0x4) != 0;
 	Boolean V = (headerStart[0] & 0x2) != 0;
-	unsigned char PLEN = ((headerStart[0] & 0x1) << 5) | (headerStart[1] >> 3);
-	//unsigned char PEBIT = headerStart[1]&0x7;
+	DP_U8 PLEN = ((headerStart[0] & 0x1) << 5) | (headerStart[1] >> 3);
+	//DP_U8 PEBIT = headerStart[1]&0x7;
 
 	if (V) {
 		// There's an extra VRC byte at the end of the header:

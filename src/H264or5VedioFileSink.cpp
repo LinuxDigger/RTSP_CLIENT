@@ -15,8 +15,9 @@ H264or5VideoFileSink::H264or5VideoFileSink(UsageEnvironment& env,
 		char const* perFrameFileNamePrefix, char const* sPropParameterSetsStr1,
 		char const* sPropParameterSetsStr2, char const* sPropParameterSetsStr3,
 		CommonPlay *cpObj) :
-		FileSink(env, fid, bufferSize, perFrameFileNamePrefix, clientID,cpObj), fHaveWrittenFirstFrame(
+		FileSink(env, fid, bufferSize, perFrameFileNamePrefix, clientID, cpObj), fHaveWrittenFirstFrame(
 				False) {
+	cout << "MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM: "<<clientID<<endl;
 	fSPropParameterSetsStr[0] = sPropParameterSetsStr1;
 	fSPropParameterSetsStr[1] = sPropParameterSetsStr2;
 	fSPropParameterSetsStr[2] = sPropParameterSetsStr3;
@@ -27,7 +28,7 @@ H264or5VideoFileSink::~H264or5VideoFileSink() {
 
 void H264or5VideoFileSink::afterGettingFrame(unsigned frameSize,
 		unsigned numTruncatedBytes, struct timeval presentationTime) {
-	unsigned char const start_code[4] = { 0x00, 0x00, 0x00, 0x01 };
+	DP_U8 const start_code[4] = { 0x00, 0x00, 0x00, 0x01 };
 
 	if (!fHaveWrittenFirstFrame) {
 		// If we have NAL units encoded in "sprop parameter strings", prepend these to the file:
@@ -36,9 +37,11 @@ void H264or5VideoFileSink::afterGettingFrame(unsigned frameSize,
 			SPropRecord* sPropRecords = parseSPropParameterSets(
 					fSPropParameterSetsStr[j], numSPropRecords);
 			for (unsigned i = 0; i < numSPropRecords; ++i) {
-				addData(start_code, 4, presentationTime);
-				addData(sPropRecords[i].sPropBytes, sPropRecords[i].sPropLength,
-						presentationTime);
+
+				/////////////////////////add first VPS SPS PPS
+//				addData(start_code, 4, presentationTime);
+//				addData(sPropRecords[i].sPropBytes, sPropRecords[i].sPropLength,
+//						presentationTime);
 			}
 			delete[] sPropRecords;
 		}
@@ -49,6 +52,7 @@ void H264or5VideoFileSink::afterGettingFrame(unsigned frameSize,
 	addData(start_code, 4, presentationTime);
 
 	// Call the parent class to complete the normal file write with the input data:
+
 	FileSink::afterGettingFrame(frameSize, numTruncatedBytes, presentationTime);
 }
 

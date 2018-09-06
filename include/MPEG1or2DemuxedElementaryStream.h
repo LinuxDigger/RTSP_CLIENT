@@ -16,7 +16,7 @@ public:
 		return fLastSeenSCR;
 	}
 
-	unsigned char mpegVersion() const {
+	DP_U8 mpegVersion() const {
 		return fMPEGversion;
 	}
 
@@ -50,7 +50,7 @@ private:
 	MPEG1or2Demux& fOurSourceDemux;
 	char const* fMIMEtype;
 	MPEG1or2Demux::SCR fLastSeenSCR;
-	unsigned char fMPEGversion;
+	DP_U8 fMPEGversion;
 
 	friend class MPEG1or2Demux;
 };

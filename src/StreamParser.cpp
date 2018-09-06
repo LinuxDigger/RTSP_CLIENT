@@ -28,8 +28,8 @@ StreamParser::StreamParser(FramedSource* inputSource,
 				clientContinueClientData), fSavedParserIndex(0), fSavedRemainingUnparsedBits(
 				0), fCurParserIndex(0), fRemainingUnparsedBits(0), fTotNumValidBytes(
 				0), fHaveSeenEOF(False) {
-	fBank[0] = new unsigned char[BANK_SIZE];
-	fBank[1] = new unsigned char[BANK_SIZE];
+	fBank[0] = new DP_U8[BANK_SIZE];
+	fBank[1] = new DP_U8[BANK_SIZE];
 	fCurBankNum = 0;
 	fCurBank = fBank[fCurBankNum];
 
@@ -68,13 +68,13 @@ void StreamParser::skipBits(unsigned numBits) {
 
 unsigned StreamParser::getBits(unsigned numBits) {
 	if (numBits <= fRemainingUnparsedBits) {
-		unsigned char lastByte = *lastParsed();
+		DP_U8 lastByte = *lastParsed();
 		lastByte >>= (fRemainingUnparsedBits - numBits);
 		fRemainingUnparsedBits -= numBits;
 
 		return (unsigned) lastByte & ~((~0u) << numBits);
 	} else {
-		unsigned char lastByte;
+		DP_U8 lastByte;
 		if (fRemainingUnparsedBits > 0) {
 			lastByte = *lastParsed();
 		} else {
@@ -118,7 +118,7 @@ void StreamParser::ensureValidBytes1(unsigned numBytesNeeded) {
 	if (fCurParserIndex + numBytesNeeded > BANK_SIZE) {
 		// Swap banks, but save any still-needed bytes from the old bank:
 		unsigned numBytesToSave = fTotNumValidBytes - fSavedParserIndex;
-		unsigned char const* from = &curBank()[fSavedParserIndex];
+		DP_U8 const* from = &curBank()[fSavedParserIndex];
 
 		fCurBankNum = (fCurBankNum + 1) % 2;
 		fCurBank = fBank[fCurBankNum];
@@ -167,7 +167,7 @@ void StreamParser::afterGettingBytes1(unsigned numBytesRead,
 
 	fLastSeenPresentationTime = presentationTime;
 
-	unsigned char* ptr = &curBank()[fTotNumValidBytes];
+	DP_U8* ptr = &curBank()[fTotNumValidBytes];
 	fTotNumValidBytes += numBytesRead;
 
 	// Continue our original calling source where it left off:

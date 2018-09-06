@@ -24,7 +24,7 @@ public:
 	virtual ~MPEGProgramStreamParser();
 
 public:
-	unsigned char parse();
+	DP_U8 parse();
 	// returns the stream id of a stream for which a frame was acquired,
 	// or 0 if no such frame was acquired.
 
@@ -33,9 +33,9 @@ private:
 
 	void parsePackHeader();
 	void parseSystemHeader();
-	unsigned char parsePESPacket(); // returns as does parse()
+	DP_U8 parsePESPacket(); // returns as does parse()
 
-	Boolean isSpecialStreamId(unsigned char stream_id) const;
+	Boolean isSpecialStreamId(DP_U8 stream_id) const;
 	// for PES packet header parsing
 
 private:
@@ -47,7 +47,7 @@ private:
 
 class MPEG1or2Demux::OutputDescriptor::SavedData {
 public:
-	SavedData(unsigned char* buf, unsigned size) :
+	SavedData(DP_U8* buf, unsigned size) :
 			next(NULL), data(buf), dataSize(size), numBytesUsed(0) {
 	}
 	virtual ~SavedData() {
@@ -56,7 +56,7 @@ public:
 	}
 
 	SavedData* next;
-	unsigned char* data;
+	DP_U8* data;
 	unsigned dataSize, numBytesUsed;
 };
 
@@ -116,13 +116,13 @@ MPEG1or2Demux::newElementaryStream(u_int8_t streamIdTag) {
 }
 
 MPEG1or2DemuxedElementaryStream* MPEG1or2Demux::newAudioStream() {
-	unsigned char newAudioStreamTag = 0xC0 | (fNextAudioStreamNumber++ & ~0xE0);
+	DP_U8 newAudioStreamTag = 0xC0 | (fNextAudioStreamNumber++ & ~0xE0);
 	// MPEG audio stream tags are 110x xxxx (binary)
 	return newElementaryStream(newAudioStreamTag);
 }
 
 MPEG1or2DemuxedElementaryStream* MPEG1or2Demux::newVideoStream() {
-	unsigned char newVideoStreamTag = 0xE0 | (fNextVideoStreamNumber++ & ~0xF0);
+	DP_U8 newVideoStreamTag = 0xE0 | (fNextVideoStreamNumber++ & ~0xF0);
 	// MPEG video stream tags are 1110 xxxx (binary)
 	return newElementaryStream(newVideoStreamTag);
 }
@@ -135,7 +135,7 @@ MPEG1or2DemuxedElementaryStream* MPEG1or2Demux::newRawPESStream() {
 }
 
 void MPEG1or2Demux::registerReadInterest(u_int8_t streamIdTag,
-		unsigned char* to, unsigned maxSize,
+		DP_U8* to, unsigned maxSize,
 		FramedSource::afterGettingFunc* afterGettingFunc,
 		void* afterGettingClientData, FramedSource::onCloseFunc* onCloseFunc,
 		void* onCloseClientData) {
@@ -161,7 +161,7 @@ void MPEG1or2Demux::registerReadInterest(u_int8_t streamIdTag,
 	++fNumPendingReads;
 }
 
-Boolean MPEG1or2Demux::useSavedData(u_int8_t streamIdTag, unsigned char* to,
+Boolean MPEG1or2Demux::useSavedData(u_int8_t streamIdTag, DP_U8* to,
 		unsigned maxSize, FramedSource::afterGettingFunc* afterGettingFunc,
 		void* afterGettingClientData) {
 	struct OutputDescriptor& out = fOutput[streamIdTag];
@@ -171,7 +171,7 @@ Boolean MPEG1or2Demux::useSavedData(u_int8_t streamIdTag, unsigned char* to,
 	unsigned totNumBytesCopied = 0;
 	while (maxSize > 0 && out.savedDataHead != NULL) {
 		OutputDescriptor::SavedData& savedData = *(out.savedDataHead);
-		unsigned char* from = &savedData.data[savedData.numBytesUsed];
+		DP_U8* from = &savedData.data[savedData.numBytesUsed];
 		unsigned numBytesToCopy = savedData.dataSize - savedData.numBytesUsed;
 		if (numBytesToCopy > maxSize)
 			numBytesToCopy = maxSize;
@@ -203,7 +203,7 @@ Boolean MPEG1or2Demux::useSavedData(u_int8_t streamIdTag, unsigned char* to,
 }
 
 void MPEG1or2Demux::continueReadProcessing(void* clientData,
-		unsigned char* /*ptr*/, unsigned /*size*/,
+		DP_U8* /*ptr*/, unsigned /*size*/,
 		struct timeval /*presentationTime*/) {
 	MPEG1or2Demux* demux = (MPEG1or2Demux*) clientData;
 	demux->continueReadProcessing();
@@ -211,7 +211,7 @@ void MPEG1or2Demux::continueReadProcessing(void* clientData,
 
 void MPEG1or2Demux::continueReadProcessing() {
 	while (fNumPendingReads > 0) {
-		unsigned char acquiredStreamIdTag = fParser->parse();
+		DP_U8 acquiredStreamIdTag = fParser->parse();
 
 		if (acquiredStreamIdTag != 0) {
 			// We were able to acquire a frame from the input.
@@ -241,7 +241,7 @@ void MPEG1or2Demux::continueReadProcessing() {
 	}
 }
 
-void MPEG1or2Demux::getNextFrame(u_int8_t streamIdTag, unsigned char* to,
+void MPEG1or2Demux::getNextFrame(u_int8_t streamIdTag, DP_U8* to,
 		unsigned maxSize, FramedSource::afterGettingFunc* afterGettingFunc,
 		void* afterGettingClientData, FramedSource::onCloseFunc* onCloseFunc,
 		void* onCloseClientData) {
@@ -325,8 +325,8 @@ void MPEGProgramStreamParser::setParseState(MPEGParseState parseState) {
 	saveParserState();
 }
 
-unsigned char MPEGProgramStreamParser::parse() {
-	unsigned char acquiredStreamTagId = 0;
+DP_U8 MPEGProgramStreamParser::parse() {
+	DP_U8 acquiredStreamTagId = 0;
 
 	try {
 		do {
@@ -402,7 +402,7 @@ void MPEGProgramStreamParser::parsePackHeader() {
 
 	// The size of the pack header differs depending on whether it's
 	// MPEG-1 or MPEG-2.  The next byte tells us this:
-	unsigned char nextByte = get1Byte();
+	DP_U8 nextByte = get1Byte();
 	MPEG1or2Demux::SCR& scr = fUsingDemux->fLastSeenSCR; // alias
 	if ((nextByte & 0xF0) == 0x20) { // MPEG-1
 		fUsingDemux->fMPEGversion = 1;
@@ -441,7 +441,7 @@ void MPEGProgramStreamParser::parsePackHeader() {
 		fprintf(stderr, "pack hdr system_clock_reference_extension: 0x%03x\n",
 				scr.extension);
 #endif
-		unsigned char pack_stuffing_length = getBits(3);
+		DP_U8 pack_stuffing_length = getBits(3);
 		skipBytes(pack_stuffing_length);
 	} else { // unknown
 		fUsingDemux->envir()
@@ -488,7 +488,7 @@ void MPEGProgramStreamParser::parseSystemHeader() {
 
 // A test for stream ids that are exempt from normal PES packet header parsing
 Boolean MPEGProgramStreamParser::isSpecialStreamId(
-		unsigned char stream_id) const {
+		DP_U8 stream_id) const {
 	if (stream_id == RAW_PES)
 		return True; // hack
 
@@ -498,7 +498,7 @@ Boolean MPEGProgramStreamParser::isSpecialStreamId(
 		if (stream_id <= private_stream_2) {
 			return stream_id != private_stream_1;
 		} else if ((stream_id & 0xF0) == 0xF0) {
-			unsigned char lower4Bits = stream_id & 0x0F;
+			DP_U8 lower4Bits = stream_id & 0x0F;
 			return lower4Bits <= 2 || lower4Bits == 0x8 || lower4Bits == 0xF;
 		} else {
 			return False;
@@ -508,7 +508,7 @@ Boolean MPEGProgramStreamParser::isSpecialStreamId(
 
 #define READER_NOT_READY 2
 
-unsigned char MPEGProgramStreamParser::parsePESPacket() {
+DP_U8 MPEGProgramStreamParser::parsePESPacket() {
 #ifdef DEBUG
 	fprintf(stderr, "parsing PES packet\n"); fflush(stderr);
 #endif
@@ -524,9 +524,9 @@ unsigned char MPEGProgramStreamParser::parsePESPacket() {
 #endif
 	skipBytes(3); // we've already seen the packet_start_code_prefix
 
-	unsigned char stream_id = get1Byte();
+	DP_U8 stream_id = get1Byte();
 #if defined(DEBUG) || defined(DEBUG_TIMESTAMPS)
-	unsigned char streamNum = stream_id;
+	DP_U8 streamNum = stream_id;
 	char const* streamTypeStr;
 	if ((stream_id&0xE0) == 0xC0) {
 		streamTypeStr = "audio";
@@ -564,14 +564,14 @@ unsigned char MPEGProgramStreamParser::parsePESPacket() {
 	}
 	unsigned savedParserOffset = curOffset();
 #ifdef DEBUG_TIMESTAMPS
-	unsigned char pts_highBit = 0;
+	DP_U8 pts_highBit = 0;
 	unsigned pts_remainingBits = 0;
-	unsigned char dts_highBit = 0;
+	DP_U8 dts_highBit = 0;
 	unsigned dts_remainingBits = 0;
 #endif
 	if (fUsingDemux->fMPEGversion == 1) {
 		if (!isSpecialStreamId(stream_id)) {
-			unsigned char nextByte;
+			DP_U8 nextByte;
 			while ((nextByte = get1Byte()) == 0xFF) { // stuffing_byte
 			}
 			if ((nextByte & 0xC0) == 0x40) { // '01'
@@ -612,20 +612,20 @@ unsigned char MPEGProgramStreamParser::parsePESPacket() {
 			// Fields in the next 3 bytes determine the size of the rest:
 			unsigned next3Bytes = getBits(24);
 #ifdef DEBUG_TIMESTAMPS
-			unsigned char PTS_DTS_flags = (next3Bytes&0x00C000)>>14;
+			DP_U8 PTS_DTS_flags = (next3Bytes&0x00C000)>>14;
 #endif
 #ifdef undef
-			unsigned char ESCR_flag = (next3Bytes&0x002000)>>13;
-			unsigned char ES_rate_flag = (next3Bytes&0x001000)>>12;
-			unsigned char DSM_trick_mode_flag = (next3Bytes&0x000800)>>11;
+			DP_U8 ESCR_flag = (next3Bytes&0x002000)>>13;
+			DP_U8 ES_rate_flag = (next3Bytes&0x001000)>>12;
+			DP_U8 DSM_trick_mode_flag = (next3Bytes&0x000800)>>11;
 #endif
-			unsigned char PES_header_data_length = (next3Bytes & 0x0000FF);
+			DP_U8 PES_header_data_length = (next3Bytes & 0x0000FF);
 #ifdef DEBUG
 			fprintf(stderr, "PES_header_data_length: 0x%02x\n", PES_header_data_length); fflush(stderr);
 #endif
 #ifdef DEBUG_TIMESTAMPS
 			if (PTS_DTS_flags == 0x2 && PES_header_data_length >= 5) {
-				unsigned char nextByte = get1Byte();
+				DP_U8 nextByte = get1Byte();
 				pts_highBit = (nextByte&0x08)>>3;
 				pts_remainingBits = (nextByte&0x06)<<29;
 				unsigned next4Bytes = get4Bytes();
@@ -634,7 +634,7 @@ unsigned char MPEGProgramStreamParser::parsePESPacket() {
 
 				skipBytes(PES_header_data_length-5);
 			} else if (PTS_DTS_flags == 0x3 && PES_header_data_length >= 10) {
-				unsigned char nextByte = get1Byte();
+				DP_U8 nextByte = get1Byte();
 				pts_highBit = (nextByte&0x08)>>3;
 				pts_remainingBits = (nextByte&0x06)<<29;
 				unsigned next4Bytes = get4Bytes();
@@ -665,7 +665,7 @@ unsigned char MPEGProgramStreamParser::parsePESPacket() {
 
 	// The rest of the packet will be the "PES_packet_data_byte"s
 	// Make sure that "PES_packet_length" was consistent with where we are now:
-	unsigned char acquiredStreamIdTag = 0;
+	DP_U8 acquiredStreamIdTag = 0;
 	unsigned currentParserOffset = curOffset();
 	unsigned bytesSkipped = currentParserOffset - savedParserOffset;
 	if (stream_id == RAW_PES) {
@@ -722,7 +722,7 @@ unsigned char MPEGProgramStreamParser::parsePESPacket() {
 						< 1000000 /*limit*/) {
 			// Someone is interested in this stream, but hasn't begun reading it yet.
 			// Save this data, so that the reader will get it when he later asks for it.
-			unsigned char* buf = new unsigned char[PES_packet_length];
+			DP_U8* buf = new DP_U8[PES_packet_length];
 			getBytes(buf, PES_packet_length);
 			MPEG1or2Demux::OutputDescriptor::SavedData* savedData =
 					new MPEG1or2Demux::OutputDescriptor::SavedData(buf,

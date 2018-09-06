@@ -1,4 +1,7 @@
 src/MP3ADURTPSource.o: ../src/MP3ADURTPSource.cpp \
+ /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/X86/include/Rtsp_server.h \
+ /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/X86/include/Rtsp_sys.h \
+ /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/X86/include/Rtsp_sys.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/MP3ADURTPSource.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/MultiFramedRTPSource.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/RTPSource.h \
@@ -18,6 +21,12 @@ src/MP3ADURTPSource.o: ../src/MP3ADURTPSource.cpp \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/GroupEId.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/RTPInterface.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/MP3ADUdescriptor.h
+
+/home/jhb/nfs/TerminalC++Workspace/RTSP_Client/X86/include/Rtsp_server.h:
+
+/home/jhb/nfs/TerminalC++Workspace/RTSP_Client/X86/include/Rtsp_sys.h:
+
+/home/jhb/nfs/TerminalC++Workspace/RTSP_Client/X86/include/Rtsp_sys.h:
 
 /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/MP3ADURTPSource.h:
 

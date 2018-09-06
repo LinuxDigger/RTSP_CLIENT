@@ -429,14 +429,14 @@ C_DEPS += \
 src/%.o: ../src/%.cpp
 	@echo 'Building file: $<'
 	@echo 'Invoking: GCC C++ Compiler'
-	g++ -I"/home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include" -I"/home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include" -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"$(@:%.o=%.d)" -MT"$(@)" -o "$@" "$<" -Wno-unused
+	g++ -I/home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include -I/home/jhb/nfs/TerminalC++Workspace/RTSP_Client/X86/include -include/home/jhb/nfs/TerminalC++Workspace/RTSP_Client/X86/include/Rtsp_server.h -include/home/jhb/nfs/TerminalC++Workspace/RTSP_Client/X86/include/Rtsp_sys.h -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"$(@:%.o=%.d)" -MT"$(@)" -o "$@" "$<" -Wno-unused
 	@echo 'Finished building: $<'
 	@echo ' '
 
 src/%.o: ../src/%.c
 	@echo 'Building file: $<'
 	@echo 'Invoking: GCC C Compiler'
-	gcc -I"/home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include" -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"$(@:%.o=%.d)" -MT"$(@)" -o "$@" "$<"
+	gcc -I"/home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include" -I"/home/jhb/nfs/TerminalC++Workspace/RTSP_Client/X86/include" -include/home/jhb/nfs/TerminalC++Workspace/RTSP_Client/X86/include/Rtsp_server.h -include"/home/jhb/nfs/TerminalC++Workspace/RTSP_Client/X86/include/Rtsp_sys.h" -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"$(@:%.o=%.d)" -MT"$(@)" -o "$@" "$<"
 	@echo 'Finished building: $<'
 	@echo ' '
 

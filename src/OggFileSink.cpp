@@ -44,7 +44,7 @@ OggFileSink::OggFileSink(UsageEnvironment& env, FILE* fid,
 				False), fHaveSeenEOF(False), fGranulePosition(0), fGranulePositionAdjustment(
 				0), fPageSequenceNumber(0), fIsTheora(False), fGranuleIncrementPerFrame(
 				1), fAltFrameSize(0), fAltNumTruncatedBytes(0) {
-	fAltBuffer = new unsigned char[bufferSize];
+	fAltBuffer = new DP_U8[bufferSize];
 
 	// Initialize our 'Ogg page header' array with constant values:
 	u_int8_t* p = fPageHeaderBytes;
@@ -99,7 +99,7 @@ Boolean OggFileSink::continuePlaying() {
 
 #define PAGE_DATA_MAX_SIZE (255*255)
 
-void OggFileSink::addData(unsigned char const* data, unsigned dataSize,
+void OggFileSink::addData(DP_U8 const* data, unsigned dataSize,
 		struct timeval presentationTime) {
 	if (dataSize == 0)
 		return;
@@ -267,7 +267,7 @@ void OggFileSink::afterGettingFrame(unsigned frameSize,
 	}
 
 	// Save this input frame for next time, and instead write the previous input frame now:
-	unsigned char* tmpPtr = fBuffer;
+	DP_U8* tmpPtr = fBuffer;
 	fBuffer = fAltBuffer;
 	fAltBuffer = tmpPtr;
 	unsigned prevFrameSize = fAltFrameSize;

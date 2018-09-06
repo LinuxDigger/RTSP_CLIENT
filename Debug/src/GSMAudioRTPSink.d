@@ -1,4 +1,7 @@
 src/GSMAudioRTPSink.o: ../src/GSMAudioRTPSink.cpp \
+ /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/X86/include/Rtsp_server.h \
+ /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/X86/include/Rtsp_sys.h \
+ /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/X86/include/Rtsp_sys.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/GSMAudioRTPSink.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/AudioRTPSink.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/MultiFramedRTPSink.h \
@@ -19,6 +22,12 @@ src/GSMAudioRTPSink.o: ../src/GSMAudioRTPSink.cpp \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/NetInterface.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/NetAddress.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/GroupEId.h
+
+/home/jhb/nfs/TerminalC++Workspace/RTSP_Client/X86/include/Rtsp_server.h:
+
+/home/jhb/nfs/TerminalC++Workspace/RTSP_Client/X86/include/Rtsp_sys.h:
+
+/home/jhb/nfs/TerminalC++Workspace/RTSP_Client/X86/include/Rtsp_sys.h:
 
 /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/GSMAudioRTPSink.h:
 

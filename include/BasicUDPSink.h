@@ -38,7 +38,7 @@ private:
 private:
 	Groupsock* fGS;
 	unsigned fMaxPayloadSize;
-	unsigned char* fOutputBuffer;
+	DP_U8* fOutputBuffer;
 	struct timeval fNextSendTime;
 };
 

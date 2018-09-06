@@ -16,7 +16,7 @@ public:
 
 private:
 	// redefined virtual functions
-	virtual unsigned nextEnclosedFrameSize(unsigned char*& framePtr,
+	virtual unsigned nextEnclosedFrameSize(DP_U8*& framePtr,
 			unsigned dataSize);
 
 private:
@@ -33,14 +33,14 @@ private:
 
 MPEG4LATMAudioRTPSource*
 MPEG4LATMAudioRTPSource::createNew(UsageEnvironment& env, CommonPlay *cpObj,
-		Groupsock* RTPgs, unsigned char rtpPayloadFormat,
+		Groupsock* RTPgs, DP_U8 rtpPayloadFormat,
 		unsigned rtpTimestampFrequency) {
 	return new MPEG4LATMAudioRTPSource(env, cpObj, RTPgs, rtpPayloadFormat,
 			rtpTimestampFrequency);
 }
 
 MPEG4LATMAudioRTPSource::MPEG4LATMAudioRTPSource(UsageEnvironment& env,
-		CommonPlay *cpObj, Groupsock* RTPgs, unsigned char rtpPayloadFormat,
+		CommonPlay *cpObj, Groupsock* RTPgs, DP_U8 rtpPayloadFormat,
 		unsigned rtpTimestampFrequency) :
 		MultiFramedRTPSource(env, cpObj, RTPgs, rtpPayloadFormat,
 				rtpTimestampFrequency, new LATMBufferedPacketFactory), fIncludeLATMDataLengthField(
@@ -80,7 +80,7 @@ LATMBufferedPacket::LATMBufferedPacket(Boolean includeLATMDataLengthField) :
 LATMBufferedPacket::~LATMBufferedPacket() {
 }
 
-unsigned LATMBufferedPacket::nextEnclosedFrameSize(unsigned char*& framePtr,
+unsigned LATMBufferedPacket::nextEnclosedFrameSize(DP_U8*& framePtr,
 		unsigned dataSize) {
 	// Look at the LATM data length byte(s), to determine the size
 	// of the LATM payload.
@@ -111,7 +111,7 @@ BufferedPacket* LATMBufferedPacketFactory::createNewPacket(
 
 ////////// parseStreamMuxConfigStr() implementation //////////
 
-static Boolean getNibble(char const*& configStr, unsigned char& resultNibble) {
+static Boolean getNibble(char const*& configStr, DP_U8& resultNibble) {
 	char c = configStr[0];
 	if (c == '\0')
 		return False; // we've reached the end
@@ -130,15 +130,15 @@ static Boolean getNibble(char const*& configStr, unsigned char& resultNibble) {
 	return True;
 }
 
-static Boolean getByte(char const*& configStr, unsigned char& resultByte) {
+static Boolean getByte(char const*& configStr, DP_U8& resultByte) {
 	resultByte = 0; // by default, in case parsing fails
 
-	unsigned char firstNibble;
+	DP_U8 firstNibble;
 	if (!getNibble(configStr, firstNibble))
 		return False;
 	resultByte = firstNibble << 4;
 
-	unsigned char secondNibble = 0;
+	DP_U8 secondNibble = 0;
 	if (!getNibble(configStr, secondNibble) && configStr[0] != '\0') {
 		// There's a second nibble, but it's malformed
 		return False;
@@ -151,8 +151,8 @@ static Boolean getByte(char const*& configStr, unsigned char& resultByte) {
 Boolean parseStreamMuxConfigStr(char const* configStr,
 		// result parameters:
 		Boolean& audioMuxVersion, Boolean& allStreamsSameTimeFraming,
-		unsigned char& numSubFrames, unsigned char& numProgram,
-		unsigned char& numLayer, unsigned char*& audioSpecificConfig,
+		DP_U8& numSubFrames, DP_U8& numProgram,
+		DP_U8& numLayer, DP_U8*& audioSpecificConfig,
 		unsigned& audioSpecificConfigSize) {
 	// Set default versions of the result parameters:
 	audioMuxVersion = False;
@@ -165,7 +165,7 @@ Boolean parseStreamMuxConfigStr(char const* configStr,
 		if (configStr == NULL)
 			break;
 
-		unsigned char nextByte;
+		DP_U8 nextByte;
 
 		if (!getByte(configStr, nextByte))
 			break;
@@ -184,10 +184,10 @@ Boolean parseStreamMuxConfigStr(char const* configStr,
 
 		// The one remaining bit, and the rest of the string,
 		// are used for "audioSpecificConfig":
-		unsigned char remainingBit = nextByte & 1;
+		DP_U8 remainingBit = nextByte & 1;
 
 		unsigned ascSize = (strlen(configStr) + 1) / 2 + 1;
-		audioSpecificConfig = new unsigned char[ascSize];
+		audioSpecificConfig = new DP_U8[ascSize];
 
 		Boolean parseSuccess;
 		unsigned i = 0;
@@ -209,12 +209,12 @@ Boolean parseStreamMuxConfigStr(char const* configStr,
 	return False; // parsing failed
 }
 
-unsigned char* parseStreamMuxConfigStr(char const* configStr,
+DP_U8* parseStreamMuxConfigStr(char const* configStr,
 // result parameter:
 		unsigned& audioSpecificConfigSize) {
 	Boolean audioMuxVersion, allStreamsSameTimeFraming;
-	unsigned char numSubFrames, numProgram, numLayer;
-	unsigned char* audioSpecificConfig;
+	DP_U8 numSubFrames, numProgram, numLayer;
+	DP_U8* audioSpecificConfig;
 
 	if (!parseStreamMuxConfigStr(configStr, audioMuxVersion,
 			allStreamsSameTimeFraming, numSubFrames, numProgram, numLayer,
@@ -226,16 +226,16 @@ unsigned char* parseStreamMuxConfigStr(char const* configStr,
 	return audioSpecificConfig;
 }
 
-unsigned char* parseGeneralConfigStr(char const* configStr,
+DP_U8* parseGeneralConfigStr(char const* configStr,
 // result parameter:
 		unsigned& configSize) {
-	unsigned char* config = NULL;
+	DP_U8* config = NULL;
 	do {
 		if (configStr == NULL)
 			break;
 		configSize = (strlen(configStr) + 1) / 2;
 
-		config = new unsigned char[configSize];
+		config = new DP_U8[configSize];
 		if (config == NULL)
 			break;
 

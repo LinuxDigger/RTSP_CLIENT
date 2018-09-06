@@ -14,12 +14,12 @@
 class DVVideoRTPSink: public VideoRTPSink {
 public:
 	static DVVideoRTPSink* createNew(UsageEnvironment& env, CommonPlay *cpObj,
-			Groupsock* RTPgs, unsigned char rtpPayloadFormat);
+			Groupsock* RTPgs, DP_U8 rtpPayloadFormat);
 	char const* auxSDPLineFromFramer(DVVideoStreamFramer* framerSource);
 
 protected:
 	DVVideoRTPSink(UsageEnvironment& env, CommonPlay *cpObj, Groupsock* RTPgs,
-			unsigned char rtpPayloadFormat);
+			DP_U8 rtpPayloadFormat);
 	// called only by createNew()
 
 	virtual ~DVVideoRTPSink();
@@ -28,7 +28,7 @@ private:
 	// redefined virtual functions:
 	virtual Boolean sourceIsCompatibleWithUs(MediaSource& source);
 	virtual void doSpecialFrameHandling(unsigned fragmentationOffset,
-			unsigned char* frameStart, unsigned numBytesInFrame,
+			DP_U8* frameStart, unsigned numBytesInFrame,
 			struct timeval framePresentationTime, unsigned numRemainingBytes);
 	virtual unsigned computeOverflowForNewFrame(unsigned newFrameSize) const;
 	virtual char const* auxSDPLine();

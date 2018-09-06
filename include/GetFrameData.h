@@ -21,7 +21,7 @@ public:
 	void afterGettingFrame(unsigned frameSize, unsigned numTruncatedBytes,
 			struct timeval presentationTime);
 private:
-	unsigned char*buffer;
+	DP_U8*buffer;
 //	unsigned short _cliID;
 //	CycleQueue *_cycQueue;
 };

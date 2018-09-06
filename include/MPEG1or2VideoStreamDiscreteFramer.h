@@ -45,7 +45,7 @@ protected:
 
 	// A saved copy of the most recently seen 'video_sequence_header',
 	// in case we need to insert it into the stream periodically:
-	unsigned char fSavedVSHBuffer[VSH_MAX_SIZE];
+	DP_U8 fSavedVSHBuffer[VSH_MAX_SIZE];
 	unsigned fSavedVSHSize;
 	double fSavedVSHTimestamp;
 	Boolean fIFramesOnly;

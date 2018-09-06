@@ -16,7 +16,7 @@ protected:
 	H264or5VideoRTPSink(
 			int hNumber, // 264 or 265
 			UsageEnvironment& env, CommonPlay *cpObj, Groupsock* RTPgs,
-			unsigned char rtpPayloadFormat, u_int8_t const* vps = NULL,
+			DP_U8 rtpPayloadFormat, u_int8_t const* vps = NULL,
 			unsigned vpsSize = 0, u_int8_t const* sps = NULL, unsigned spsSize =
 					0, u_int8_t const* pps = NULL, unsigned ppsSize = 0);
 	// we're an abstrace base class
@@ -26,10 +26,10 @@ private:
 	// redefined virtual functions:
 	virtual Boolean continuePlaying();
 	virtual void doSpecialFrameHandling(unsigned fragmentationOffset,
-			unsigned char* frameStart, unsigned numBytesInFrame,
+			DP_U8* frameStart, unsigned numBytesInFrame,
 			struct timeval framePresentationTime, unsigned numRemainingBytes);
 	virtual Boolean frameCanAppearAfterPacketStart(
-			unsigned char const* frameStart, unsigned numBytesInFrame) const;
+			DP_U8 const* frameStart, unsigned numBytesInFrame) const;
 
 protected:
 	int fHNumber;

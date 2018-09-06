@@ -14,7 +14,7 @@
 class AudioRTPSink: public MultiFramedRTPSink {
 protected:
   AudioRTPSink(UsageEnvironment& env,CommonPlay *cpObj,
-	       Groupsock* rtpgs, unsigned char rtpPayloadType,
+	       Groupsock* rtpgs, DP_U8 rtpPayloadType,
 	       unsigned rtpTimestampFrequency,
 	       char const* rtpPayloadFormatName,
 	       unsigned numChannels = 1);

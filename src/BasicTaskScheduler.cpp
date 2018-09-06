@@ -159,6 +159,7 @@ void BasicTaskScheduler::SingleStep(unsigned maxDelayTime) {
 			break;
 		}
 	}
+
 	if (handler == NULL && fLastHandledSocketNum >= 0) {
 		// We didn't call a handler, but we didn't get to check all of them,
 		// so try again from the beginning:

@@ -10,7 +10,7 @@
 
 #include <string.h>
 
-typedef unsigned char uint8;
+typedef DP_U8 uint8;
 
 typedef unsigned short uint16;
 
@@ -30,7 +30,7 @@ struct vc_params_t {
 	}
 };
 
-bool ParseSequenceParameterSet(unsigned char * data, int size,
+bool ParseSequenceParameterSet(DP_U8 * data, int size,
 		vc_params_t& params);
 class NALBitstream {
 public:
@@ -41,17 +41,17 @@ public:
 		Init(data, len);
 	}
 	void Init(void * data, int len) {
-		m_data = (unsigned char *) data;
+		m_data = (DP_U8 *) data;
 		m_len = len;
 		m_idx = 0;
 		m_bits = 0;
 		m_byte = 0;
 		m_zeros = 0;
 	}
-	unsigned char GetBYTE() {
+	DP_U8 GetBYTE() {
 		if (m_idx >= m_len)
 			return 0;
-		unsigned char b = m_data[m_idx++];
+		DP_U8 b = m_data[m_idx++];
 
 		// to avoid start-code emulation, a byte 0x03 is inserted
 		// after any 00 00 pair. Discard that here.
@@ -132,11 +132,11 @@ public:
 	;
 
 private:
-	unsigned char * m_data;
+	DP_U8 * m_data;
 	int m_len;
 	int m_idx;
 	int m_bits;
-	unsigned char m_byte;
+	DP_U8 m_byte;
 	int m_zeros;
 };
 

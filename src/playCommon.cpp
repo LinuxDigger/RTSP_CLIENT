@@ -103,7 +103,7 @@
 //char* password = NULL;
 //char* proxyServerName = NULL;
 //unsigned short proxyServerPortNum = 0;
-//unsigned char desiredAudioRTPPayloadFormat = 0;
+//DP_U8 desiredAudioRTPPayloadFormat = 0;
 //char* mimeSubtype = NULL;
 //unsigned short movieWidth = 240; // default
 //Boolean movieWidthOptionSet = False;
@@ -382,7 +382,7 @@
 //						|| formatArg >= 96) {
 //					usage();
 //				}
-//				desiredAudioRTPPayloadFormat = (unsigned char)formatArg;
+//				desiredAudioRTPPayloadFormat = (DP_U8)formatArg;
 //				++argv; --argc;
 //				break;
 //			}
@@ -991,7 +991,7 @@
 //					// from the SDP description contains useful VOL etc. headers.
 //					// Insert this data at the front of the output file:
 //					unsigned configLen;
-//					unsigned char* configData = parseGeneralConfigStr(
+//					DP_U8* configData = parseGeneralConfigStr(
 //							subsession->fmtp_config(), configLen);
 //					struct timeval timeNow;
 //					gettimeofday(&timeNow, NULL);

@@ -14,19 +14,19 @@
 #define MAX_CYCLE_SIZE 256
 class Interleaving {
 public:
-	Interleaving(unsigned cycleSize, unsigned char const* cycleArray);
+	Interleaving(unsigned cycleSize, DP_U8 const* cycleArray);
 	virtual ~Interleaving();
 
 	unsigned cycleSize() const {
 		return fCycleSize;
 	}
-	unsigned char lookupInverseCycle(unsigned char index) const {
+	DP_U8 lookupInverseCycle(DP_U8 index) const {
 		return fInverseCycle[index];
 	}
 
 private:
 	unsigned fCycleSize;
-	unsigned char fInverseCycle[MAX_CYCLE_SIZE];
+	DP_U8 fInverseCycle[MAX_CYCLE_SIZE];
 };
 
 // This class is used only as a base for the following two:
@@ -75,7 +75,7 @@ private:
 private:
 	Interleaving const fInterleaving;
 	class InterleavingFrames* fFrames;
-	unsigned char fPositionOfNextIncomingFrame;
+	DP_U8 fPositionOfNextIncomingFrame;
 	unsigned fII, fICC;
 };
 

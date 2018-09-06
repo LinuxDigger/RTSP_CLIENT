@@ -1,4 +1,7 @@
 src/H264VideoRTPSource.o: ../src/H264VideoRTPSource.cpp \
+ /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/X86/include/Rtsp_server.h \
+ /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/X86/include/Rtsp_sys.h \
+ /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/X86/include/Rtsp_sys.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/H264VideoRTPSource.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/MultiFramedRTPSource.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/RTPSource.h \
@@ -19,6 +22,12 @@ src/H264VideoRTPSource.o: ../src/H264VideoRTPSource.cpp \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/RTPInterface.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/Base64.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/strDup.h
+
+/home/jhb/nfs/TerminalC++Workspace/RTSP_Client/X86/include/Rtsp_server.h:
+
+/home/jhb/nfs/TerminalC++Workspace/RTSP_Client/X86/include/Rtsp_sys.h:
+
+/home/jhb/nfs/TerminalC++Workspace/RTSP_Client/X86/include/Rtsp_sys.h:
 
 /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/H264VideoRTPSource.h:
 

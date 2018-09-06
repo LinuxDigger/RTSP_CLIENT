@@ -46,10 +46,10 @@ private:
 	virtual char const* auxSDPLine(); // for the "a=fmtp:" SDP line
 
 	virtual void doSpecialFrameHandling(unsigned fragmentationOffset,
-			unsigned char* frameStart, unsigned numBytesInFrame,
+			DP_U8* frameStart, unsigned numBytesInFrame,
 			struct timeval framePresentationTime, unsigned numRemainingBytes);
 	virtual Boolean frameCanAppearAfterPacketStart(
-			unsigned char const* frameStart, unsigned numBytesInFrame) const;
+			DP_U8 const* frameStart, unsigned numBytesInFrame) const;
 	virtual unsigned specialHeaderSize() const;
 	virtual unsigned frameSpecificHeaderSize() const;
 

@@ -10,7 +10,7 @@
 ////////// DVVideoRTPSink implementation //////////
 
 DVVideoRTPSink::DVVideoRTPSink(UsageEnvironment& env, CommonPlay *cpObj,
-		Groupsock* RTPgs, unsigned char rtpPayloadFormat) :
+		Groupsock* RTPgs, DP_U8 rtpPayloadFormat) :
 		VideoRTPSink(env, cpObj, RTPgs, rtpPayloadFormat, 90000, "DV"), fFmtpSDPLine(
 				NULL) {
 }
@@ -21,7 +21,7 @@ DVVideoRTPSink::~DVVideoRTPSink() {
 
 DVVideoRTPSink*
 DVVideoRTPSink::createNew(UsageEnvironment& env,  CommonPlay *cpObj,Groupsock* RTPgs,
-		unsigned char rtpPayloadFormat) {
+		DP_U8 rtpPayloadFormat) {
 	return new DVVideoRTPSink(env,cpObj, RTPgs, rtpPayloadFormat);
 }
 
@@ -31,7 +31,7 @@ Boolean DVVideoRTPSink::sourceIsCompatibleWithUs(MediaSource& source) {
 }
 
 void DVVideoRTPSink::doSpecialFrameHandling(unsigned fragmentationOffset,
-		unsigned char* /*frameStart*/, unsigned /*numBytesInFrame*/,
+		DP_U8* /*frameStart*/, unsigned /*numBytesInFrame*/,
 		struct timeval framePresentationTime, unsigned numRemainingBytes) {
 	if (numRemainingBytes == 0) {
 		// This packet contains the last (or only) fragment of the frame.

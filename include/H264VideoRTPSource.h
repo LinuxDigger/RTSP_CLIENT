@@ -14,12 +14,12 @@ class H264VideoRTPSource: public MultiFramedRTPSource {
 public:
 	static H264VideoRTPSource*
 	createNew(UsageEnvironment& env, CommonPlay *cpObj,Groupsock* RTPgs,
-			unsigned char rtpPayloadFormat, unsigned rtpTimestampFrequency =
+			DP_U8 rtpPayloadFormat, unsigned rtpTimestampFrequency =
 					90000);
 
 protected:
 	H264VideoRTPSource(UsageEnvironment& env,CommonPlay *cpObj, Groupsock* RTPgs,
-			unsigned char rtpPayloadFormat, unsigned rtpTimestampFrequency);
+			DP_U8 rtpPayloadFormat, unsigned rtpTimestampFrequency);
 	// called only by createNew()
 
 	virtual ~H264VideoRTPSource();
@@ -32,7 +32,7 @@ protected:
 
 private:
 	friend class H264BufferedPacket;
-	unsigned char fCurPacketNALUnitType;
+	DP_U8 fCurPacketNALUnitType;
 };
 
 class SPropRecord {
@@ -42,7 +42,7 @@ public:
 	}
 
 	unsigned sPropLength; // in bytes
-	unsigned char* sPropBytes;
+	DP_U8* sPropBytes;
 };
 
 SPropRecord* parseSPropParameterSets(char const* sPropParameterSetsStr,

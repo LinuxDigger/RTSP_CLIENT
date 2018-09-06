@@ -270,7 +270,7 @@ int setupStreamSocket(UsageEnvironment& env,
 }
 
 int readSocket(UsageEnvironment& env,
-	       int socket, unsigned char* buffer, unsigned bufferSize,
+	       int socket, DP_U8* buffer, unsigned bufferSize,
 	       struct sockaddr_in& fromAddress) {
   SOCKLEN_T addressSize = sizeof fromAddress;
   int bytesRead = recvfrom(socket, (char*)buffer, bufferSize, 0,
@@ -308,7 +308,7 @@ int readSocket(UsageEnvironment& env,
 Boolean writeSocket(UsageEnvironment& env,
 		    int socket, struct in_addr address, portNumBits portNum,
 		    u_int8_t ttlArg,
-		    unsigned char* buffer, unsigned bufferSize) {
+		    DP_U8* buffer, unsigned bufferSize) {
   // Before sending, set the socket's TTL:
 #if defined(__WIN32__) || defined(_WIN32)
 #define TTL_TYPE int
@@ -327,7 +327,7 @@ Boolean writeSocket(UsageEnvironment& env,
 
 Boolean writeSocket(UsageEnvironment& env,
 		    int socket, struct in_addr address, portNumBits portNum,
-		    unsigned char* buffer, unsigned bufferSize) {
+		    DP_U8* buffer, unsigned bufferSize) {
   do {
     MAKE_SOCKADDR_IN(dest, address.s_addr, portNum);
     int bytesSent = sendto(socket, (char*)buffer, bufferSize, 0,
@@ -612,7 +612,7 @@ netAddressBits ourIPAddress(UsageEnvironment& env) {
 
       if (!socketJoinGroup(env, sock, testAddr.s_addr)) break;
 
-      unsigned char testString[] = "hostIdTest";
+      DP_U8 testString[] = "hostIdTest";
       unsigned testStringLength = sizeof testString;
 
       if (!writeSocket(env, sock, testAddr, testPort.num(), 0,
@@ -629,7 +629,7 @@ netAddressBits ourIPAddress(UsageEnvironment& env) {
       int result = select(numFds, &rd_set, NULL, NULL, &timeout);
       if (result <= 0) break;
 
-      unsigned char readBuffer[20];
+      DP_U8 readBuffer[20];
       int bytesRead = readSocket(env, sock,
 				 readBuffer, sizeof readBuffer,
 				 fromAddr);

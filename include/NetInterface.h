@@ -25,7 +25,7 @@ class DirectedNetInterface: public NetInterface {
 public:
   virtual ~DirectedNetInterface();
 
-  virtual Boolean write(unsigned char* data, unsigned numBytes) = 0;
+  virtual Boolean write(DP_U8* data, unsigned numBytes) = 0;
 
   virtual Boolean SourceAddrOKForRelaying(UsageEnvironment& env,
 					  unsigned addr) = 0;
@@ -67,7 +67,7 @@ public:
   virtual ~Socket();
   void reset(); // closes the socket, and sets "fSocketNum" to -1
 
-  virtual Boolean handleRead(unsigned char* buffer, unsigned bufferMaxSize,
+  virtual Boolean handleRead(DP_U8* buffer, unsigned bufferMaxSize,
 			     unsigned& bytesRead,
 			     struct sockaddr_in& fromAddress) = 0;
       // Returns False on error; resultData == NULL if data ignored

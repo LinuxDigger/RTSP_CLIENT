@@ -14,7 +14,7 @@ class SimpleRTPSink: public MultiFramedRTPSink {
 public:
 	static SimpleRTPSink*
 	createNew(UsageEnvironment& env, CommonPlay *cpObj, Groupsock* RTPgs,
-			unsigned char rtpPayloadFormat, unsigned rtpTimestampFrequency,
+			DP_U8 rtpPayloadFormat, unsigned rtpTimestampFrequency,
 			char const* sdpMediaTypeString, char const* rtpPayloadFormatName,
 			unsigned numChannels = 1, Boolean allowMultipleFramesPerPacket =
 					True, Boolean doNormalMBitRule = True);
@@ -28,7 +28,7 @@ public:
 
 protected:
 	SimpleRTPSink(UsageEnvironment& env, CommonPlay *cpObj, Groupsock* RTPgs,
-			unsigned char rtpPayloadFormat, unsigned rtpTimestampFrequency,
+			DP_U8 rtpPayloadFormat, unsigned rtpTimestampFrequency,
 			char const* sdpMediaTypeString, char const* rtpPayloadFormatName,
 			unsigned numChannels, Boolean allowMultipleFramesPerPacket,
 			Boolean doNormalMBitRule);
@@ -39,10 +39,10 @@ protected:
 protected:
 	// redefined virtual functions
 	virtual void doSpecialFrameHandling(unsigned fragmentationOffset,
-			unsigned char* frameStart, unsigned numBytesInFrame,
+			DP_U8* frameStart, unsigned numBytesInFrame,
 			struct timeval framePresentationTime, unsigned numRemainingBytes);
 	virtual Boolean frameCanAppearAfterPacketStart(
-			unsigned char const* frameStart, unsigned numBytesInFrame) const;
+			DP_U8 const* frameStart, unsigned numBytesInFrame) const;
 	virtual char const* sdpMediaType() const;
 
 private:

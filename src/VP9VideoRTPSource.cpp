@@ -9,14 +9,14 @@
 
 VP9VideoRTPSource*
 VP9VideoRTPSource::createNew(UsageEnvironment& env, CommonPlay *cpObj,
-		Groupsock* RTPgs, unsigned char rtpPayloadFormat,
+		Groupsock* RTPgs, DP_U8 rtpPayloadFormat,
 		unsigned rtpTimestampFrequency) {
 	return new VP9VideoRTPSource(env, cpObj, RTPgs, rtpPayloadFormat,
 			rtpTimestampFrequency);
 }
 
 VP9VideoRTPSource::VP9VideoRTPSource(UsageEnvironment& env, CommonPlay *cpObj,
-		Groupsock* RTPgs, unsigned char rtpPayloadFormat,
+		Groupsock* RTPgs, DP_U8 rtpPayloadFormat,
 		unsigned rtpTimestampFrequency) :
 		MultiFramedRTPSource(env, cpObj, RTPgs, rtpPayloadFormat,
 				rtpTimestampFrequency) {
@@ -29,7 +29,7 @@ VP9VideoRTPSource::~VP9VideoRTPSource() {
 
 Boolean VP9VideoRTPSource::processSpecialHeader(BufferedPacket* packet,
 		unsigned& resultSpecialHeaderSize) {
-	unsigned char* headerStart = packet->data();
+	DP_U8* headerStart = packet->data();
 	unsigned packetSize = packet->dataSize();
 
 	// Figure out the size of the special header.

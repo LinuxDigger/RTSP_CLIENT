@@ -57,7 +57,7 @@ public:
   unsigned hdr;
 
   // a buffer that can be used to hold the rest of the frame:
-  unsigned char frameBytes[MAX_MP3_FRAME_SIZE];
+  DP_U8 frameBytes[MAX_MP3_FRAME_SIZE];
 
   // public parameters derived from the header
   void setParamsFromHeader(); // this sets them
@@ -71,9 +71,9 @@ public:
   unsigned sideInfoSize;
   Boolean hasCRC;
 
-  void setBytePointer(unsigned char const* restOfFrame,
+  void setBytePointer(DP_U8 const* restOfFrame,
 		      unsigned totNumBytes) {// called during setup
-    bv.setup((unsigned char*)restOfFrame, 0, 8*totNumBytes);
+    bv.setup((DP_U8*)restOfFrame, 0, 8*totNumBytes);
   }
 
   // other, public parameters used when parsing input (perhaps get rid of)
@@ -108,20 +108,20 @@ private:
 
 unsigned ComputeFrameSize(unsigned bitrate, unsigned samplingFreq,
 			  Boolean usePadding, Boolean isMPEG2,
-			  unsigned char layer);
+			  DP_U8 layer);
 
-Boolean GetADUInfoFromMP3Frame(unsigned char const* framePtr,
+Boolean GetADUInfoFromMP3Frame(DP_U8 const* framePtr,
 			       unsigned totFrameSize,
 			       unsigned& hdr, unsigned& frameSize,
 			       MP3SideInfo& sideInfo, unsigned& sideInfoSize,
 			       unsigned& backpointer, unsigned& aduSize);
 
-Boolean ZeroOutMP3SideInfo(unsigned char* framePtr, unsigned totFrameSize,
+Boolean ZeroOutMP3SideInfo(DP_U8* framePtr, unsigned totFrameSize,
 			   unsigned newBackpointer);
 
-unsigned TranscodeMP3ADU(unsigned char const* fromPtr, unsigned fromSize,
+unsigned TranscodeMP3ADU(DP_U8 const* fromPtr, unsigned fromSize,
 		      unsigned toBitrate,
-		      unsigned char* toPtr, unsigned toMaxSize,
+		      DP_U8* toPtr, unsigned toMaxSize,
 		      unsigned& availableBytesForBackpointer);
   // returns the size of the resulting ADU (0 on failure)
 

@@ -13,11 +13,11 @@
 class VP9VideoRTPSink: public VideoRTPSink {
 public:
 	static VP9VideoRTPSink* createNew(UsageEnvironment& env, CommonPlay *cpObj,
-			Groupsock* RTPgs, unsigned char rtpPayloadFormat);
+			Groupsock* RTPgs, DP_U8 rtpPayloadFormat);
 
 protected:
 	VP9VideoRTPSink(UsageEnvironment& env, CommonPlay *cpObj, Groupsock* RTPgs,
-			unsigned char rtpPayloadFormat);
+			DP_U8 rtpPayloadFormat);
 	// called only by createNew()
 
 	virtual ~VP9VideoRTPSink();
@@ -25,10 +25,10 @@ protected:
 private:
 	// redefined virtual functions:
 	virtual void doSpecialFrameHandling(unsigned fragmentationOffset,
-			unsigned char* frameStart, unsigned numBytesInFrame,
+			DP_U8* frameStart, unsigned numBytesInFrame,
 			struct timeval framePresentationTime, unsigned numRemainingBytes);
 	virtual Boolean frameCanAppearAfterPacketStart(
-			unsigned char const* frameStart, unsigned numBytesInFrame) const;
+			DP_U8 const* frameStart, unsigned numBytesInFrame) const;
 	virtual unsigned specialHeaderSize() const;
 };
 

@@ -14,15 +14,15 @@ class OutPacketBuffer;
 class RTPSink;
 class SDESItem {
 public:
-	SDESItem(unsigned char tag, unsigned char const* value);
+	SDESItem(DP_U8 tag, DP_U8 const* value);
 
-	unsigned char const* data() const {
+	DP_U8 const* data() const {
 		return fData;
 	}
 	unsigned totalSize() const;
 
 private:
-	unsigned char fData[2 + 0xFF]; // first 2 bytes are tag and length
+	DP_U8 fData[2 + 0xFF]; // first 2 bytes are tag and length
 };
 
 typedef void RTCPAppHandlerFunc(void* clientData, u_int8_t subtype,
@@ -36,7 +36,7 @@ class RTCPInstance: public Medium {
 public:
 	static RTCPInstance* createNew(UsageEnvironment& env, Groupsock* RTCPgs,
 			unsigned totSessionBW, /* in kbps */
-			unsigned char const* cname, RTPSink* sink, RTPSource* source,
+			DP_U8 const* cname, RTPSink* sink, RTPSource* source,
 			Boolean isSSMSource = False, CommonPlay *cpObj = NULL);
 
 	static Boolean lookupByName(UsageEnvironment& env, char const* instanceName,
@@ -87,9 +87,9 @@ public:
 		return fRTCPInterface.gs();
 	}
 
-	void setStreamSocket(int sockNum, unsigned char streamChannelId);
-	void addStreamSocket(int sockNum, unsigned char streamChannelId);
-	void removeStreamSocket(int sockNum, unsigned char streamChannelId) {
+	void setStreamSocket(int sockNum, DP_U8 streamChannelId);
+	void addStreamSocket(int sockNum, DP_U8 streamChannelId);
+	void removeStreamSocket(int sockNum, DP_U8 streamChannelId) {
 		fRTCPInterface.removeStreamSocket(sockNum, streamChannelId);
 	}
 	// hacks to allow sending RTP over TCP (RFC 2236, section 10.12)
@@ -105,13 +105,13 @@ public:
 
 protected:
 	RTCPInstance(UsageEnvironment& env, Groupsock* RTPgs, unsigned totSessionBW,
-			unsigned char const* cname, RTPSink* sink, RTPSource* source,
+			DP_U8 const* cname, RTPSink* sink, RTPSource* source,
 			Boolean isSSMSource,CommonPlay *cpObj);
 	// called only by createNew()
 	virtual ~RTCPInstance();
 
 	virtual void noteArrivingRR(struct sockaddr_in const& fromAddressAndPort,
-			int tcpSocketNum, unsigned char tcpStreamChannelId);
+			int tcpSocketNum, DP_U8 tcpStreamChannelId);
 
 	void incomingReportHandler1();
 
@@ -123,7 +123,7 @@ private:
 	Boolean addReport(Boolean alwaysAdd = False);
 	void addSR();
 	void addRR();
-	void enqueueCommonReportPrefix(unsigned char packetType, u_int32_t SSRC,
+	void enqueueCommonReportPrefix(DP_U8 packetType, u_int32_t SSRC,
 			unsigned numExtraWords = 0);
 	void enqueueCommonReportSuffix();
 	void enqueueReportBlock(RTPReceptionStats* receptionStats);
@@ -138,7 +138,7 @@ private:
 	static void incomingReportHandler(RTCPInstance* instance, int /*mask*/);
 	void processIncomingReport(unsigned packetSize,
 			struct sockaddr_in const& fromAddressAndPort, int tcpSocketNum,
-			unsigned char tcpStreamChannelId);
+			DP_U8 tcpStreamChannelId);
 	void onReceive(int typeOfPacket, int totPacketSize, u_int32_t ssrc);
 
 private:
@@ -205,28 +205,28 @@ public:
 };
 
 // RTCP packet types:
-const unsigned char RTCP_PT_SR = 200;
-const unsigned char RTCP_PT_RR = 201;
-const unsigned char RTCP_PT_SDES = 202;
-const unsigned char RTCP_PT_BYE = 203;
-const unsigned char RTCP_PT_APP = 204;
-const unsigned char RTCP_PT_RTPFB = 205; // Generic RTP Feedback [RFC4585]
-const unsigned char RTCP_PT_PSFB = 206; // Payload-specific [RFC4585]
-const unsigned char RTCP_PT_XR = 207; // extended report [RFC3611]
-const unsigned char RTCP_PT_AVB = 208; // AVB RTCP packet ["Standard for Layer 3 Transport Protocol for Time Sensitive Applications in Local Area Networks." Work in progress.]
-const unsigned char RTCP_PT_RSI = 209; // Receiver Summary Information [RFC5760]
-const unsigned char RTCP_PT_TOKEN = 210; // Port Mapping [RFC6284]
-const unsigned char RTCP_PT_IDMS = 211; // IDMS Settings [RFC7272]
+const DP_U8 RTCP_PT_SR = 200;
+const DP_U8 RTCP_PT_RR = 201;
+const DP_U8 RTCP_PT_SDES = 202;
+const DP_U8 RTCP_PT_BYE = 203;
+const DP_U8 RTCP_PT_APP = 204;
+const DP_U8 RTCP_PT_RTPFB = 205; // Generic RTP Feedback [RFC4585]
+const DP_U8 RTCP_PT_PSFB = 206; // Payload-specific [RFC4585]
+const DP_U8 RTCP_PT_XR = 207; // extended report [RFC3611]
+const DP_U8 RTCP_PT_AVB = 208; // AVB RTCP packet ["Standard for Layer 3 Transport Protocol for Time Sensitive Applications in Local Area Networks." Work in progress.]
+const DP_U8 RTCP_PT_RSI = 209; // Receiver Summary Information [RFC5760]
+const DP_U8 RTCP_PT_TOKEN = 210; // Port Mapping [RFC6284]
+const DP_U8 RTCP_PT_IDMS = 211; // IDMS Settings [RFC7272]
 
 // SDES tags:
-const unsigned char RTCP_SDES_END = 0;
-const unsigned char RTCP_SDES_CNAME = 1;
-const unsigned char RTCP_SDES_NAME = 2;
-const unsigned char RTCP_SDES_EMAIL = 3;
-const unsigned char RTCP_SDES_PHONE = 4;
-const unsigned char RTCP_SDES_LOC = 5;
-const unsigned char RTCP_SDES_TOOL = 6;
-const unsigned char RTCP_SDES_NOTE = 7;
-const unsigned char RTCP_SDES_PRIV = 8;
+const DP_U8 RTCP_SDES_END = 0;
+const DP_U8 RTCP_SDES_CNAME = 1;
+const DP_U8 RTCP_SDES_NAME = 2;
+const DP_U8 RTCP_SDES_EMAIL = 3;
+const DP_U8 RTCP_SDES_PHONE = 4;
+const DP_U8 RTCP_SDES_LOC = 5;
+const DP_U8 RTCP_SDES_TOOL = 6;
+const DP_U8 RTCP_SDES_NOTE = 7;
+const DP_U8 RTCP_SDES_PRIV = 8;
 
 #endif /* INCLUDE_RTCP_H_ */

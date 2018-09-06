@@ -31,7 +31,7 @@ DP_RTSP_CLIENT_Client::DP_RTSP_CLIENT_Client() :
 DP_RTSP_CLIENT_Client::~DP_RTSP_CLIENT_Client() {
 }
 
-DP_S32 DP_RTSP_CLIENT_Client::DP_RTSP_CLIENT_Init(const DP_S8 *ps8URL,
+DP_S32 DP_RTSP_CLIENT_Client::DP_RTSP_CLIENT_Init(const char *ps8URL,
 		DP_RTSP_CLIENT_STREAM_TYPE_E enStreamType,
 		DP_RTSP_CLIENT_NET_PROTOCOL_E enNetProtocol, DP_U16 u32FrmNums,
 		DP_U8 *pu8UsrName, DP_U8 *pu8UsrPassword) {
@@ -63,6 +63,9 @@ DP_S32 DP_RTSP_CLIENT_Client::DP_RTSP_CLIENT_Init(const DP_S8 *ps8URL,
 	ClientInitArgs_S stCliArgs(_u16ClientNum, ps8URL, enStreamType,
 			enNetProtocol, u32FrmNums, pu8UsrName, pu8UsrPassword, this);
 	if (pthread_create(&tid, NULL, sClientInit, (void*) &stCliArgs) == 0) {
+		cout
+				<< "Thread create successfully............................................!"
+				<< endl;
 		DP_RTSP_CLIENT_CycleQueue *cycQ = new DP_RTSP_CLIENT_CycleQueue(
 				u32FrmNums * sizeof(DP_RTSP_CLIENT_FRAME_DATA_S));
 		cycQ->DSP_QueueInit();
@@ -78,8 +81,8 @@ DP_S32 DP_RTSP_CLIENT_Client::DP_RTSP_CLIENT_Init(const DP_S8 *ps8URL,
 			return DP_RetError;
 		} else {
 			cout
-					<< "cond time wait == 000000000000000000000000000000000000000000000000"
-					<< endl;
+					<< "cond time wait == 0000000000000000000000000000000000000000000 : "
+					<< _u16ClientNum << endl;
 			//init a queue according a uID.put it in map
 		}
 		pthread_cond_destroy(cond);
@@ -97,23 +100,26 @@ DP_S32 DP_RTSP_CLIENT_Client::DP_RTSP_CLIENT_Init(const DP_S8 *ps8URL,
 
 void* DP_RTSP_CLIENT_Client::sClientInit(void*args) {
 	ClientInitArgs_S *stCliArgs = (ClientInitArgs_S*) args;
-	CommonPlay cp;
+//	stCliArgs->client->_mutex.Lock();
+	CommonPlay cp(stCliArgs->clientID);
 	UsageEnvironment* env;
 	TaskScheduler* scheduler = BasicTaskScheduler::createNew(10000, &cp);
 	env = BasicUsageEnvironment::createNew(*scheduler, stCliArgs->clientID); //111id?
-
+//return fd
 	cp.setEnvURL(*env, stCliArgs->ps8URL);
-	//	char const* progName;
+//	stCliArgs->client->_mutex.Unlock();
+//	char const* progName;
 //	openRTSP openRtsp;
 	Medium* ourClient = cp.createClient(*env, stCliArgs->ps8URL, &cp);
 	if (ourClient == NULL) {
 		cp.shutdown();
 	}
-	//mutex
+//mutex
 //	if (DP_RTSP_CLIENT_ClientNum++ > DP_RTSP_CLIENT_ClientMaxNum - 1) {
 //		return NULL;
 //	}
 	cp.continueAfterClientCreation1();
+	cout << "stCliArgs...IDXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX: "<<env->_cliID<<endl;
 	env->taskScheduler().doEventLoop(); // does not return
 	return NULL;
 }
@@ -124,7 +130,8 @@ DP_S32 DP_RTSP_CLIENT_Client::DP_RTSP_CLIENT_GetStreamData(
 //	GetFrameData getFrameData(stDataRecv->u16ClientID);
 //	getFrameData.afterGettingFrame(clientData, frameSize, numTruncatedBytes, presentationTime, durationInMicroseconds);
 	DP_U16 cliID = stDataRecv->u16ClientID;
-	//free mem the ptr
+
+//free mem the ptr
 	if (stDataRecv->pu8Data) {
 		delete[] stDataRecv->pu8Data;
 		stDataRecv->pu8Data = NULL;

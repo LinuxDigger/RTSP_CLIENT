@@ -20,7 +20,7 @@ public:
 
 private:
 	// redefined virtual functions
-	virtual unsigned nextEnclosedFrameSize(unsigned char*& framePtr,
+	virtual unsigned nextEnclosedFrameSize(DP_U8*& framePtr,
 			unsigned dataSize);
 private:
 	QuickTimeGenericRTPSource& fOurSource;
@@ -36,14 +36,14 @@ private:
 
 QuickTimeGenericRTPSource*
 QuickTimeGenericRTPSource::createNew(UsageEnvironment& env, CommonPlay *cpObj,
-		Groupsock* RTPgs, unsigned char rtpPayloadFormat,
+		Groupsock* RTPgs, DP_U8 rtpPayloadFormat,
 		unsigned rtpTimestampFrequency, char const* mimeTypeString) {
 	return new QuickTimeGenericRTPSource(env, cpObj, RTPgs, rtpPayloadFormat,
 			rtpTimestampFrequency, mimeTypeString);
 }
 
 QuickTimeGenericRTPSource::QuickTimeGenericRTPSource(UsageEnvironment& env,
-		CommonPlay *cpObj, Groupsock* RTPgs, unsigned char rtpPayloadFormat,
+		CommonPlay *cpObj, Groupsock* RTPgs, DP_U8 rtpPayloadFormat,
 		unsigned rtpTimestampFrequency, char const* mimeTypeString) :
 		MultiFramedRTPSource(env, cpObj, RTPgs, rtpPayloadFormat,
 				rtpTimestampFrequency, new QTGenericBufferedPacketFactory), fMIMEtypeString(
@@ -61,7 +61,7 @@ QuickTimeGenericRTPSource::~QuickTimeGenericRTPSource() {
 
 Boolean QuickTimeGenericRTPSource::processSpecialHeader(BufferedPacket* packet,
 		unsigned& resultSpecialHeaderSize) {
-	unsigned char* headerStart = packet->data();
+	DP_U8* headerStart = packet->data();
 	unsigned packetSize = packet->dataSize();
 
 	// The "QuickTime Header" must be at least 4 bytes in size:
@@ -70,7 +70,7 @@ Boolean QuickTimeGenericRTPSource::processSpecialHeader(BufferedPacket* packet,
 	if (packetSize < expectedHeaderSize)
 		return False;
 
-	unsigned char VER = (headerStart[0] & 0xF0) >> 4;
+	DP_U8 VER = (headerStart[0] & 0xF0) >> 4;
 	if (VER > 1)
 		return False; // unknown header version
 	qtState.PCK = (headerStart[0] & 0x0C) >> 2;
@@ -118,7 +118,7 @@ Boolean QuickTimeGenericRTPSource::processSpecialHeader(BufferedPacket* packet,
 		expectedHeaderSize -= expectedHeaderSize % 4; // adds padding
 		if (packetSize < expectedHeaderSize)
 			return False;
-		unsigned char padding = expectedHeaderSize - nonPaddedSize;
+		DP_U8 padding = expectedHeaderSize - nonPaddedSize;
 
 #ifdef DEBUG
 		unsigned mediaType = (headerStart[0]<<24)|(headerStart[1]<<16)
@@ -199,7 +199,7 @@ Boolean QuickTimeGenericRTPSource::processSpecialHeader(BufferedPacket* packet,
 		expectedHeaderSize -= expectedHeaderSize % 4; // adds padding
 		if (packetSize < expectedHeaderSize)
 			return False;
-		unsigned char padding = expectedHeaderSize - nonPaddedSize;
+		DP_U8 padding = expectedHeaderSize - nonPaddedSize;
 
 		ssInfoLength -= 4;
 		while (ssInfoLength > 3) {
@@ -251,7 +251,7 @@ QTGenericBufferedPacket::~QTGenericBufferedPacket() {
 }
 
 unsigned QTGenericBufferedPacket::nextEnclosedFrameSize(
-		unsigned char*& framePtr, unsigned dataSize) {
+		DP_U8*& framePtr, unsigned dataSize) {
 	// We use the entire packet for a frame, unless "PCK" == 2
 	if (fOurSource.qtState.PCK != 2)
 		return dataSize;

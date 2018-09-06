@@ -32,7 +32,7 @@ typedef void* TaskToken;
 class CommonPlay {
 public:
 
-	CommonPlay();
+	CommonPlay(unsigned short cliID);
 	~CommonPlay();
 
 	// Forward function definitions:
@@ -173,7 +173,7 @@ public:
 	char* password;
 	char* proxyServerName;
 	unsigned short proxyServerPortNum;
-	unsigned char desiredAudioRTPPayloadFormat;
+	DP_U8 desiredAudioRTPPayloadFormat;
 	char* mimeSubtype;
 	unsigned short movieWidth; // default
 	Boolean movieWidthOptionSet;
@@ -216,6 +216,8 @@ public:
 	SIPClient* ourSIPClient;
 
 	unsigned statusCode;
+
+	static map<unsigned short, MediaSubsessionIterator*> mSetupIter;
 
 };
 

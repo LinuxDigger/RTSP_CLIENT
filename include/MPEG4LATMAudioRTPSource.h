@@ -14,7 +14,7 @@ class MPEG4LATMAudioRTPSource: public MultiFramedRTPSource {
 public:
 	static MPEG4LATMAudioRTPSource*
 	createNew(UsageEnvironment& env, CommonPlay *cpObj, Groupsock* RTPgs,
-			unsigned char rtpPayloadFormat, unsigned rtpTimestampFrequency);
+			DP_U8 rtpPayloadFormat, unsigned rtpTimestampFrequency);
 
 	// By default, the LATM data length field is included at the beginning of each
 	// returned frame.  To omit this field, call the following:
@@ -29,7 +29,7 @@ protected:
 
 private:
 	MPEG4LATMAudioRTPSource(UsageEnvironment& env, CommonPlay *cpObj,
-			Groupsock* RTPgs, unsigned char rtpPayloadFormat,
+			Groupsock* RTPgs, DP_U8 rtpPayloadFormat,
 			unsigned rtpTimestampFrequency);
 	// called only by createNew()
 
@@ -48,8 +48,8 @@ Boolean
 parseStreamMuxConfigStr(char const* configStr,
 		// result parameters:
 		Boolean& audioMuxVersion, Boolean& allStreamsSameTimeFraming,
-		unsigned char& numSubFrames, unsigned char& numProgram,
-		unsigned char& numLayer, unsigned char*& audioSpecificConfig,
+		DP_U8& numSubFrames, DP_U8& numProgram,
+		DP_U8& numLayer, DP_U8*& audioSpecificConfig,
 		unsigned& audioSpecificConfigSize);
 // Parses "configStr" as a sequence of hexadecimal digits, representing
 // a "StreamMuxConfig" (as defined in ISO.IEC 14496-3, table 1.21).
@@ -67,14 +67,14 @@ parseStreamMuxConfigStr(char const* configStr,
 // Also, any 'other data' or CRC info will be included at
 // the end of "audioSpecificConfig".
 
-unsigned char* parseStreamMuxConfigStr(char const* configStr,
+DP_U8* parseStreamMuxConfigStr(char const* configStr,
 // result parameter:
 		unsigned& audioSpecificConfigSize);
 // A variant of the above that returns just the "AudioSpecificConfig" data
 // (or NULL) if the parsing failed, without bothering with the other
 // result parameters.
 
-unsigned char* parseGeneralConfigStr(char const* configStr,
+DP_U8* parseGeneralConfigStr(char const* configStr,
 // result parameter:
 		unsigned& configSize);
 // A routine that parses an arbitrary config string, returning

@@ -11,7 +11,7 @@
 ////////// T140TextRTPSink implementation //////////
 
 T140TextRTPSink::T140TextRTPSink(UsageEnvironment& env, CommonPlay *cpObj,
-		Groupsock* RTPgs, unsigned char rtpPayloadFormat) :
+		Groupsock* RTPgs, DP_U8 rtpPayloadFormat) :
 		TextRTPSink(env, cpObj, RTPgs, rtpPayloadFormat,
 				1000/*mandatory RTP timestamp frequency for this payload format*/,
 				"T140"), fOurIdleFilter(NULL), fAreInIdlePeriod(True) {
@@ -28,7 +28,7 @@ T140TextRTPSink::~T140TextRTPSink() {
 
 T140TextRTPSink*
 T140TextRTPSink::createNew(UsageEnvironment& env, CommonPlay *cpObj,
-		Groupsock* RTPgs, unsigned char rtpPayloadFormat) {
+		Groupsock* RTPgs, DP_U8 rtpPayloadFormat) {
 	return new T140TextRTPSink(env, cpObj, RTPgs, rtpPayloadFormat);
 }
 
@@ -46,7 +46,7 @@ Boolean T140TextRTPSink::continuePlaying() {
 }
 
 void T140TextRTPSink::doSpecialFrameHandling(unsigned /*fragmentationOffset*/,
-		unsigned char* /*frameStart*/, unsigned numBytesInFrame,
+		DP_U8* /*frameStart*/, unsigned numBytesInFrame,
 		struct timeval framePresentationTime, unsigned /*numRemainingBytes*/) {
 	// Set the RTP 'M' (marker) bit if we have just ended an idle period - i.e., if we were in an idle period, but just got data:
 	if (fAreInIdlePeriod && numBytesInFrame > 0)
@@ -57,7 +57,7 @@ void T140TextRTPSink::doSpecialFrameHandling(unsigned /*fragmentationOffset*/,
 }
 
 Boolean T140TextRTPSink::frameCanAppearAfterPacketStart(
-		unsigned char const* /*frameStart*/,
+		DP_U8 const* /*frameStart*/,
 		unsigned /*numBytesInFrame*/) const {
 	return False; // We don't concatenate input data; instead, send it out immediately
 }
@@ -93,7 +93,7 @@ void T140IdleFilter::doGetNextFrame() {
 	fIdleTimerTask = envir().taskScheduler().scheduleDelayedTask(
 	IDLE_TIMEOUT_MICROSECONDS, handleIdleTimeout, this, fcpObj);
 	if (fInputSource != NULL && !fInputSource->isCurrentlyAwaitingData()) {
-		fInputSource->getNextFrame((unsigned char*) fBuffer, fBufferSize,
+		fInputSource->getNextFrame((DP_U8*) fBuffer, fBufferSize,
 				afterGettingFrame, this, onSourceClosure, this);
 	}
 }

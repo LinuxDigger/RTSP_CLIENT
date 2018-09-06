@@ -98,7 +98,7 @@ char const* TheoraVideoRTPSink::auxSDPLine() {
 }
 
 void TheoraVideoRTPSink::doSpecialFrameHandling(unsigned fragmentationOffset,
-		unsigned char* frameStart, unsigned numBytesInFrame,
+		DP_U8* frameStart, unsigned numBytesInFrame,
 		struct timeval framePresentationTime, unsigned numRemainingBytes) {
 	// Set the 4-byte "payload header", as defined in http://svn.xiph.org/trunk/theora/doc/draft-ietf-avt-rtp-theora-00.txt
 	u_int8_t header[6];
@@ -146,7 +146,7 @@ void TheoraVideoRTPSink::doSpecialFrameHandling(unsigned fragmentationOffset,
 }
 
 Boolean TheoraVideoRTPSink::frameCanAppearAfterPacketStart(
-		unsigned char const* /*frameStart*/,
+		DP_U8 const* /*frameStart*/,
 		unsigned /*numBytesInFrame*/) const {
 	// Only one frame per packet:
 	return False;

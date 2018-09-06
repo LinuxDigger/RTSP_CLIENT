@@ -13,7 +13,7 @@
 class ADUBufferedPacket: public BufferedPacket {
 private:
 	// redefined virtual functions
-	virtual unsigned nextEnclosedFrameSize(unsigned char*& framePtr,
+	virtual unsigned nextEnclosedFrameSize(DP_U8*& framePtr,
 			unsigned dataSize);
 };
 
@@ -27,14 +27,14 @@ private:
 
 MP3ADURTPSource*
 MP3ADURTPSource::createNew(UsageEnvironment& env, CommonPlay *cpObj,
-		Groupsock* RTPgs, unsigned char rtpPayloadFormat,
+		Groupsock* RTPgs, DP_U8 rtpPayloadFormat,
 		unsigned rtpTimestampFrequency) {
 	return new MP3ADURTPSource(env, cpObj, RTPgs, rtpPayloadFormat,
 			rtpTimestampFrequency);
 }
 
 MP3ADURTPSource::MP3ADURTPSource(UsageEnvironment& env, CommonPlay *cpObj,
-		Groupsock* RTPgs, unsigned char rtpPayloadFormat,
+		Groupsock* RTPgs, DP_U8 rtpPayloadFormat,
 		unsigned rtpTimestampFrequency) :
 		MultiFramedRTPSource(env, cpObj, RTPgs, rtpPayloadFormat,
 				rtpTimestampFrequency, new ADUBufferedPacketFactory) {
@@ -49,11 +49,11 @@ char const* MP3ADURTPSource::MIMEtype() const {
 
 ////////// ADUBufferedPacket and ADUBufferredPacketFactory implementation
 
-unsigned ADUBufferedPacket::nextEnclosedFrameSize(unsigned char*& framePtr,
+unsigned ADUBufferedPacket::nextEnclosedFrameSize(DP_U8*& framePtr,
 		unsigned dataSize) {
 	// Return the size of the next MP3 'ADU', on the assumption that
 	// the input data is ADU-encoded MP3 frames.
-	unsigned char* frameDataPtr = framePtr;
+	DP_U8* frameDataPtr = framePtr;
 	unsigned remainingFrameSize = ADUdescriptor::getRemainingFrameSize(
 			frameDataPtr);
 	unsigned descriptorSize = (unsigned) (frameDataPtr - framePtr);

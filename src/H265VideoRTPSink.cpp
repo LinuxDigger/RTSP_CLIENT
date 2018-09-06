@@ -16,7 +16,7 @@ using namespace std;
 ////////// H265VideoRTPSink implementation //////////
 
 H265VideoRTPSink::H265VideoRTPSink(UsageEnvironment& env, Groupsock* RTPgs,
-		unsigned char rtpPayloadFormat, u_int8_t const* vps, unsigned vpsSize,
+		DP_U8 rtpPayloadFormat, u_int8_t const* vps, unsigned vpsSize,
 		u_int8_t const* sps, unsigned spsSize, u_int8_t const* pps,
 		unsigned ppsSize) :
 		H264or5VideoRTPSink(265, env, fcpObj, RTPgs, rtpPayloadFormat, vps,
@@ -27,12 +27,12 @@ H265VideoRTPSink::~H265VideoRTPSink() {
 }
 
 H265VideoRTPSink* H265VideoRTPSink::createNew(UsageEnvironment& env,
-		Groupsock* RTPgs, unsigned char rtpPayloadFormat) {
+		Groupsock* RTPgs, DP_U8 rtpPayloadFormat) {
 	return new H265VideoRTPSink(env, RTPgs, rtpPayloadFormat);
 }
 
 H265VideoRTPSink* H265VideoRTPSink::createNew(UsageEnvironment& env,
-		Groupsock* RTPgs, unsigned char rtpPayloadFormat, u_int8_t const* vps,
+		Groupsock* RTPgs, DP_U8 rtpPayloadFormat, u_int8_t const* vps,
 		unsigned vpsSize, u_int8_t const* sps, unsigned spsSize,
 		u_int8_t const* pps, unsigned ppsSize) {
 	return new H265VideoRTPSink(env, RTPgs, rtpPayloadFormat, vps, vpsSize, sps,
@@ -41,7 +41,7 @@ H265VideoRTPSink* H265VideoRTPSink::createNew(UsageEnvironment& env,
 
 ////fmtp
 H265VideoRTPSink* H265VideoRTPSink::createNew(UsageEnvironment& env,
-		Groupsock* RTPgs, unsigned char rtpPayloadFormat,
+		Groupsock* RTPgs, DP_U8 rtpPayloadFormat,
 		char const* sPropVPSStr, char const* sPropSPSStr,
 		char const* sPropPPSStr) {
 	//none
@@ -171,7 +171,7 @@ char const* H265VideoRTPSink::auxSDPLine() {
 			levelId, interopConstraintsStr, sprop_vps, sprop_sps, sprop_pps);
 
 	unsigned len = strlen(sprop_sps);
-	unsigned char* sps64 = base64Decode(sprop_sps, len, false);
+	DP_U8* sps64 = base64Decode(sprop_sps, len, false);
 	cout << "sps64444444444444444444444444444444444444444444444444444 " << sps64
 			<< endl;
 

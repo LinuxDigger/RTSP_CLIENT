@@ -110,7 +110,7 @@ static unsigned const maxRTCPPacketSize = 1456;
 static unsigned const preferredRTCPPacketSize = 1000; // bytes
 
 RTCPInstance::RTCPInstance(UsageEnvironment& env, Groupsock* RTCPgs,
-		unsigned totSessionBW, unsigned char const* cname, RTPSink* sink,
+		unsigned totSessionBW, DP_U8 const* cname, RTPSink* sink,
 		RTPSource* source, Boolean isSSMSource, CommonPlay *cpObj) :
 		Medium(env), fcpObj(cpObj), fRTCPInterface(this, RTCPgs), fTotSessionBW(
 				totSessionBW), fSink(sink), fSource(source), fIsSSMSource(
@@ -138,7 +138,7 @@ RTCPInstance::RTCPInstance(UsageEnvironment& env, Groupsock* RTCPgs,
 	fPrevReportTime = fNextReportTime = timeNow;
 
 	fKnownMembers = new RTCPMemberDatabase(*this);
-	fInBuf = new unsigned char[maxRTCPPacketSize];
+	fInBuf = new DP_U8[maxRTCPPacketSize];
 	if (fKnownMembers == NULL || fInBuf == NULL)
 		return;
 	fNumBytesAlreadyRead = 0;
@@ -180,6 +180,7 @@ RTCPInstance::~RTCPInstance() {
 	fTypeOfEvent = EVENT_BYE; // not used, but...
 	sendBYE();
 
+	cout << "BYEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE"<<endl;
 	if (fSource != NULL && fSource->RTPgs() == fRTCPInterface.gs()) {
 		// We were receiving RTCP reports that were multiplexed with RTP, so tell the RTP source
 		// to stop giving them to us:
@@ -203,7 +204,7 @@ RTCPInstance::~RTCPInstance() {
 }
 
 void RTCPInstance::noteArrivingRR(struct sockaddr_in const& fromAddressAndPort,
-		int tcpSocketNum, unsigned char tcpStreamChannelId) {
+		int tcpSocketNum, DP_U8 tcpStreamChannelId) {
 	// If a 'RR handler' was set, call it now:
 
 	// Specific RR handler:
@@ -240,7 +241,7 @@ void RTCPInstance::noteArrivingRR(struct sockaddr_in const& fromAddressAndPort,
 }
 
 RTCPInstance* RTCPInstance::createNew(UsageEnvironment& env, Groupsock* RTCPgs,
-		unsigned totSessionBW, unsigned char const* cname, RTPSink* sink,
+		unsigned totSessionBW, DP_U8 const* cname, RTPSink* sink,
 		RTPSource* source, Boolean isSSMSource, CommonPlay *cpObj) {
 	return new RTCPInstance(env, RTCPgs, totSessionBW, cname, sink, source,
 			isSSMSource, cpObj);
@@ -369,7 +370,8 @@ void RTCPInstance::sendAppPacket(u_int8_t subtype, char const* name,
 	sendBuiltPacket();
 }
 
-void RTCPInstance::setStreamSocket(int sockNum, unsigned char streamChannelId) {
+void RTCPInstance::setStreamSocket(int sockNum, DP_U8 streamChannelId) {
+	//nooooooooooooooooooooooooooooooooooooooooo
 	cout << "RTCP set Stream socket `````````````````````````````````" << endl;
 	// Turn off background read handling:
 	fRTCPInterface.stopNetworkReading();
@@ -383,7 +385,7 @@ void RTCPInstance::setStreamSocket(int sockNum, unsigned char streamChannelId) {
 	fRTCPInterface.startNetworkReading(handler);
 }
 
-void RTCPInstance::addStreamSocket(int sockNum, unsigned char streamChannelId) {
+void RTCPInstance::addStreamSocket(int sockNum, DP_U8 streamChannelId) {
 	cout << "RTCP add Stream socket `````````````````````````````````" << endl;
 	// First, turn off background read handling for the default (UDP) socket:
 	envir().taskScheduler().turnOffBackgroundReadHandling(
@@ -413,8 +415,8 @@ static unsigned const IP_UDP_HDR_SIZE = 28;
 #define ADVANCE(n) pkt += (n); packetSize -= (n)
 
 void RTCPInstance::incomingReportHandler(RTCPInstance* instance, int /*mask*/) {
-	cout << " incoming report handler ***********************************"
-			<< endl;
+//	cout << " incoming report handler ***********************************"
+//			<< endl;
 	instance->incomingReportHandler1();
 }
 
@@ -432,7 +434,7 @@ void RTCPInstance::incomingReportHandler1() {
 		unsigned numBytesRead;
 		struct sockaddr_in fromAddress;
 		int tcpSocketNum;
-		unsigned char tcpStreamChannelId;
+		DP_U8 tcpStreamChannelId;
 		Boolean packetReadWasIncomplete;
 		Boolean readResult = fRTCPInterface.handleRead(
 				&fInBuf[fNumBytesAlreadyRead],
@@ -498,11 +500,12 @@ void RTCPInstance::incomingReportHandler1() {
 
 void RTCPInstance::processIncomingReport(unsigned packetSize,
 		struct sockaddr_in const& fromAddressAndPort, int tcpSocketNum,
-		unsigned char tcpStreamChannelId) {
+		DP_U8 tcpStreamChannelId) {
 	do {
 		Boolean callByeHandler = False;
-		unsigned char* pkt = fInBuf;
+		DP_U8* pkt = fInBuf;
 
+//#define DEBUG
 #ifdef DEBUG
 		fprintf(stderr, "[%p]saw incoming RTCP packet (from ", this);
 		if (tcpSocketNum < 0) {
@@ -535,7 +538,7 @@ void RTCPInstance::processIncomingReport(unsigned packetSize,
 #endif
 			break;
 		}
-
+#undef DEBUG
 		// Process each of the individual RTCP 'subpackets' in (what may be)
 		// a compound RTCP packet.
 		int typeOfPacket = PACKET_UNKNOWN_TYPE;
@@ -931,7 +934,7 @@ void RTCPInstance::sendBYE() {
 void RTCPInstance::sendBuiltPacket() {
 #ifdef DEBUG
 	fprintf(stderr, "sending RTCP packet\n");
-	unsigned char* p = fOutBuf->packet();
+	DP_U8* p = fOutBuf->packet();
 	for (unsigned i = 0; i < fOutBuf->curPacketSize(); ++i) {
 		if (i%4 == 0) fprintf(stderr," ");
 		fprintf(stderr, "%02x", p[i]);
@@ -1035,7 +1038,7 @@ void RTCPInstance::addRR() {
 	enqueueCommonReportSuffix();
 }
 
-void RTCPInstance::enqueueCommonReportPrefix(unsigned char packetType,
+void RTCPInstance::enqueueCommonReportPrefix(DP_U8 packetType,
 		u_int32_t SSRC, unsigned numExtraWords) {
 	unsigned numReportingSources;
 	if (fSource == NULL) {
@@ -1099,11 +1102,11 @@ void RTCPInstance::enqueueReportBlock(RTPReceptionStats* stats) {
 			- stats->lastResetExtSeqNumReceived();
 	int numLostSinceLastReset = numExpectedSinceLastReset
 			- stats->numPacketsReceivedSinceLastReset();
-	unsigned char lossFraction;
+	DP_U8 lossFraction;
 	if (numExpectedSinceLastReset == 0 || numLostSinceLastReset < 0) {
 		lossFraction = 0;
 	} else {
-		lossFraction = (unsigned char) ((numLostSinceLastReset << 8)
+		lossFraction = (DP_U8) ((numLostSinceLastReset << 8)
 				/ numExpectedSinceLastReset);
 	}
 
@@ -1166,7 +1169,7 @@ void RTCPInstance::addSDES() {
 
 	// Add the 'END' item (i.e., a zero byte), plus any more needed to pad:
 	unsigned numPaddingBytesNeeded = 4 - (fOutBuf->curPacketSize() % 4);
-	unsigned char const zero = '\0';
+	DP_U8 const zero = '\0';
 	while (numPaddingBytesNeeded-- > 0)
 		fOutBuf->enqueue(&zero, 1);
 }
@@ -1224,13 +1227,13 @@ void RTCPInstance::onExpire1() {
 
 ////////// SDESItem //////////
 
-SDESItem::SDESItem(unsigned char tag, unsigned char const* value) {
+SDESItem::SDESItem(DP_U8 tag, DP_U8 const* value) {
 	unsigned length = strlen((char const*) value);
 	if (length > 0xFF)
 		length = 0xFF; // maximum data length for a SDES item
 
 	fData[0] = tag;
-	fData[1] = (unsigned char) length;
+	fData[1] = (DP_U8) length;
 	memmove(&fData[2], value, length);
 }
 

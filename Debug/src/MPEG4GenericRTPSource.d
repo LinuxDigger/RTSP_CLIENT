@@ -1,4 +1,7 @@
 src/MPEG4GenericRTPSource.o: ../src/MPEG4GenericRTPSource.cpp \
+ /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/X86/include/Rtsp_server.h \
+ /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/X86/include/Rtsp_sys.h \
+ /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/X86/include/Rtsp_sys.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/MPEG4GenericRTPSource.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/MultiFramedRTPSource.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/RTPSource.h \
@@ -20,6 +23,12 @@ src/MPEG4GenericRTPSource.o: ../src/MPEG4GenericRTPSource.cpp \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/BitVector.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/MPEG4LATMAudioRTPSource.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/strDup.h
+
+/home/jhb/nfs/TerminalC++Workspace/RTSP_Client/X86/include/Rtsp_server.h:
+
+/home/jhb/nfs/TerminalC++Workspace/RTSP_Client/X86/include/Rtsp_sys.h:
+
+/home/jhb/nfs/TerminalC++Workspace/RTSP_Client/X86/include/Rtsp_sys.h:
 
 /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/MPEG4GenericRTPSource.h:
 

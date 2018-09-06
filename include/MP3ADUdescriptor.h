@@ -17,14 +17,14 @@ public:
   static unsigned computeSize(unsigned remainingFrameSize) {
     return remainingFrameSize >= 64 ? 2 : 1;
   }
-  static unsigned generateDescriptor(unsigned char*& toPtr, unsigned remainingFrameSize);
+  static unsigned generateDescriptor(DP_U8*& toPtr, unsigned remainingFrameSize);
    // returns descriptor size; increments "toPtr" afterwards
-  static void generateTwoByteDescriptor(unsigned char*& toPtr, unsigned remainingFrameSize);
+  static void generateTwoByteDescriptor(DP_U8*& toPtr, unsigned remainingFrameSize);
    // always generates a 2-byte descriptor, even if "remainingFrameSize" is
    // small enough for a 1-byte descriptor
 
   // Operations for reading a descriptor
-  static unsigned getRemainingFrameSize(unsigned char*& fromPtr);
+  static unsigned getRemainingFrameSize(DP_U8*& fromPtr);
    // increments "fromPtr" afterwards
 };
 

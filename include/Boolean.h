@@ -14,7 +14,7 @@ typedef bool Boolean;
 #define False false
 #define True true
 #else
-typedef unsigned char Boolean;
+typedef DP_U8 Boolean;
 #ifndef __MSHTML_LIBRARY_DEFINED__
 #ifndef False
 const Boolean False = 0;

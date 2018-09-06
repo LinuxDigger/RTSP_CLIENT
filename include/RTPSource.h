@@ -24,7 +24,7 @@ public:
 		return fCurPacketMarkerBit;
 	}
 
-	unsigned char rtpPayloadFormat() const {
+	DP_U8 rtpPayloadFormat() const {
 		return fRTPPayloadFormat;
 	}
 
@@ -69,7 +69,7 @@ public:
 		return fEnableRTCPReports;
 	}
 
-	void setStreamSocket(int sockNum, unsigned char streamChannelId) {
+	void setStreamSocket(int sockNum, DP_U8 streamChannelId) {
 		// hack to allow sending RTP over TCP (RFC 2236, section 10.12)
 		fRTPInterface.setStreamSocket(sockNum, streamChannelId);
 	}
@@ -93,7 +93,7 @@ private:
 
 protected:
 	RTPSource(UsageEnvironment& env, Groupsock* RTPgs,
-			unsigned char rtpPayloadFormat, u_int32_t rtpTimestampFrequency, CommonPlay *cpObj);
+			DP_U8 rtpPayloadFormat, u_int32_t rtpTimestampFrequency, CommonPlay *cpObj);
 	// abstract base class
 	virtual ~RTPSource();
 
@@ -112,7 +112,7 @@ private:
 	virtual void getAttributes() const;
 
 private:
-	unsigned char fRTPPayloadFormat;
+	DP_U8 fRTPPayloadFormat;
 	unsigned fTimestampFrequency;
 	u_int32_t fSSRC;
 	Boolean fEnableRTCPReports; // whether RTCP "RR" reports should be sent for this source (default: True)

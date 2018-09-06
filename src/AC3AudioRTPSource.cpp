@@ -9,14 +9,14 @@
 
 AC3AudioRTPSource*
 AC3AudioRTPSource::createNew(UsageEnvironment& env, CommonPlay *cpObj,
-		Groupsock* RTPgs, unsigned char rtpPayloadFormat,
+		Groupsock* RTPgs, DP_U8 rtpPayloadFormat,
 		unsigned rtpTimestampFrequency) {
 	return new AC3AudioRTPSource(env, cpObj, RTPgs, rtpPayloadFormat,
 			rtpTimestampFrequency);
 }
 
 AC3AudioRTPSource::AC3AudioRTPSource(UsageEnvironment& env, CommonPlay *cpObj,
-		Groupsock* rtpGS, unsigned char rtpPayloadFormat,
+		Groupsock* rtpGS, DP_U8 rtpPayloadFormat,
 		unsigned rtpTimestampFrequency) :
 		MultiFramedRTPSource(env, cpObj, rtpGS, rtpPayloadFormat,
 				rtpTimestampFrequency) {
@@ -27,7 +27,7 @@ AC3AudioRTPSource::~AC3AudioRTPSource() {
 
 Boolean AC3AudioRTPSource::processSpecialHeader(BufferedPacket* packet,
 		unsigned& resultSpecialHeaderSize) {
-	unsigned char* headerStart = packet->data();
+	DP_U8* headerStart = packet->data();
 	unsigned packetSize = packet->dataSize();
 
 	// There's a 2-byte payload header at the beginning:
@@ -35,7 +35,7 @@ Boolean AC3AudioRTPSource::processSpecialHeader(BufferedPacket* packet,
 		return False;
 	resultSpecialHeaderSize = 2;
 
-	unsigned char FT = headerStart[0] & 0x03;
+	DP_U8 FT = headerStart[0] & 0x03;
 	fCurrentPacketBeginsFrame = FT != 3;
 
 	// The RTP "M" (marker) bit indicates the last fragment of a frame.

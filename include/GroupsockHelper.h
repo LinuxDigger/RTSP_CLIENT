@@ -15,15 +15,15 @@ int setupDatagramSocket(UsageEnvironment& env, Port port);
 int setupStreamSocket(UsageEnvironment& env, Port port,
 		Boolean makeNonBlocking = True);
 
-int readSocket(UsageEnvironment& env, int socket, unsigned char* buffer,
+int readSocket(UsageEnvironment& env, int socket, DP_U8* buffer,
 		unsigned bufferSize, struct sockaddr_in& fromAddress);
 
 Boolean writeSocket(UsageEnvironment& env, int socket, struct in_addr address,
 		portNumBits portNum/*network byte order*/, u_int8_t ttlArg,
-		unsigned char* buffer, unsigned bufferSize);
+		DP_U8* buffer, unsigned bufferSize);
 
 Boolean writeSocket(UsageEnvironment& env, int socket, struct in_addr address,
-		portNumBits portNum/*network byte order*/, unsigned char* buffer,
+		portNumBits portNum/*network byte order*/, DP_U8* buffer,
 		unsigned bufferSize);
 // An optimized version of "writeSocket" that omits the "setsockopt()" call to set the TTL.
 

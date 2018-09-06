@@ -75,7 +75,7 @@ private:
 	unsigned addWord64(u_int64_t word);
 	unsigned addWord(unsigned word);
 	unsigned addHalfWord(unsigned short halfWord);
-	unsigned addByte(unsigned char byte) {
+	unsigned addByte(DP_U8 byte) {
 		putc(byte, fOutFid);
 		return 1;
 	}

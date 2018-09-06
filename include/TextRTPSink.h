@@ -13,7 +13,7 @@
 class TextRTPSink: public MultiFramedRTPSink {
 protected:
 	TextRTPSink(UsageEnvironment& env, CommonPlay *cpObj, Groupsock* rtpgs,
-			unsigned char rtpPayloadType, unsigned rtpTimestampFrequency,
+			DP_U8 rtpPayloadType, unsigned rtpTimestampFrequency,
 			char const* rtpPayloadFormatName);
 	// (we're an abstract base class)
 	virtual ~TextRTPSink();

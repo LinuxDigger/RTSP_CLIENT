@@ -13,7 +13,7 @@
 class SimpleRTPSource: public MultiFramedRTPSource {
 public:
 	static SimpleRTPSource* createNew(UsageEnvironment& env, CommonPlay *cpObj,Groupsock* RTPgs,
-			unsigned char rtpPayloadFormat, unsigned rtpTimestampFrequency,
+			DP_U8 rtpPayloadFormat, unsigned rtpTimestampFrequency,
 			char const* mimeTypeString, unsigned offset = 0,
 			Boolean doNormalMBitRule = True);
 	// "doNormalMBitRule" means: If the medium is not audio, use the RTP "M"
@@ -25,7 +25,7 @@ protected:
 
 protected:
 	SimpleRTPSource(UsageEnvironment& env, CommonPlay *cpObj,Groupsock* RTPgs,
-			unsigned char rtpPayloadFormat, unsigned rtpTimestampFrequency,
+			DP_U8 rtpPayloadFormat, unsigned rtpTimestampFrequency,
 			char const* mimeTypeString, unsigned offset,
 			Boolean doNormalMBitRule);
 	// called only by createNew()

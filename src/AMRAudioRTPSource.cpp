@@ -20,23 +20,23 @@ class RawAMRRTPSource: public MultiFramedRTPSource {
 public:
 	static RawAMRRTPSource*
 	createNew(UsageEnvironment& env, CommonPlay *cpObj, Groupsock* RTPgs,
-			unsigned char rtpPayloadFormat, Boolean isWideband,
+			DP_U8 rtpPayloadFormat, Boolean isWideband,
 			Boolean isOctetAligned, Boolean isInterleaved,
 			Boolean CRCsArePresent);
 
 	Boolean isWideband() const {
 		return fIsWideband;
 	}
-	unsigned char ILL() const {
+	DP_U8 ILL() const {
 		return fILL;
 	}
-	unsigned char ILP() const {
+	DP_U8 ILP() const {
 		return fILP;
 	}
 	unsigned TOCSize() const {
 		return fTOCSize;
 	} // total # of frames in the last pkt
-	unsigned char* TOC() const {
+	DP_U8* TOC() const {
 		return fTOC;
 	} // FT+Q value for each TOC entry
 	unsigned& frameIndex() {
@@ -48,7 +48,7 @@ public:
 
 private:
 	RawAMRRTPSource(UsageEnvironment& env, CommonPlay *cpObj, Groupsock* RTPgs,
-			unsigned char rtpPayloadFormat, Boolean isWideband,
+			DP_U8 rtpPayloadFormat, Boolean isWideband,
 			Boolean isOctetAligned, Boolean isInterleaved,
 			Boolean CRCsArePresent);
 	// called only by createNew()
@@ -65,9 +65,9 @@ private:
 
 private:
 	Boolean fIsWideband, fIsOctetAligned, fIsInterleaved, fCRCsArePresent;
-	unsigned char fILL, fILP;
+	DP_U8 fILL, fILP;
 	unsigned fTOCSize;
-	unsigned char* fTOC;
+	DP_U8* fTOC;
 	unsigned fFrameIndex;
 	Boolean fIsSynchronized;
 };
@@ -112,7 +112,7 @@ private:
 AMRAudioSource*
 AMRAudioRTPSource::createNew(UsageEnvironment& env, CommonPlay *cpObj,
 		Groupsock* RTPgs, RTPSource*& resultRTPSource,
-		unsigned char rtpPayloadFormat, Boolean isWideband,
+		DP_U8 rtpPayloadFormat, Boolean isWideband,
 		unsigned numChannels, Boolean isOctetAligned, unsigned interleaving,
 		Boolean robustSortingOrder, Boolean CRCsArePresent) {
 	// Perform sanity checks on the input parameters:
@@ -179,7 +179,7 @@ public:
 
 private:
 	// redefined virtual functions
-	virtual unsigned nextEnclosedFrameSize(unsigned char*& framePtr,
+	virtual unsigned nextEnclosedFrameSize(DP_U8*& framePtr,
 			unsigned dataSize);
 private:
 	RawAMRRTPSource& fOurSource;
@@ -195,14 +195,14 @@ private:
 
 RawAMRRTPSource*
 RawAMRRTPSource::createNew(UsageEnvironment& env, CommonPlay *cpObj,
-		Groupsock* RTPgs, unsigned char rtpPayloadFormat, Boolean isWideband,
+		Groupsock* RTPgs, DP_U8 rtpPayloadFormat, Boolean isWideband,
 		Boolean isOctetAligned, Boolean isInterleaved, Boolean CRCsArePresent) {
 	return new RawAMRRTPSource(env, cpObj, RTPgs, rtpPayloadFormat, isWideband,
 			isOctetAligned, isInterleaved, CRCsArePresent);
 }
 
 RawAMRRTPSource::RawAMRRTPSource(UsageEnvironment& env, CommonPlay *cpObj,
-		Groupsock* RTPgs, unsigned char rtpPayloadFormat, Boolean isWideband,
+		Groupsock* RTPgs, DP_U8 rtpPayloadFormat, Boolean isWideband,
 		Boolean isOctetAligned, Boolean isInterleaved, Boolean CRCsArePresent) :
 		MultiFramedRTPSource(env, cpObj, RTPgs, rtpPayloadFormat,
 				isWideband ? 16000 : 8000, new AMRBufferedPacketFactory), fIsWideband(
@@ -229,7 +229,7 @@ Boolean RawAMRRTPSource::processSpecialHeader(BufferedPacket* packet,
 	if (!fIsOctetAligned)
 		unpackBandwidthEfficientData(packet, fIsWideband);
 
-	unsigned char* headerStart = packet->data();
+	DP_U8* headerStart = packet->data();
 	unsigned packetSize = packet->dataSize();
 
 	// There's at least a 1-byte header, containing the CMR:
@@ -243,7 +243,7 @@ Boolean RawAMRRTPSource::processSpecialHeader(BufferedPacket* packet,
 			return False;
 
 		// Get the interleaving parameters, and check them for validity:
-		unsigned char const secondByte = headerStart[1];
+		DP_U8 const secondByte = headerStart[1];
 		fILL = (secondByte & 0xF0) >> 4;
 		fILP = secondByte & 0x0F;
 		if (fILP > fILL)
@@ -262,11 +262,11 @@ Boolean RawAMRRTPSource::processSpecialHeader(BufferedPacket* packet,
 	do {
 		if (resultSpecialHeaderSize >= packetSize)
 			return False;
-		unsigned char const tocByte = headerStart[resultSpecialHeaderSize++];
+		DP_U8 const tocByte = headerStart[resultSpecialHeaderSize++];
 		F = (tocByte & 0x80) != 0;
-		unsigned char const FT = (tocByte & 0x78) >> 3;
+		DP_U8 const FT = (tocByte & 0x78) >> 3;
 #ifdef DEBUG
-		unsigned char Q = (tocByte&0x04)>>2;
+		DP_U8 Q = (tocByte&0x04)>>2;
 		fprintf(stderr, "\tTOC entry: F %d, FT %d, Q %d\n", F, FT, Q);
 #endif
 		++numFramesPresent;
@@ -280,11 +280,11 @@ Boolean RawAMRRTPSource::processSpecialHeader(BufferedPacket* packet,
 	// Now that we know the size of the TOC, fill in our copy:
 	if (numFramesPresent > fTOCSize) {
 		delete[] fTOC;
-		fTOC = new unsigned char[numFramesPresent];
+		fTOC = new DP_U8[numFramesPresent];
 	}
 	fTOCSize = numFramesPresent;
 	for (unsigned i = 0; i < fTOCSize; ++i) {
-		unsigned char const tocByte = headerStart[tocStartIndex + i];
+		DP_U8 const tocByte = headerStart[tocStartIndex + i];
 		fTOC[i] = tocByte & 0x7C; // clear everything except the F and Q fields
 	}
 
@@ -332,7 +332,7 @@ static unsigned short const frameBytesFromFTWideband[16] = { 17, 23, 32, 36, 40,
 		46, 50, 58, 60, 5, FT_INVALID, FT_INVALID,
 		FT_INVALID, FT_INVALID, 0, 0 };
 
-unsigned AMRBufferedPacket::nextEnclosedFrameSize(unsigned char*& framePtr,
+unsigned AMRBufferedPacket::nextEnclosedFrameSize(DP_U8*& framePtr,
 		unsigned dataSize) {
 	if (dataSize == 0)
 		return 0; // sanity check
@@ -343,8 +343,8 @@ unsigned AMRBufferedPacket::nextEnclosedFrameSize(unsigned char*& framePtr,
 	if (tocIndex >= fOurSource.TOCSize())
 		return 0; // sanity check
 
-	unsigned char const tocByte = fOurSource.TOC()[tocIndex];
-	unsigned char const FT = (tocByte & 0x78) >> 3;
+	DP_U8 const tocByte = fOurSource.TOC()[tocIndex];
+	DP_U8 const FT = (tocByte & 0x78) >> 3;
 	// ASSERT: FT < 16
 	unsigned short frameSize =
 			fOurSource.isWideband() ?
@@ -381,12 +381,12 @@ public:
 
 	void deliverIncomingFrame(unsigned frameSize, RawAMRRTPSource* source,
 			struct timeval presentationTime);
-	Boolean retrieveFrame(unsigned char* to, unsigned maxSize,
+	Boolean retrieveFrame(DP_U8* to, unsigned maxSize,
 			unsigned& resultFrameSize, unsigned& resultNumTruncatedBytes,
 			u_int8_t& resultFrameHeader, struct timeval& resultPresentationTime,
 			Boolean& resultIsSynchronized);
 
-	unsigned char* inputBuffer() {
+	DP_U8* inputBuffer() {
 		return fInputBuffer;
 	}
 	unsigned inputBufferSize() const {
@@ -394,7 +394,7 @@ public:
 	}
 
 private:
-	unsigned char* createNewBuffer();
+	DP_U8* createNewBuffer();
 
 	class FrameDescriptor {
 	public:
@@ -402,7 +402,7 @@ private:
 		virtual ~FrameDescriptor();
 
 		unsigned frameSize;
-		unsigned char* frameData;
+		DP_U8* frameData;
 		u_int8_t frameHeader;
 		struct timeval presentationTime;
 		Boolean fIsSynchronized;
@@ -410,16 +410,16 @@ private:
 
 	unsigned fNumChannels, fMaxInterleaveGroupSize;
 	FrameDescriptor* fFrames[2];
-	unsigned char fIncomingBankId; // toggles between 0 and 1
-	unsigned char fIncomingBinMax; // in the incoming bank
-	unsigned char fOutgoingBinMax; // in the outgoing bank
-	unsigned char fNextOutgoingBin;
+	DP_U8 fIncomingBankId; // toggles between 0 and 1
+	DP_U8 fIncomingBinMax; // in the incoming bank
+	DP_U8 fOutgoingBinMax; // in the outgoing bank
+	DP_U8 fNextOutgoingBin;
 	Boolean fHaveSeenPackets;
 	u_int16_t fLastPacketSeqNumForGroup;
-	unsigned char* fInputBuffer;
+	DP_U8* fInputBuffer;
 	struct timeval fLastRetrievedPresentationTime;
 	unsigned fNumSuccessiveSyncedFrames;
-	unsigned char fILL;
+	DP_U8 fILL;
 };
 
 ////////// AMRDeinterleaver implementation /////////
@@ -522,7 +522,7 @@ AMRDeinterleavingBuffer::~AMRDeinterleavingBuffer() {
 void AMRDeinterleavingBuffer::deliverIncomingFrame(unsigned frameSize,
 		RawAMRRTPSource* source, struct timeval presentationTime) {
 	fILL = source->ILL();
-	unsigned char const ILP = source->ILP();
+	DP_U8 const ILP = source->ILP();
 	unsigned frameIndex = source->frameIndex();
 	unsigned short packetSeqNum = source->curPacketRTPSeqNum();
 
@@ -565,7 +565,7 @@ void AMRDeinterleavingBuffer::deliverIncomingFrame(unsigned frameSize,
 
 		// Switch the incoming and outgoing banks:
 		fIncomingBankId ^= 1;
-		unsigned char tmp = fIncomingBinMax;
+		DP_U8 tmp = fIncomingBinMax;
 		fIncomingBinMax = fOutgoingBinMax;
 		fOutgoingBinMax = tmp;
 		fNextOutgoingBin = 0;
@@ -579,7 +579,7 @@ void AMRDeinterleavingBuffer::deliverIncomingFrame(unsigned frameSize,
 					fprintf(stderr, "AMRDeinterleavingBuffer::deliverIncomingFrame(): frameIndex %d (%d,%d) put in bank %d, bin %d (%d): size %d, header 0x%02x, presentationTime %lu.%06ld\n", frameIndex, frameBlockIndex, frameWithinFrameBlock, fIncomingBankId, binNumber, fMaxInterleaveGroupSize, frameSize, frameHeader, presentationTime.tv_sec, presentationTime.tv_usec);
 #endif
 	FrameDescriptor& inBin = fFrames[fIncomingBankId][binNumber];
-	unsigned char* curBuffer = inBin.frameData;
+	DP_U8* curBuffer = inBin.frameData;
 	inBin.frameData = fInputBuffer;
 	inBin.frameSize = frameSize;
 	inBin.frameHeader = frameHeader;
@@ -596,7 +596,7 @@ void AMRDeinterleavingBuffer::deliverIncomingFrame(unsigned frameSize,
 	}
 }
 
-Boolean AMRDeinterleavingBuffer::retrieveFrame(unsigned char* to,
+Boolean AMRDeinterleavingBuffer::retrieveFrame(DP_U8* to,
 		unsigned maxSize, unsigned& resultFrameSize,
 		unsigned& resultNumTruncatedBytes, u_int8_t& resultFrameHeader,
 		struct timeval& resultPresentationTime, Boolean& resultIsSynchronized) {
@@ -605,8 +605,8 @@ Boolean AMRDeinterleavingBuffer::retrieveFrame(unsigned char* to,
 		return False; // none left
 
 	FrameDescriptor& outBin = fFrames[fIncomingBankId ^ 1][fNextOutgoingBin];
-	unsigned char* fromPtr = outBin.frameData;
-	unsigned char fromSize = outBin.frameSize;
+	DP_U8* fromPtr = outBin.frameData;
+	DP_U8 fromSize = outBin.frameSize;
 	outBin.frameSize = 0; // for the next time this bin is used
 	resultIsSynchronized = False; // by default; can be changed by:
 	if (outBin.fIsSynchronized) {
@@ -655,8 +655,8 @@ Boolean AMRDeinterleavingBuffer::retrieveFrame(unsigned char* to,
 	return True;
 }
 
-unsigned char* AMRDeinterleavingBuffer::createNewBuffer() {
-	return new unsigned char[inputBufferSize()];
+DP_U8* AMRDeinterleavingBuffer::createNewBuffer() {
+	return new DP_U8[inputBufferSize()];
 }
 
 AMRDeinterleavingBuffer::FrameDescriptor::FrameDescriptor() :
@@ -686,7 +686,7 @@ static void unpackBandwidthEfficientData(BufferedPacket* packet,
 	BitVector fromBV(packet->data(), 0, 8 * packet->dataSize());
 
 	unsigned const toBufferSize = 2 * packet->dataSize(); // conservatively large
-	unsigned char* toBuffer = new unsigned char[toBufferSize];
+	DP_U8* toBuffer = new DP_U8[toBufferSize];
 	unsigned toCount = 0;
 
 // Begin with the payload header:
@@ -705,8 +705,8 @@ static void unpackBandwidthEfficientData(BufferedPacket* packet,
 // Then, using the TOC data, unpack each frame payload:
 	unsigned const tocSize = toCount - 1;
 	for (unsigned i = 1; i <= tocSize; ++i) {
-		unsigned char tocByte = toBuffer[i];
-		unsigned char const FT = (tocByte & 0x78) >> 3;
+		DP_U8 tocByte = toBuffer[i];
+		DP_U8 const FT = (tocByte & 0x78) >> 3;
 		unsigned short frameSizeBits =
 				isWideband ? frameBitsFromFTWideband[FT] : frameBitsFromFT[FT];
 		unsigned short frameSizeBytes = (frameSizeBits + 7) / 8;

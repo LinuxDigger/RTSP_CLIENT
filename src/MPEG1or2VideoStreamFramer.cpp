@@ -53,11 +53,11 @@ private:
 	// can be used to compute timestamp for a video_sequence_header
 	unsigned short fCurPicTemporalReference;
 	// used to compute slice timestamp
-	unsigned char fCurrentSliceNumber; // set when parsing a slice
+	DP_U8 fCurrentSliceNumber; // set when parsing a slice
 
 	// A saved copy of the most recently seen 'video_sequence_header',
 	// in case we need to insert it into the stream periodically:
-	unsigned char fSavedVSHBuffer[VSH_MAX_SIZE];
+	DP_U8 fSavedVSHBuffer[VSH_MAX_SIZE];
 	unsigned fSavedVSHSize;
 	double fSavedVSHTimestamp;
 	double fVSHPeriod;
@@ -247,9 +247,9 @@ unsigned MPEG1or2VideoStreamParser::parseVideoSequenceHeader(
 #ifdef DEBUG
 	unsigned short horizontal_size_value = (paramWord1&0xFFF00000)>>(32-12);
 	unsigned short vertical_size_value = (paramWord1&0x000FFF00)>>8;
-	unsigned char aspect_ratio_information = (paramWord1&0x000000F0)>>4;
+	DP_U8 aspect_ratio_information = (paramWord1&0x000000F0)>>4;
 #endif
-	unsigned char frame_rate_code = (paramWord1 & 0x0000000F);
+	DP_U8 frame_rate_code = (paramWord1 & 0x0000000F);
 	usingSource()->fFrameRate = frameRateFromCode[frame_rate_code];
 #ifdef DEBUG
 	unsigned bit_rate_value = (next4Bytes&0xFFFFC000)>>(32-18);
@@ -346,7 +346,7 @@ inline Boolean isSliceStartCode(unsigned fourBytes) {
 	if ((fourBytes & 0xFFFFFF00) != 0x00000100)
 		return False;
 
-	unsigned char lastByte = fourBytes & 0xFF;
+	DP_U8 lastByte = fourBytes & 0xFF;
 	return lastByte <= 0xAF && lastByte >= 1;
 }
 
@@ -358,7 +358,7 @@ unsigned MPEG1or2VideoStreamParser::parsePictureHeader() {
 	// Next, extract the temporal reference from the next 4 bytes:
 	unsigned next4Bytes = get4Bytes();
 	unsigned short temporal_reference = (next4Bytes & 0xFFC00000) >> (32 - 10);
-	unsigned char picture_coding_type = (next4Bytes & 0x00380000) >> 19;
+	DP_U8 picture_coding_type = (next4Bytes & 0x00380000) >> 19;
 #ifdef DEBUG
 	unsigned short vbv_delay = (next4Bytes&0x0007FFF8)>>3;
 	fprintf(stderr, "temporal_reference: %d, picture_coding_type: %d, vbv_delay: %d\n", temporal_reference, picture_coding_type, vbv_delay);

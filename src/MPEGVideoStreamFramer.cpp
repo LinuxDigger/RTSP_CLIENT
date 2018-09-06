@@ -140,7 +140,7 @@ void MPEGVideoStreamFramer::doStopGettingFrames() {
 }
 
 void MPEGVideoStreamFramer::continueReadProcessing(void* clientData,
-		unsigned char* /*ptr*/, unsigned /*size*/,
+		DP_U8* /*ptr*/, unsigned /*size*/,
 		struct timeval /*presentationTime*/) {
 	MPEGVideoStreamFramer* framer = (MPEGVideoStreamFramer*) clientData;
 	framer->continueReadProcessing();

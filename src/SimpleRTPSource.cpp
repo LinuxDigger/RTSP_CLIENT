@@ -11,7 +11,7 @@
 
 SimpleRTPSource*
 SimpleRTPSource::createNew(UsageEnvironment& env, CommonPlay *cpObj,
-		Groupsock* RTPgs, unsigned char rtpPayloadFormat,
+		Groupsock* RTPgs, DP_U8 rtpPayloadFormat,
 		unsigned rtpTimestampFrequency, char const* mimeTypeString,
 		unsigned offset, Boolean doNormalMBitRule) {
 	return new SimpleRTPSource(env, cpObj, RTPgs, rtpPayloadFormat,
@@ -19,7 +19,7 @@ SimpleRTPSource::createNew(UsageEnvironment& env, CommonPlay *cpObj,
 }
 
 SimpleRTPSource::SimpleRTPSource(UsageEnvironment& env, CommonPlay *cpObj,
-		Groupsock* RTPgs, unsigned char rtpPayloadFormat,
+		Groupsock* RTPgs, DP_U8 rtpPayloadFormat,
 		unsigned rtpTimestampFrequency, char const* mimeTypeString,
 		unsigned offset, Boolean doNormalMBitRule) :
 		MultiFramedRTPSource(env, cpObj, RTPgs, rtpPayloadFormat,

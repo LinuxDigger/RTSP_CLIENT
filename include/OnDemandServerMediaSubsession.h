@@ -27,7 +27,7 @@ protected:
 	virtual void getStreamParameters(unsigned clientSessionId,
 			netAddressBits clientAddress, Port const& clientRTPPort,
 			Port const& clientRTCPPort, int tcpSocketNum,
-			unsigned char rtpChannelId, unsigned char rtcpChannelId,
+			DP_U8 rtpChannelId, DP_U8 rtcpChannelId,
 			netAddressBits& destinationAddress, u_int8_t& destinationTTL,
 			Boolean& isMulticast, Port& serverRTPPort, Port& serverRTCPPort,
 			void*& streamToken);
@@ -77,14 +77,14 @@ protected:
 			unsigned& estBitrate) = 0;
 	// "estBitrate" is the stream's estimated bitrate, in kbps
 	virtual RTPSink* createNewRTPSink(Groupsock* rtpGroupsock,
-			unsigned char rtpPayloadTypeIfDynamic,
+			DP_U8 rtpPayloadTypeIfDynamic,
 			FramedSource* inputSource) = 0;
 
 protected:
 	// new virtual functions, may be redefined by a subclass:
 	virtual Groupsock* createGroupsock(struct in_addr const& addr, Port port);
 	virtual RTCPInstance* createRTCP(Groupsock* RTCPgs, unsigned totSessionBW, /* in kbps */
-	unsigned char const* cname, RTPSink* sink);
+	DP_U8 const* cname, RTPSink* sink);
 
 public:
 	void multiplexRTCPWithRTP() {
@@ -139,8 +139,8 @@ public:
 			isTCP(False), addr(destAddr), rtpPort(rtpDestPort), rtcpPort(
 					rtcpDestPort) {
 	}
-	Destinations(int tcpSockNum, unsigned char rtpChanId,
-			unsigned char rtcpChanId) :
+	Destinations(int tcpSockNum, DP_U8 rtpChanId,
+			DP_U8 rtcpChanId) :
 			isTCP(True), rtpPort(0) /*dummy*/, rtcpPort(0) /*dummy*/, tcpSocketNum(
 					tcpSockNum), rtpChannelId(rtpChanId), rtcpChannelId(
 					rtcpChanId) {
@@ -152,7 +152,7 @@ public:
 	Port rtpPort;
 	Port rtcpPort;
 	int tcpSocketNum;
-	unsigned char rtpChannelId, rtcpChannelId;
+	DP_U8 rtpChannelId, rtcpChannelId;
 };
 
 class StreamState {

@@ -15,7 +15,7 @@ class AMRAudioRTPSource {
 public:
 	static AMRAudioSource* createNew(UsageEnvironment& env, CommonPlay *cpObj,
 			Groupsock* RTPgs, RTPSource*& resultRTPSource,
-			unsigned char rtpPayloadFormat, Boolean isWideband = False,
+			DP_U8 rtpPayloadFormat, Boolean isWideband = False,
 			unsigned numChannels = 1, Boolean isOctetAligned = True,
 			unsigned interleaving = 0,
 			// relevant only if "isOctetAligned"

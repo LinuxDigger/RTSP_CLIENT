@@ -16,7 +16,7 @@ public:
 
 protected:
 	// we're a virtual base class
-	typedef void (clientContinueFunc)(void* clientData, unsigned char* ptr,
+	typedef void (clientContinueFunc)(void* clientData, DP_U8* ptr,
 			unsigned size, struct timeval presentationTime);
 	StreamParser(FramedSource* inputSource,
 			FramedSource::onCloseFunc* onInputCloseFunc,
@@ -38,14 +38,14 @@ protected:
 	u_int32_t test4Bytes() { // as above, but doesn't advance ptr
 		ensureValidBytes(4);
 
-		unsigned char const* ptr = nextToParse();
+		DP_U8 const* ptr = nextToParse();
 		return (ptr[0] << 24) | (ptr[1] << 16) | (ptr[2] << 8) | ptr[3];
 	}
 
 	u_int16_t get2Bytes() {
 		ensureValidBytes(2);
 
-		unsigned char const* ptr = nextToParse();
+		DP_U8 const* ptr = nextToParse();
 		u_int16_t result = (ptr[0] << 8) | ptr[1];
 
 		fCurParserIndex += 2;
@@ -97,13 +97,13 @@ protected:
 	unsigned bankSize() const;
 
 private:
-	unsigned char* curBank() {
+	DP_U8* curBank() {
 		return fCurBank;
 	}
-	unsigned char* nextToParse() {
+	DP_U8* nextToParse() {
 		return &curBank()[fCurParserIndex];
 	}
-	unsigned char* lastParsed() {
+	DP_U8* lastParsed() {
 		return &curBank()[fCurParserIndex - 1];
 	}
 
@@ -134,17 +134,17 @@ private:
 	void* fClientContinueClientData;
 
 	// Use a pair of 'banks', and swap between them as they fill up:
-	unsigned char* fBank[2];
-	unsigned char fCurBankNum;
-	unsigned char* fCurBank;
+	DP_U8* fBank[2];
+	DP_U8 fCurBankNum;
+	DP_U8* fCurBank;
 
 	// The most recent 'saved' parse position:
 	unsigned fSavedParserIndex; // <= fCurParserIndex
-	unsigned char fSavedRemainingUnparsedBits;
+	DP_U8 fSavedRemainingUnparsedBits;
 
 	// The current position of the parser within the current bank:
 	unsigned fCurParserIndex; // <= fTotNumValidBytes
-	unsigned char fRemainingUnparsedBits; // in previous byte: [0,7]
+	DP_U8 fRemainingUnparsedBits; // in previous byte: [0,7]
 
 	// The total number of valid bytes stored in the current bank:
 	unsigned fTotNumValidBytes; // <= BANK_SIZE

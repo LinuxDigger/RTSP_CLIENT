@@ -17,24 +17,24 @@ public:
 	MD5Context();
 	~MD5Context();
 
-	void addData(unsigned char const* inputData, unsigned inputDataSize);
+	void addData(DP_U8 const* inputData, unsigned inputDataSize);
 	void end(
 			char* outputDigest /*must point to an array of size DIGEST_SIZE_AS_STRING*/);
-	void finalize(unsigned char* outputDigestInBytes);
+	void finalize(DP_U8* outputDigestInBytes);
 	// Like "end()", except that the argument is a byte array, of size DIGEST_SIZE_IN_BYTES.
 	// This function is used to implement "end()".
 
 private:
 	void zeroize(); // to remove potentially sensitive information
-	void transform64Bytes(unsigned char const block[64]); // does the actual MD5 transform
+	void transform64Bytes(DP_U8 const block[64]); // does the actual MD5 transform
 
 private:
 	u_int32_t fState[4]; // ABCD
 	u_int64_t fBitCount; // number of bits, modulo 2^64
-	unsigned char fWorkingBuffer[64];
+	DP_U8 fWorkingBuffer[64];
 };
 
-char* our_MD5Data(unsigned char const* data, unsigned dataSize,
+char* our_MD5Data(DP_U8 const* data, unsigned dataSize,
 		char* outputDigest) {
 	MD5Context ctx;
 
@@ -47,14 +47,14 @@ char* our_MD5Data(unsigned char const* data, unsigned dataSize,
 	return outputDigest;
 }
 
-unsigned char* our_MD5DataRaw(unsigned char const* data, unsigned dataSize,
-		unsigned char* outputDigest) {
+DP_U8* our_MD5DataRaw(DP_U8 const* data, unsigned dataSize,
+		DP_U8* outputDigest) {
 	MD5Context ctx;
 
 	ctx.addData(data, dataSize);
 
 	if (outputDigest == NULL)
-		outputDigest = new unsigned char[DIGEST_SIZE_IN_BYTES];
+		outputDigest = new DP_U8[DIGEST_SIZE_IN_BYTES];
 	ctx.finalize(outputDigest);
 
 	return outputDigest;
@@ -75,7 +75,7 @@ MD5Context::~MD5Context() {
 	zeroize();
 }
 
-void MD5Context::addData(unsigned char const* inputData,
+void MD5Context::addData(DP_U8 const* inputData,
 		unsigned inputDataSize) {
 	// Begin by noting how much of our 64-byte working buffer remains unfilled:
 	u_int64_t const byteCount = fBitCount >> 3;
@@ -91,8 +91,8 @@ void MD5Context::addData(unsigned char const* inputData,
 		// Do this now, starting with a transform on our working buffer, then with
 		// (as many as possible) transforms on rest of the input data.
 
-		memcpy((unsigned char*) &fWorkingBuffer[bufferBytesInUse],
-				(unsigned char*) inputData, bufferBytesRemaining);
+		memcpy((DP_U8*) &fWorkingBuffer[bufferBytesInUse],
+				(DP_U8*) inputData, bufferBytesRemaining);
 		transform64Bytes(fWorkingBuffer);
 		bufferBytesInUse = 0;
 
@@ -103,13 +103,13 @@ void MD5Context::addData(unsigned char const* inputData,
 
 	// Copy any remaining (and currently un-transformed) input data into our working buffer:
 	if (i < inputDataSize) {
-		memcpy((unsigned char*) &fWorkingBuffer[bufferBytesInUse],
-				(unsigned char*) &inputData[i], inputDataSize - i);
+		memcpy((DP_U8*) &fWorkingBuffer[bufferBytesInUse],
+				(DP_U8*) &inputData[i], inputDataSize - i);
 	}
 }
 
 void MD5Context::end(char* outputDigest) {
-	unsigned char digestInBytes[DIGEST_SIZE_IN_BYTES];
+	DP_U8 digestInBytes[DIGEST_SIZE_IN_BYTES];
 	finalize(digestInBytes);
 
 	// Convert the digest from bytes (binary) to hex digits:
@@ -125,26 +125,26 @@ void MD5Context::end(char* outputDigest) {
 // Routines that unpack 32 and 64-bit values into arrays of bytes (in little-endian order).
 // (These are used to implement "finalize()".)
 
-static void unpack32(unsigned char out[4], u_int32_t in) {
+static void unpack32(DP_U8 out[4], u_int32_t in) {
 	for (unsigned i = 0; i < 4; ++i) {
-		out[i] = (unsigned char) ((in >> (8 * i)) & 0xFF);
+		out[i] = (DP_U8) ((in >> (8 * i)) & 0xFF);
 	}
 }
 
-static void unpack64(unsigned char out[8], u_int64_t in) {
+static void unpack64(DP_U8 out[8], u_int64_t in) {
 	for (unsigned i = 0; i < 8; ++i) {
-		out[i] = (unsigned char) ((in >> (8 * i)) & 0xFF);
+		out[i] = (DP_U8) ((in >> (8 * i)) & 0xFF);
 	}
 }
 
-static unsigned char const PADDING[64] = { 0x80, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+static DP_U8 const PADDING[64] = { 0x80, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 		0, 0, 0, 0, 0 };
 
-void MD5Context::finalize(unsigned char* outputDigestInBytes) {
+void MD5Context::finalize(DP_U8* outputDigestInBytes) {
 	// Unpack our bit count:
-	unsigned char bitCountInBytes[8];
+	DP_U8 bitCountInBytes[8];
 	unpack64(bitCountInBytes, fBitCount);
 
 	// Before 'finalizing', make sure that we transform any remaining bytes in our working buffer:
@@ -224,7 +224,7 @@ void MD5Context::zeroize() {
  (a) += (b); \
 }
 
-void MD5Context::transform64Bytes(unsigned char const block[64]) {
+void MD5Context::transform64Bytes(DP_U8 const block[64]) {
 	u_int32_t a = fState[0], b = fState[1], c = fState[2], d = fState[3];
 
 	// Begin by packing "block" into an array ("x") of 16 32-bit values (in little-endian order):

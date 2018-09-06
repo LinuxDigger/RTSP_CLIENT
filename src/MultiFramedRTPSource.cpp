@@ -57,7 +57,7 @@ private:
 ////////// MultiFramedRTPSource implementation //////////
 
 MultiFramedRTPSource::MultiFramedRTPSource(UsageEnvironment& env,
-		CommonPlay *cpObj, Groupsock* RTPgs, unsigned char rtpPayloadFormat,
+		CommonPlay *cpObj, Groupsock* RTPgs, DP_U8 rtpPayloadFormat,
 		unsigned rtpTimestampFrequency, BufferedPacketFactory* packetFactory) :
 		RTPSource(env, RTPgs, rtpPayloadFormat, rtpTimestampFrequency, cpObj) {
 	reset();
@@ -88,7 +88,7 @@ Boolean MultiFramedRTPSource::processSpecialHeader(BufferedPacket* /*packet*/,
 }
 
 Boolean MultiFramedRTPSource::packetIsUsableInJitterCalculation(
-		unsigned char* /*packet*/, unsigned /*packetSize*/) {
+		DP_U8* /*packet*/, unsigned /*packetSize*/) {
 	// Default implementation:
 	return True;
 }
@@ -281,7 +281,7 @@ void MultiFramedRTPSource::networkReadHandler1() {
 			break;
 
 		// Check the Payload Type.
-		unsigned char rtpPayloadType = (unsigned char) ((rtpHdr & 0x007F0000)
+		DP_U8 rtpPayloadType = (DP_U8) ((rtpHdr & 0x007F0000)
 				>> 16);
 		if (rtpPayloadType != rtpPayloadFormat()) {
 			if (fRTCPInstanceForMultiplexedRTCPPackets != NULL
@@ -365,7 +365,7 @@ void MultiFramedRTPSource::networkReadHandler1() {
 #define MAX_PACKET_SIZE 65536
 
 BufferedPacket::BufferedPacket() :
-		fPacketSize(MAX_PACKET_SIZE), fBuf(new unsigned char[MAX_PACKET_SIZE]), fHead(
+		fPacketSize(MAX_PACKET_SIZE), fBuf(new DP_U8[MAX_PACKET_SIZE]), fHead(
 				0), fTail(0), fNextPacket(
 		NULL), fUseCount(0), fRTPSeqNo(0), fRTPTimestamp(0), fPresentationTime(), fHasBeenSyncedUsingRTCP(
 				false), fRTPMarkerBit(false), fIsFirstPacket(false), fTimeReceived() {
@@ -383,7 +383,7 @@ void BufferedPacket::reset() {
 }
 
 // The following function has been deprecated:
-unsigned BufferedPacket::nextEnclosedFrameSize(unsigned char*& /*framePtr*/,
+unsigned BufferedPacket::nextEnclosedFrameSize(DP_U8*& /*framePtr*/,
 		unsigned dataSize) {
 // By default, use the entire buffered data, even though it may consist
 // of more than one frame, on the assumption that the client doesn't
@@ -391,7 +391,7 @@ unsigned BufferedPacket::nextEnclosedFrameSize(unsigned char*& /*framePtr*/,
 	return dataSize;
 }
 
-void BufferedPacket::getNextEnclosedFrameParameters(unsigned char*& framePtr,
+void BufferedPacket::getNextEnclosedFrameParameters(DP_U8*& framePtr,
 		unsigned dataSize, unsigned& frameSize,
 		unsigned& frameDurationInMicroseconds) {
 // By default, use the entire buffered data, even though it may consist
@@ -416,7 +416,7 @@ Boolean BufferedPacket::fillInData(RTPInterface& rtpInterface,
 
 	unsigned numBytesRead;
 	int tcpSocketNum; // not used
-	unsigned char tcpStreamChannelId; // not used
+	DP_U8 tcpStreamChannelId; // not used
 	if (!rtpInterface.handleRead(&fBuf[fTail], maxBytesToRead, numBytesRead,
 			fromAddress, tcpSocketNum, tcpStreamChannelId,
 			packetReadWasIncomplete)) {
@@ -450,19 +450,19 @@ void BufferedPacket::removePadding(unsigned numBytes) {
 	fTail -= numBytes;
 }
 
-void BufferedPacket::appendData(unsigned char* newData, unsigned numBytes) {
+void BufferedPacket::appendData(DP_U8* newData, unsigned numBytes) {
 	if (numBytes > fPacketSize - fTail)
 		numBytes = fPacketSize - fTail;
 	memmove(&fBuf[fTail], newData, numBytes);
 	fTail += numBytes;
 }
 
-void BufferedPacket::use(unsigned char* to, unsigned toSize,
+void BufferedPacket::use(DP_U8* to, unsigned toSize,
 		unsigned& bytesUsed, unsigned& bytesTruncated, unsigned short& rtpSeqNo,
 		unsigned& rtpTimestamp, struct timeval& presentationTime,
 		Boolean& hasBeenSyncedUsingRTCP, Boolean& rtpMarkerBit) {
-	unsigned char* origFramePtr = &fBuf[fHead];
-	unsigned char* newFramePtr = origFramePtr; // may change in the call below
+	DP_U8* origFramePtr = &fBuf[fHead];
+	DP_U8* newFramePtr = origFramePtr; // may change in the call below
 	unsigned frameSize, frameDurationInMicroseconds;
 	getNextEnclosedFrameParameters(newFramePtr, fTail - fHead, frameSize,
 			frameDurationInMicroseconds);

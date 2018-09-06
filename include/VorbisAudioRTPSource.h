@@ -14,7 +14,7 @@ class VorbisAudioRTPSource: public MultiFramedRTPSource {
 public:
 	static VorbisAudioRTPSource*
 	createNew(UsageEnvironment& env, CommonPlay *cpObj, Groupsock* RTPgs,
-			unsigned char rtpPayloadFormat, unsigned rtpTimestampFrequency);
+			DP_U8 rtpPayloadFormat, unsigned rtpTimestampFrequency);
 
 	u_int32_t curPacketIdent() const {
 		return fCurPacketIdent;
@@ -22,7 +22,7 @@ public:
 
 protected:
 	VorbisAudioRTPSource(UsageEnvironment& env, CommonPlay *cpObj,
-			Groupsock* RTPgs, unsigned char rtpPayloadFormat,
+			Groupsock* RTPgs, DP_U8 rtpPayloadFormat,
 			unsigned rtpTimestampFrequency);
 	// called only by createNew()
 

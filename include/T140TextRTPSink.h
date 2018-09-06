@@ -16,11 +16,11 @@ class T140IdleFilter;
 class T140TextRTPSink: public TextRTPSink {
 public:
 	static T140TextRTPSink* createNew(UsageEnvironment& env, CommonPlay *cpObj,
-			Groupsock* RTPgs, unsigned char rtpPayloadFormat);
+			Groupsock* RTPgs, DP_U8 rtpPayloadFormat);
 
 protected:
 	T140TextRTPSink(UsageEnvironment& env, CommonPlay *cpObj, Groupsock* RTPgs,
-			unsigned char rtpPayloadFormat);
+			DP_U8 rtpPayloadFormat);
 	// called only by createNew()
 
 	virtual ~T140TextRTPSink();
@@ -29,10 +29,10 @@ protected:
 	// redefined virtual functions:
 	virtual Boolean continuePlaying();
 	virtual void doSpecialFrameHandling(unsigned fragmentationOffset,
-			unsigned char* frameStart, unsigned numBytesInFrame,
+			DP_U8* frameStart, unsigned numBytesInFrame,
 			struct timeval framePresentationTime, unsigned numRemainingBytes);
 	virtual Boolean frameCanAppearAfterPacketStart(
-			unsigned char const* frameStart, unsigned numBytesInFrame) const;
+			DP_U8 const* frameStart, unsigned numBytesInFrame) const;
 
 protected:
 	T140IdleFilter* fOurIdleFilter;

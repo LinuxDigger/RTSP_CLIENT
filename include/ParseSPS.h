@@ -18,7 +18,7 @@
  * @param fps 帧率
  * @成功则返回true , 失败则返回false
  */
-bool h264_decode_sps(unsigned char * buf, unsigned int nLen, int &width,
+bool h264_decode_sps(DP_U8 * buf, unsigned int nLen, int &width,
 		int &height, int &fps);
 
 #endif /* INCLUDE_PARSESPS_H_ */

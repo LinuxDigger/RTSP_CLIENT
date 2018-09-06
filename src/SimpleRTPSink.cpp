@@ -9,7 +9,7 @@
 #include "strDup.h"
 
 SimpleRTPSink::SimpleRTPSink(UsageEnvironment& env, CommonPlay *cpObj,
-		Groupsock* RTPgs, unsigned char rtpPayloadFormat,
+		Groupsock* RTPgs, DP_U8 rtpPayloadFormat,
 		unsigned rtpTimestampFrequency, char const* sdpMediaTypeString,
 		char const* rtpPayloadFormatName, unsigned numChannels,
 		Boolean allowMultipleFramesPerPacket, Boolean doNormalMBitRule) :
@@ -28,7 +28,7 @@ SimpleRTPSink::~SimpleRTPSink() {
 
 SimpleRTPSink*
 SimpleRTPSink::createNew(UsageEnvironment& env, CommonPlay *cpObj,
-		Groupsock* RTPgs, unsigned char rtpPayloadFormat,
+		Groupsock* RTPgs, DP_U8 rtpPayloadFormat,
 		unsigned rtpTimestampFrequency, char const* sdpMediaTypeString,
 		char const* rtpPayloadFormatName, unsigned numChannels,
 		Boolean allowMultipleFramesPerPacket, Boolean doNormalMBitRule) {
@@ -38,7 +38,7 @@ SimpleRTPSink::createNew(UsageEnvironment& env, CommonPlay *cpObj,
 }
 
 void SimpleRTPSink::doSpecialFrameHandling(unsigned fragmentationOffset,
-		unsigned char* frameStart, unsigned numBytesInFrame,
+		DP_U8* frameStart, unsigned numBytesInFrame,
 		struct timeval framePresentationTime, unsigned numRemainingBytes) {
 	if (numRemainingBytes == 0) {
 		// This packet contains the last (or only) fragment of the frame.
@@ -59,7 +59,7 @@ void SimpleRTPSink::doSpecialFrameHandling(unsigned fragmentationOffset,
 }
 
 Boolean SimpleRTPSink::frameCanAppearAfterPacketStart(
-		unsigned char const* /*frameStart*/,
+		DP_U8 const* /*frameStart*/,
 		unsigned /*numBytesInFrame*/) const {
 	return fAllowMultipleFramesPerPacket;
 }

@@ -112,7 +112,7 @@ OutPacketBuffer::OutPacketBuffer(unsigned preferredPacketSize,
 	unsigned maxNumPackets = (maxBufferSize + (maxPacketSize - 1))
 			/ maxPacketSize;
 	fLimit = maxNumPackets * maxPacketSize;
-	fBuf = new unsigned char[fLimit];
+	fBuf = new DP_U8[fLimit];
 	resetPacketStart();
 	resetOffset();
 	resetOverflowData();
@@ -122,7 +122,7 @@ OutPacketBuffer::~OutPacketBuffer() {
 	delete[] fBuf;
 }
 
-void OutPacketBuffer::enqueue(unsigned char const* from, unsigned numBytes) {
+void OutPacketBuffer::enqueue(DP_U8 const* from, unsigned numBytes) {
 	if (numBytes > totalBytesAvailable()) {
 #ifdef DEBUG
 		fprintf(stderr, "OutPacketBuffer::enqueue() warning: %d > %d\n", numBytes, totalBytesAvailable());
@@ -137,10 +137,10 @@ void OutPacketBuffer::enqueue(unsigned char const* from, unsigned numBytes) {
 
 void OutPacketBuffer::enqueueWord(u_int32_t word) {
 	u_int32_t nWord = htonl(word);
-	enqueue((unsigned char*) &nWord, 4);
+	enqueue((DP_U8*) &nWord, 4);
 }
 
-void OutPacketBuffer::insert(unsigned char const* from, unsigned numBytes,
+void OutPacketBuffer::insert(DP_U8 const* from, unsigned numBytes,
 		unsigned toPosition) {
 	unsigned realToPosition = fPacketStart + toPosition;
 	if (realToPosition + numBytes > fLimit) {
@@ -157,10 +157,10 @@ void OutPacketBuffer::insert(unsigned char const* from, unsigned numBytes,
 
 void OutPacketBuffer::insertWord(u_int32_t word, unsigned toPosition) {
 	u_int32_t nWord = htonl(word);
-	insert((unsigned char*) &nWord, 4, toPosition);
+	insert((DP_U8*) &nWord, 4, toPosition);
 }
 
-void OutPacketBuffer::extract(unsigned char* to, unsigned numBytes,
+void OutPacketBuffer::extract(DP_U8* to, unsigned numBytes,
 		unsigned fromPosition) {
 	unsigned realFromPosition = fPacketStart + fromPosition;
 	if (realFromPosition + numBytes > fLimit) { // sanity check
@@ -174,7 +174,7 @@ void OutPacketBuffer::extract(unsigned char* to, unsigned numBytes,
 
 u_int32_t OutPacketBuffer::extractWord(unsigned fromPosition) {
 	u_int32_t nWord;
-	extract((unsigned char*) &nWord, 4, fromPosition);
+	extract((DP_U8*) &nWord, 4, fromPosition);
 	return ntohl(nWord);
 }
 

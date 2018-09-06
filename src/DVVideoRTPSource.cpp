@@ -9,14 +9,14 @@
 
 DVVideoRTPSource*
 DVVideoRTPSource::createNew(UsageEnvironment& env, CommonPlay *cpObj,
-		Groupsock* RTPgs, unsigned char rtpPayloadFormat,
+		Groupsock* RTPgs, DP_U8 rtpPayloadFormat,
 		unsigned rtpTimestampFrequency) {
 	return new DVVideoRTPSource(env, cpObj, RTPgs, rtpPayloadFormat,
 			rtpTimestampFrequency);
 }
 
 DVVideoRTPSource::DVVideoRTPSource(UsageEnvironment& env, CommonPlay *cpObj,
-		Groupsock* rtpGS, unsigned char rtpPayloadFormat,
+		Groupsock* rtpGS, DP_U8 rtpPayloadFormat,
 		unsigned rtpTimestampFrequency) :
 		MultiFramedRTPSource(env, cpObj, rtpGS, rtpPayloadFormat,
 				rtpTimestampFrequency) {

@@ -17,7 +17,7 @@ public:
 private:
   // Redefined virtual functions:
   virtual void reset();
-  virtual unsigned nextEnclosedFrameSize(unsigned char*& framePtr,
+  virtual unsigned nextEnclosedFrameSize(DP_U8*& framePtr,
 					 unsigned dataSize);
 };
 
@@ -29,13 +29,13 @@ private: // redefined virtual functions
 
 ////////// JPEGVideoRTPSource implementation //////////
 
-#define BYTE unsigned char
+#define BYTE DP_U8
 #define WORD unsigned
 #define DWORD unsigned long
 
 JPEGVideoRTPSource*
 JPEGVideoRTPSource::createNew(UsageEnvironment& env, CommonPlay *cpObj,Groupsock* RTPgs,
-			      unsigned char rtpPayloadFormat,
+			      DP_U8 rtpPayloadFormat,
 			      unsigned rtpTimestampFrequency,
 			      unsigned defaultWidth, unsigned defaultHeight) {
   return new JPEGVideoRTPSource(env, cpObj,RTPgs, rtpPayloadFormat,
@@ -44,7 +44,7 @@ JPEGVideoRTPSource::createNew(UsageEnvironment& env, CommonPlay *cpObj,Groupsock
 
 JPEGVideoRTPSource::JPEGVideoRTPSource(UsageEnvironment& env,CommonPlay *cpObj,
 				       Groupsock* RTPgs,
-				       unsigned char rtpPayloadFormat,
+				       DP_U8 rtpPayloadFormat,
 				       unsigned rtpTimestampFrequency,
 				       unsigned defaultWidth, unsigned defaultHeight)
   : MultiFramedRTPSource(env, cpObj,RTPgs,
@@ -69,19 +69,19 @@ enum {
 	MARKER_COMMENT		= 0xfe,
 };
 
-static unsigned char const lum_dc_codelens[] = {
+static DP_U8 const lum_dc_codelens[] = {
   0, 1, 5, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0,
 };
 
-static unsigned char const lum_dc_symbols[] = {
+static DP_U8 const lum_dc_symbols[] = {
   0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11,
 };
 
-static unsigned char const lum_ac_codelens[] = {
+static DP_U8 const lum_ac_codelens[] = {
   0, 2, 1, 3, 3, 2, 4, 3, 5, 5, 4, 4, 0, 0, 1, 0x7d,
 };
 
-static unsigned char const lum_ac_symbols[] = {
+static DP_U8 const lum_ac_symbols[] = {
   0x01, 0x02, 0x03, 0x00, 0x04, 0x11, 0x05, 0x12,
   0x21, 0x31, 0x41, 0x06, 0x13, 0x51, 0x61, 0x07,
   0x22, 0x71, 0x14, 0x32, 0x81, 0x91, 0xa1, 0x08,
@@ -105,19 +105,19 @@ static unsigned char const lum_ac_symbols[] = {
   0xf9, 0xfa,
 };
 
-static unsigned char const chm_dc_codelens[] = {
+static DP_U8 const chm_dc_codelens[] = {
   0, 3, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0,
 };
 
-static unsigned char const chm_dc_symbols[] = {
+static DP_U8 const chm_dc_symbols[] = {
   0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11,
 };
 
-static unsigned char const chm_ac_codelens[] = {
+static DP_U8 const chm_ac_codelens[] = {
   0, 2, 1, 2, 4, 4, 3, 4, 7, 5, 4, 4, 0, 1, 2, 0x77,
 };
 
-static unsigned char const chm_ac_symbols[] = {
+static DP_U8 const chm_ac_symbols[] = {
   0x00, 0x01, 0x02, 0x03, 0x11, 0x04, 0x05, 0x21,
   0x31, 0x06, 0x12, 0x41, 0x51, 0x07, 0x61, 0x71,
   0x13, 0x22, 0x32, 0x81, 0x08, 0x14, 0x42, 0x91,
@@ -141,10 +141,10 @@ static unsigned char const chm_ac_symbols[] = {
   0xf9, 0xfa,
 };
 
-static void createHuffmanHeader(unsigned char*& p,
-				unsigned char const* codelens,
+static void createHuffmanHeader(DP_U8*& p,
+				DP_U8 const* codelens,
 				int ncodes,
-				unsigned char const* symbols,
+				DP_U8 const* symbols,
 				int nsymbols,
 				int tableNo, int tableClass) {
   *p++ = 0xff; *p++ = MARKER_DHT;
@@ -165,11 +165,11 @@ static unsigned computeJPEGHeaderSize(unsigned qtlen, unsigned dri) {
   return 485 + numQtables*5 + qtlen + (dri > 0 ? 6 : 0);
 }
 
-static void createJPEGHeader(unsigned char* buf, unsigned type,
+static void createJPEGHeader(DP_U8* buf, unsigned type,
 			     unsigned w, unsigned h,
-			     unsigned char const* qtables, unsigned qtlen,
+			     DP_U8 const* qtables, unsigned qtlen,
 			     unsigned dri) {
-  unsigned char *ptr = buf;
+  DP_U8 *ptr = buf;
   unsigned numQtables = qtlen > 64 ? 2 : 1;
 
   // MARKER_SOI:
@@ -256,7 +256,7 @@ static void createJPEGHeader(unsigned char* buf, unsigned type,
 }
 
 // The default 'luma' and 'chroma' quantizer tables, in zigzag order:
-static unsigned char const defaultQuantizers[128] = {
+static DP_U8 const defaultQuantizers[128] = {
   // luma table:
   16, 11, 12, 14, 12, 10, 16, 14,
   13, 14, 18, 17, 16, 19, 24, 40,
@@ -277,7 +277,7 @@ static unsigned char const defaultQuantizers[128] = {
   99, 99, 99, 99, 99, 99, 99, 99
 };
 
-static void makeDefaultQtables(unsigned char* resultTables, unsigned Q) {
+static void makeDefaultQtables(DP_U8* resultTables, unsigned Q) {
   int factor = Q;
   int q;
 
@@ -301,10 +301,10 @@ static void makeDefaultQtables(unsigned char* resultTables, unsigned Q) {
 Boolean JPEGVideoRTPSource
 ::processSpecialHeader(BufferedPacket* packet,
 		       unsigned& resultSpecialHeaderSize) {
-  unsigned char* headerStart = packet->data();
+  DP_U8* headerStart = packet->data();
   unsigned packetSize = packet->dataSize();
 
-  unsigned char* qtables = NULL;
+  DP_U8* qtables = NULL;
   unsigned qtlen = 0;
   unsigned dri = 0;
 
@@ -395,7 +395,7 @@ Boolean JPEGVideoRTPSource
   // "resultSpecialHeaderSize" to become negative, but the code that called
   // us (in "MultiFramedRTPSource") will handle this properly.
   if (Offset == 0) {
-    unsigned char newQtables[128];
+    DP_U8 newQtables[128];
     if (qtlen == 0) {
       // A quantization table was not present in the RTP JPEG header,
       // so use the default tables, scaled according to the "Q" factor:
@@ -436,7 +436,7 @@ void JPEGBufferedPacket::reset() {
 }
 
 unsigned JPEGBufferedPacket
-::nextEnclosedFrameSize(unsigned char*& framePtr, unsigned dataSize) {
+::nextEnclosedFrameSize(DP_U8*& framePtr, unsigned dataSize) {
   // Normally, the enclosed frame size is just "dataSize".  If, however,
   // the frame does not end with the "EOI" marker, then add this now:
   if (completesFrame && dataSize >= 2 &&

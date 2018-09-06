@@ -24,7 +24,7 @@ protected:
 private:
 	// redefined virtual functions:
 	virtual Boolean frameCanAppearAfterPacketStart(
-			unsigned char const* frameStart, unsigned numBytesInFrame) const;
+			DP_U8 const* frameStart, unsigned numBytesInFrame) const;
 };
 
 #endif /* INCLUDE_GSMAUDIORTPSINK_H_ */

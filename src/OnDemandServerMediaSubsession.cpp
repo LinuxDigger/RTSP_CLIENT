@@ -57,7 +57,7 @@ OnDemandServerMediaSubsession::sdpLines() {
 		struct in_addr dummyAddr;
 		dummyAddr.s_addr = 0;
 		Groupsock* dummyGroupsock = createGroupsock(dummyAddr, 0);
-		unsigned char rtpPayloadType = 96 + trackNumber() - 1; // if dynamic
+		DP_U8 rtpPayloadType = 96 + trackNumber() - 1; // if dynamic
 		RTPSink* dummyRTPSink = createNewRTPSink(dummyGroupsock, rtpPayloadType,
 				inputSource);
 		if (dummyRTPSink != NULL && dummyRTPSink->estimatedBitrate() > 0)
@@ -75,7 +75,7 @@ OnDemandServerMediaSubsession::sdpLines() {
 void OnDemandServerMediaSubsession::getStreamParameters(
 		unsigned clientSessionId, netAddressBits clientAddress,
 		Port const& clientRTPPort, Port const& clientRTCPPort, int tcpSocketNum,
-		unsigned char rtpChannelId, unsigned char rtcpChannelId,
+		DP_U8 rtpChannelId, DP_U8 rtcpChannelId,
 		netAddressBits& destinationAddress, u_int8_t& /*destinationTTL*/,
 		Boolean& isMulticast, Port& serverRTPPort, Port& serverRTCPPort,
 		void*& streamToken) {
@@ -157,7 +157,7 @@ void OnDemandServerMediaSubsession::getStreamParameters(
 					break; // success
 				}
 
-				unsigned char rtpPayloadType = 96 + trackNumber() - 1; // if dynamic
+				DP_U8 rtpPayloadType = 96 + trackNumber() - 1; // if dynamic
 				rtpSink = createNewRTPSink(rtpGroupsock, rtpPayloadType,
 						mediaSource);
 				if (rtpSink != NULL && rtpSink->estimatedBitrate() > 0)
@@ -420,7 +420,7 @@ Groupsock* OnDemandServerMediaSubsession::createGroupsock(
 
 RTCPInstance* OnDemandServerMediaSubsession::createRTCP(Groupsock* RTCPgs,
 		unsigned totSessionBW, /* in kbps */
-		unsigned char const* cname, RTPSink* sink) {
+		DP_U8 const* cname, RTPSink* sink) {
 	// Default implementation; may be redefined by subclasses:
 	return RTCPInstance::createNew(envir(), RTCPgs, totSessionBW, cname, sink,
 	NULL/*we're a server*/);
@@ -448,7 +448,7 @@ void OnDemandServerMediaSubsession::setSDPLinesFromRTPSink(RTPSink* rtpSink,
 		return;
 
 	char const* mediaType = rtpSink->sdpMediaType();
-	unsigned char rtpPayloadType = rtpSink->rtpPayloadType();
+	DP_U8 rtpPayloadType = rtpSink->rtpPayloadType();
 	AddressString ipAddressStr(fServerAddressForSDP);
 	char* rtpmapLine = rtpSink->rtpmapLine();
 	char const* rtcpmuxLine = fMultiplexRTCPWithRTP ? "a=rtcp-mux\r\n" : "";
@@ -529,7 +529,7 @@ void StreamState::startPlaying(Destinations* dests, unsigned clientSessionId,
 	if (fRTCPInstance == NULL && fRTPSink != NULL) {
 		// Create (and start) a 'RTCP instance' for this RTP sink:
 		fRTCPInstance = fMaster.createRTCP(fRTCPgs, fTotalBW,
-				(unsigned char*) fMaster.fCNAME, fRTPSink);
+				(DP_U8*) fMaster.fCNAME, fRTPSink);
 		// Note: This starts RTCP running automatically
 		fRTCPInstance->setAppHandler(fMaster.fAppHandlerTask,
 				fMaster.fAppHandlerClientData);

@@ -21,18 +21,18 @@ static void initBase64DecodeTable() {
   for (i = 'A'; i <= 'Z'; ++i) base64DecodeTable[i] = 0 + (i - 'A');
   for (i = 'a'; i <= 'z'; ++i) base64DecodeTable[i] = 26 + (i - 'a');
   for (i = '0'; i <= '9'; ++i) base64DecodeTable[i] = 52 + (i - '0');
-  base64DecodeTable[(unsigned char)'+'] = 62;
-  base64DecodeTable[(unsigned char)'/'] = 63;
-  base64DecodeTable[(unsigned char)'='] = 0;
+  base64DecodeTable[(DP_U8)'+'] = 62;
+  base64DecodeTable[(DP_U8)'/'] = 63;
+  base64DecodeTable[(DP_U8)'='] = 0;
 }
 
-unsigned char* base64Decode(char const* in, unsigned& resultSize,
+DP_U8* base64Decode(char const* in, unsigned& resultSize,
 			    Boolean trimTrailingZeros) {
   if (in == NULL) return NULL; // sanity check
   return base64Decode(in, strlen(in), resultSize, trimTrailingZeros);
 }
 
-unsigned char* base64Decode(char const* in, unsigned inSize,
+DP_U8* base64Decode(char const* in, unsigned inSize,
 			    unsigned& resultSize,
 			    Boolean trimTrailingZeros) {
   static Boolean haveInitializedBase64DecodeTable = False;
@@ -41,7 +41,7 @@ unsigned char* base64Decode(char const* in, unsigned inSize,
     haveInitializedBase64DecodeTable = True;
   }
 
-  unsigned char* out = new unsigned char[inSize+1]; // ensures we have enough space
+  DP_U8* out = new DP_U8[inSize+1]; // ensures we have enough space
   int k = 0;
   int paddingCount = 0;
   int const jMax = inSize - 3;
@@ -51,7 +51,7 @@ unsigned char* base64Decode(char const* in, unsigned inSize,
     for (int i = 0; i < 4; ++i) {
       inTmp[i] = in[i+j];
       if (inTmp[i] == '=') ++paddingCount;
-      outTmp[i] = base64DecodeTable[(unsigned char)inTmp[i]];
+      outTmp[i] = base64DecodeTable[(DP_U8)inTmp[i]];
       if ((outTmp[i]&0x80) != 0) outTmp[i] = 0; // this happens only if there was an invalid character; pretend that it was 'A'
     }
 
@@ -64,7 +64,7 @@ unsigned char* base64Decode(char const* in, unsigned inSize,
     while (paddingCount > 0 && k > 0 && out[k-1] == '\0') { --k; --paddingCount; }
   }
   resultSize = k;
-  unsigned char* result = new unsigned char[resultSize];
+  DP_U8* result = new DP_U8[resultSize];
   memmove(result, out, resultSize);
   delete[] out;
 
@@ -75,7 +75,7 @@ static const char base64Char[] =
 "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 
 char* base64Encode(char const* origSigned, unsigned origLength) {
-  unsigned char const* orig = (unsigned char const*)origSigned; // in case any input bytes have the MSB set
+  DP_U8 const* orig = (DP_U8 const*)origSigned; // in case any input bytes have the MSB set
   if (orig == NULL) return NULL;
 
   unsigned const numOrig24BitValues = origLength/3;

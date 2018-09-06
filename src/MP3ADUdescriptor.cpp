@@ -15,12 +15,12 @@
 
 #define TWO_BYTE_DESCR_FLAG 0x40
 
-unsigned ADUdescriptor::generateDescriptor(unsigned char*& toPtr,
+unsigned ADUdescriptor::generateDescriptor(DP_U8*& toPtr,
 					   unsigned remainingFrameSize) {
   unsigned descriptorSize = ADUdescriptor::computeSize(remainingFrameSize);
   switch (descriptorSize) {
   case 1: {
-    *toPtr++ = (unsigned char)remainingFrameSize;
+    *toPtr++ = (DP_U8)remainingFrameSize;
     break;
   }
   case 2: {
@@ -32,18 +32,18 @@ unsigned ADUdescriptor::generateDescriptor(unsigned char*& toPtr,
   return descriptorSize;
 }
 
-void ADUdescriptor::generateTwoByteDescriptor(unsigned char*& toPtr,
+void ADUdescriptor::generateTwoByteDescriptor(DP_U8*& toPtr,
 					      unsigned remainingFrameSize) {
-  *toPtr++ = (TWO_BYTE_DESCR_FLAG|(unsigned char)(remainingFrameSize>>8));
-  *toPtr++ = (unsigned char)(remainingFrameSize&0xFF);
+  *toPtr++ = (TWO_BYTE_DESCR_FLAG|(DP_U8)(remainingFrameSize>>8));
+  *toPtr++ = (DP_U8)(remainingFrameSize&0xFF);
 }
 
-unsigned ADUdescriptor::getRemainingFrameSize(unsigned char*& fromPtr) {
-  unsigned char firstByte = *fromPtr++;
+unsigned ADUdescriptor::getRemainingFrameSize(DP_U8*& fromPtr) {
+  DP_U8 firstByte = *fromPtr++;
 
   if (firstByte&TWO_BYTE_DESCR_FLAG) {
     // This is a 2-byte descriptor
-    unsigned char secondByte = *fromPtr++;
+    DP_U8 secondByte = *fromPtr++;
 
     return ((firstByte&0x3F)<<8) | secondByte;
   } else {

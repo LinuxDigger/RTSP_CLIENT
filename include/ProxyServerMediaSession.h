@@ -135,7 +135,7 @@ protected:
 	// to create subclassed "Groupsock" and/or "RTCPInstance" objects:
 	virtual Groupsock* createGroupsock(struct in_addr const& addr, Port port);
 	virtual RTCPInstance* createRTCP(Groupsock* RTCPgs, unsigned totSessionBW, /* in kbps */
-	unsigned char const* cname, RTPSink* sink);
+	DP_U8 const* cname, RTPSink* sink);
 
 	virtual Boolean allowProxyingForSubsession(MediaSubsession const& mss);
 	// By default, this function always returns True.  However, a subclass may redefine this

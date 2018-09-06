@@ -1,5 +1,8 @@
 src/OnDemandServerMediaSubsession.o: \
  ../src/OnDemandServerMediaSubsession.cpp \
+ /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/X86/include/Rtsp_server.h \
+ /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/X86/include/Rtsp_sys.h \
+ /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/X86/include/Rtsp_sys.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/OnDemandServerMediaSubsession.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/ServerMediaSession.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/RTCP.h \
@@ -24,6 +27,12 @@ src/OnDemandServerMediaSubsession.o: \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/BasicUDPSink.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/GroupsockHelper.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/strDup.h
+
+/home/jhb/nfs/TerminalC++Workspace/RTSP_Client/X86/include/Rtsp_server.h:
+
+/home/jhb/nfs/TerminalC++Workspace/RTSP_Client/X86/include/Rtsp_sys.h:
+
+/home/jhb/nfs/TerminalC++Workspace/RTSP_Client/X86/include/Rtsp_sys.h:
 
 /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/OnDemandServerMediaSubsession.h:
 

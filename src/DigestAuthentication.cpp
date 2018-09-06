@@ -74,7 +74,7 @@ void Authenticator::setRealmAndRandomNonce(char const* realm) {
 
   // Use MD5 to compute a 'random' nonce from this seed data:
   char nonceBuf[33];
-  our_MD5Data((unsigned char*)(&seedData), sizeof seedData, nonceBuf);
+  our_MD5Data((DP_U8*)(&seedData), sizeof seedData, nonceBuf);
 
   assignRealmAndNonce(realm, nonceBuf);
 }
@@ -99,14 +99,14 @@ char const* Authenticator::computeDigestResponse(char const* cmd,
   } else {
     unsigned const ha1DataLen = strlen(username()) + 1
       + strlen(realm()) + 1 + strlen(password());
-    unsigned char* ha1Data = new unsigned char[ha1DataLen+1];
+    DP_U8* ha1Data = new DP_U8[ha1DataLen+1];
     sprintf((char*)ha1Data, "%s:%s:%s", username(), realm(), password());
     our_MD5Data(ha1Data, ha1DataLen, ha1Buf);
     delete[] ha1Data;
   }
 
   unsigned const ha2DataLen = strlen(cmd) + 1 + strlen(url);
-  unsigned char* ha2Data = new unsigned char[ha2DataLen+1];
+  DP_U8* ha2Data = new DP_U8[ha2DataLen+1];
   sprintf((char*)ha2Data, "%s:%s", cmd, url);
   char ha2Buf[33];
   our_MD5Data(ha2Data, ha2DataLen, ha2Buf);
@@ -114,7 +114,7 @@ char const* Authenticator::computeDigestResponse(char const* cmd,
 
   unsigned const digestDataLen
     = 32 + 1 + strlen(nonce()) + 1 + 32;
-  unsigned char* digestData = new unsigned char[digestDataLen+1];
+  DP_U8* digestData = new DP_U8[digestDataLen+1];
   sprintf((char*)digestData, "%s:%s:%s",
           ha1Buf, nonce(), ha2Buf);
   char const* result = our_MD5Data(digestData, digestDataLen, NULL);

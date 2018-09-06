@@ -16,7 +16,7 @@ BasicUDPSink* BasicUDPSink::createNew(UsageEnvironment& env, Groupsock* gs,
 BasicUDPSink::BasicUDPSink(UsageEnvironment& env, Groupsock* gs,
 		unsigned maxPayloadSize) :
 		MediaSink(env, NULL), fGS(gs), fMaxPayloadSize(maxPayloadSize) {
-	fOutputBuffer = new unsigned char[fMaxPayloadSize];
+	fOutputBuffer = new DP_U8[fMaxPayloadSize];
 }
 
 BasicUDPSink::~BasicUDPSink() {

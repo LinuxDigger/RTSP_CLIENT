@@ -20,8 +20,8 @@
 
 class Segment {
 public:
-	unsigned char buf[SegmentBufSize];
-	unsigned char* dataStart() {
+	DP_U8 buf[SegmentBufSize];
+	DP_U8* dataStart() {
 		return &buf[descriptorSize];
 	}
 	unsigned frameSize; // if it's a non-ADU frame
@@ -217,7 +217,7 @@ Boolean ADUFromMP3Source::doGetNextFrame1() {
 		return False;
 	}
 
-	unsigned char* toPtr = fTo;
+	DP_U8* toPtr = fTo;
 	// output the ADU descriptor:
 	if (fIncludeADUdescriptors) {
 		fFrameSize += ADUdescriptor::generateDescriptor(toPtr, fFrameSize);
@@ -251,7 +251,7 @@ Boolean ADUFromMP3Source::doGetNextFrame1() {
 	unsigned bytesToUse = tailSeg->aduSize;
 	while (bytesToUse > 0) {
 		Segment& seg = fSegments->s[i];
-		unsigned char* fromPtr = &seg.dataStart()[seg.headerSize
+		DP_U8* fromPtr = &seg.dataStart()[seg.headerSize
 				+ seg.sideInfoSize + offset];
 		unsigned dataHere = seg.dataHere() - offset;
 		unsigned bytesUsedHere = dataHere < bytesToUse ? dataHere : bytesToUse;
@@ -434,7 +434,7 @@ Boolean MP3FromADUSource::generateFrameFromHeadADU() {
 #ifdef DEBUG
 	fprintf(stderr, "a->m:outputting frame for %d<-%d (fs %d, dh %d), (descriptorSize: %d)\n", seg->aduSize, seg->backpointer, seg->frameSize, seg->dataHere(), seg->descriptorSize);
 #endif
-	unsigned char* toPtr = fTo;
+	DP_U8* toPtr = fTo;
 
 	// output header and side info:
 	fFrameSize = seg->frameSize;
@@ -482,7 +482,7 @@ Boolean MP3FromADUSource::generateFrameFromHeadADU() {
 			toOffset += bytesToZero;
 		}
 
-		unsigned char* fromPtr = &seg->dataStart()[seg->headerSize
+		DP_U8* fromPtr = &seg->dataStart()[seg->headerSize
 				+ seg->sideInfoSize + fromOffset];
 		unsigned bytesUsedHere = endOfData - startOfData;
 #ifdef DEBUG
@@ -554,7 +554,7 @@ void SegmentQueue::sqAfterGettingSegment(void* clientData,
 // Common code called after a new segment is enqueued
 Boolean SegmentQueue::sqAfterGettingCommon(Segment& seg,
 		unsigned numBytesRead) {
-	unsigned char* fromPtr = seg.buf;
+	DP_U8* fromPtr = seg.buf;
 
 	if (fIncludeADUdescriptors) {
 		// The newly-read data is assumed to be an ADU with a descriptor
@@ -616,7 +616,7 @@ Boolean SegmentQueue::insertDummyBeforeTail(unsigned backpointer) {
 	newTailSeg = oldTailSeg; // structure copy
 
 	// Begin by setting (replacing) the ADU descriptor of the dummy ADU:
-	unsigned char* ptr = oldTailSeg.buf;
+	DP_U8* ptr = oldTailSeg.buf;
 	if (fIncludeADUdescriptors) {
 		unsigned remainingFrameSize = oldTailSeg.headerSize
 				+ oldTailSeg.sideInfoSize + 0 /* 0-size ADU */;

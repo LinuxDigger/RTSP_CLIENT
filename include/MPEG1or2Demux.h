@@ -29,7 +29,7 @@ public:
 	// A hack for getting raw, undemuxed PES packets from the Program Stream:
 	MPEG1or2DemuxedElementaryStream* newRawPESStream();
 
-	void getNextFrame(u_int8_t streamIdTag, unsigned char* to, unsigned maxSize,
+	void getNextFrame(u_int8_t streamIdTag, DP_U8* to, unsigned maxSize,
 			FramedSource::afterGettingFunc* afterGettingFunc,
 			void* afterGettingClientData,
 			FramedSource::onCloseFunc* onCloseFunc, void* onCloseClientData);
@@ -63,7 +63,7 @@ public:
 		return fLastSeenSCR;
 	}
 
-	unsigned char mpegVersion() const {
+	DP_U8 mpegVersion() const {
 		return fMPEGversion;
 	}
 
@@ -75,16 +75,16 @@ private:
 	// called only by createNew()
 	virtual ~MPEG1or2Demux();
 
-	void registerReadInterest(u_int8_t streamIdTag, unsigned char* to,
+	void registerReadInterest(u_int8_t streamIdTag, DP_U8* to,
 			unsigned maxSize, FramedSource::afterGettingFunc* afterGettingFunc,
 			void* afterGettingClientData,
 			FramedSource::onCloseFunc* onCloseFunc, void* onCloseClientData);
 
-	Boolean useSavedData(u_int8_t streamIdTag, unsigned char* to,
+	Boolean useSavedData(u_int8_t streamIdTag, DP_U8* to,
 			unsigned maxSize, FramedSource::afterGettingFunc* afterGettingFunc,
 			void* afterGettingClientData);
 
-	static void continueReadProcessing(void* clientData, unsigned char* ptr,
+	static void continueReadProcessing(void* clientData, DP_U8* ptr,
 			unsigned size, struct timeval presentationTime);
 	void continueReadProcessing();
 
@@ -95,17 +95,17 @@ private:
 private:
 	FramedSource* fInputSource;
 	SCR fLastSeenSCR;
-	unsigned char fMPEGversion;
+	DP_U8 fMPEGversion;
 
-	unsigned char fNextAudioStreamNumber;
-	unsigned char fNextVideoStreamNumber;
+	DP_U8 fNextAudioStreamNumber;
+	DP_U8 fNextVideoStreamNumber;
 	Boolean fReclaimWhenLastESDies;
 	unsigned fNumOutstandingESs;
 
 	// A descriptor for each possible stream id tag:
 	typedef struct OutputDescriptor {
 		// input parameters
-		unsigned char* to;
+		DP_U8* to;
 		unsigned maxSize;
 		FramedSource::afterGettingFunc* fAfterGettingFunc;
 		void* afterGettingClientData;

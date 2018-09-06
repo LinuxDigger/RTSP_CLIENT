@@ -26,17 +26,17 @@ AC3AudioRTPSink::createNew(UsageEnvironment& env, CommonPlay *cpObj,
 }
 
 Boolean AC3AudioRTPSink::frameCanAppearAfterPacketStart(
-		unsigned char const* /*frameStart*/,
+		DP_U8 const* /*frameStart*/,
 		unsigned /*numBytesInFrame*/) const {
 	// (For now) allow at most 1 frame in a single packet:
 	return False;
 }
 
 void AC3AudioRTPSink::doSpecialFrameHandling(unsigned fragmentationOffset,
-		unsigned char* frameStart, unsigned numBytesInFrame,
+		DP_U8* frameStart, unsigned numBytesInFrame,
 		struct timeval framePresentationTime, unsigned numRemainingBytes) {
 	// Set the 2-byte "payload header", as defined in RFC 4184.
-	unsigned char headers[2];
+	DP_U8 headers[2];
 
 	Boolean isFragment = numRemainingBytes > 0 || fragmentationOffset > 0;
 	if (!isFragment) {

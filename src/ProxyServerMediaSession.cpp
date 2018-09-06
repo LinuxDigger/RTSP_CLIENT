@@ -65,10 +65,10 @@ private:
 			unsigned& estBitrate);
 	virtual void closeStreamSource(FramedSource *inputSource);
 	virtual RTPSink* createNewRTPSink(Groupsock* rtpGroupsock,
-			unsigned char rtpPayloadTypeIfDynamic, FramedSource* inputSource);
+			DP_U8 rtpPayloadTypeIfDynamic, FramedSource* inputSource);
 	virtual Groupsock* createGroupsock(struct in_addr const& addr, Port port);
 	virtual RTCPInstance* createRTCP(Groupsock* RTCPgs, unsigned totSessionBW, /* in kbps */
-	unsigned char const* cname, RTPSink* sink);
+	DP_U8 const* cname, RTPSink* sink);
 
 private:
 	static void subsessionByeHandler(void* clientData);
@@ -171,7 +171,7 @@ Groupsock* ProxyServerMediaSession::createGroupsock(struct in_addr const& addr,
 
 RTCPInstance* ProxyServerMediaSession::createRTCP(Groupsock* RTCPgs,
 		unsigned totSessionBW, /* in kbps */
-		unsigned char const* cname, RTPSink* sink) {
+		DP_U8 const* cname, RTPSink* sink) {
 	// Default implementation; may be redefined by subclasses:
 	return RTCPInstance::createNew(envir(), RTCPgs, totSessionBW, cname, sink,
 	NULL/*we're a server*/);
@@ -813,7 +813,7 @@ void ProxyServerMediaSubsession::closeStreamSource(FramedSource* inputSource) {
 }
 
 RTPSink* ProxyServerMediaSubsession::createNewRTPSink(Groupsock* rtpGroupsock,
-		unsigned char rtpPayloadTypeIfDynamic, FramedSource* inputSource) {
+		DP_U8 rtpPayloadTypeIfDynamic, FramedSource* inputSource) {
 	if (verbosityLevel() > 0) {
 		envir() << *this << "::createNewRTPSink()\n";
 	}
@@ -975,7 +975,7 @@ Groupsock* ProxyServerMediaSubsession::createGroupsock(
 
 RTCPInstance* ProxyServerMediaSubsession::createRTCP(Groupsock* RTCPgs,
 		unsigned totSessionBW, /* in kbps */
-		unsigned char const* cname, RTPSink* sink) {
+		DP_U8 const* cname, RTPSink* sink) {
 	ProxyServerMediaSession* parentSession =
 			(ProxyServerMediaSession*) fParentSession;
 	return parentSession->createRTCP(RTCPgs, totSessionBW, cname, sink);

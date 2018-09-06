@@ -14,7 +14,7 @@
 
 ////////// Interleaving //////////
 
-Interleaving::Interleaving(unsigned cycleSize, unsigned char const* cycleArray) :
+Interleaving::Interleaving(unsigned cycleSize, DP_U8 const* cycleArray) :
 		fCycleSize(cycleSize) {
 	for (unsigned i = 0; i < fCycleSize; ++i) {
 		fInverseCycle[cycleArray[i]] = i;
@@ -67,13 +67,13 @@ public:
 	virtual ~InterleavingFrames();
 
 	Boolean haveReleaseableFrame();
-	void getIncomingFrameParams(unsigned char index, unsigned char*& dataPtr,
+	void getIncomingFrameParams(DP_U8 index, DP_U8*& dataPtr,
 			unsigned& bytesAvailable);
-	void getReleasingFrameParams(unsigned char index, unsigned char*& dataPtr,
+	void getReleasingFrameParams(DP_U8 index, DP_U8*& dataPtr,
 			unsigned& bytesInUse, struct timeval& presentationTime,
 			unsigned& durationInMicroseconds);
-	void setFrameParams(unsigned char index, unsigned char icc,
-			unsigned char ii, unsigned frameSize,
+	void setFrameParams(DP_U8 index, DP_U8 icc,
+			DP_U8 ii, unsigned frameSize,
 			struct timeval presentationTime, unsigned durationInMicroseconds);
 	unsigned nextIndexToRelease() {
 		return fNextIndexToRelease;
@@ -117,7 +117,7 @@ void MP3ADUinterleaver::doGetNextFrame() {
 		afterGetting(this);
 	} else {
 		fPositionOfNextIncomingFrame = fInterleaving.lookupInverseCycle(fII);
-		unsigned char* dataPtr;
+		DP_U8* dataPtr;
 		unsigned bytesAvailable;
 		fFrames->getIncomingFrameParams(fPositionOfNextIncomingFrame, dataPtr,
 				bytesAvailable);
@@ -130,7 +130,7 @@ void MP3ADUinterleaver::doGetNextFrame() {
 }
 
 void MP3ADUinterleaver::releaseOutgoingFrame() {
-	unsigned char* fromPtr;
+	DP_U8* fromPtr;
 	fFrames->getReleasingFrameParams(fFrames->nextIndexToRelease(), fromPtr,
 			fFrameSize, fPresentationTime, fDurationInMicroseconds);
 
@@ -164,12 +164,12 @@ public:
 	virtual ~DeinterleavingFrames();
 
 	Boolean haveReleaseableFrame();
-	void getIncomingFrameParams(unsigned char*& dataPtr,
+	void getIncomingFrameParams(DP_U8*& dataPtr,
 			unsigned& bytesAvailable);
 	void getIncomingFrameParamsAfter(unsigned frameSize,
 			struct timeval presentationTime, unsigned durationInMicroseconds,
-			unsigned char& icc, unsigned char& ii);
-	void getReleasingFrameParams(unsigned char*& dataPtr, unsigned& bytesInUse,
+			DP_U8& icc, DP_U8& ii);
+	void getReleasingFrameParams(DP_U8*& dataPtr, unsigned& bytesInUse,
 			struct timeval& presentationTime, unsigned& durationInMicroseconds);
 	void moveIncomingFrameIntoPlace();
 	void releaseNext();
@@ -225,7 +225,7 @@ void MP3ADUdeinterleaver::doGetNextFrame() {
 			if (packetIsLost) {
 				// Read and discard the next input frame (that would be part of
 				// a lost packet):
-				unsigned char dummyBuf[2000];
+				DP_U8 dummyBuf[2000];
 				unsigned numBytesRead;
 				struct timeval presentationTime;
 				// (this works only if the source can be read synchronously)
@@ -236,7 +236,7 @@ void MP3ADUdeinterleaver::doGetNextFrame() {
 			}
 		}
 #endif
-		unsigned char* dataPtr;
+		DP_U8* dataPtr;
 		unsigned bytesAvailable;
 		fFrames->getIncomingFrameParams(dataPtr, bytesAvailable);
 
@@ -250,7 +250,7 @@ void MP3ADUdeinterleaver::doGetNextFrame() {
 void MP3ADUdeinterleaver::afterGettingFrame(unsigned numBytesRead,
 		struct timeval presentationTime, unsigned durationInMicroseconds) {
 	// Get the (icc,ii) and set the frame size of the newly-read frame:
-	unsigned char icc, ii;
+	DP_U8 icc, ii;
 	fFrames->getIncomingFrameParamsAfter(numBytesRead, presentationTime,
 			durationInMicroseconds, icc, ii);
 
@@ -271,7 +271,7 @@ void MP3ADUdeinterleaver::afterGettingFrame(unsigned numBytesRead,
 }
 
 void MP3ADUdeinterleaver::releaseOutgoingFrame() {
-	unsigned char* fromPtr;
+	DP_U8* fromPtr;
 	fFrames->getReleasingFrameParams(fromPtr, fFrameSize, fPresentationTime,
 			fDurationInMicroseconds);
 
@@ -298,7 +298,7 @@ public:
 	unsigned frameDataSize; // includes ADU descriptor and (modified) MPEG hdr
 	struct timeval presentationTime;
 	unsigned durationInMicroseconds;
-	unsigned char frameData[MAX_FRAME_SIZE]; // ditto
+	DP_U8 frameData[MAX_FRAME_SIZE]; // ditto
 };
 
 InterleavingFrames::InterleavingFrames(unsigned maxCycleSize) :
@@ -313,15 +313,15 @@ Boolean InterleavingFrames::haveReleaseableFrame() {
 	return fDescriptors[fNextIndexToRelease].frameDataSize > 0;
 }
 
-void InterleavingFrames::getIncomingFrameParams(unsigned char index,
-		unsigned char*& dataPtr, unsigned& bytesAvailable) {
+void InterleavingFrames::getIncomingFrameParams(DP_U8 index,
+		DP_U8*& dataPtr, unsigned& bytesAvailable) {
 	InterleavingFrameDescriptor& desc = fDescriptors[index];
 	dataPtr = &desc.frameData[0];
 	bytesAvailable = MAX_FRAME_SIZE;
 }
 
-void InterleavingFrames::getReleasingFrameParams(unsigned char index,
-		unsigned char*& dataPtr, unsigned& bytesInUse,
+void InterleavingFrames::getReleasingFrameParams(DP_U8 index,
+		DP_U8*& dataPtr, unsigned& bytesInUse,
 		struct timeval& presentationTime, unsigned& durationInMicroseconds) {
 	InterleavingFrameDescriptor& desc = fDescriptors[index];
 	dataPtr = &desc.frameData[0];
@@ -330,8 +330,8 @@ void InterleavingFrames::getReleasingFrameParams(unsigned char index,
 	durationInMicroseconds = desc.durationInMicroseconds;
 }
 
-void InterleavingFrames::setFrameParams(unsigned char index, unsigned char icc,
-		unsigned char ii, unsigned frameSize, struct timeval presentationTime,
+void InterleavingFrames::setFrameParams(DP_U8 index, DP_U8 icc,
+		DP_U8 ii, unsigned frameSize, struct timeval presentationTime,
 		unsigned durationInMicroseconds) {
 	InterleavingFrameDescriptor& desc = fDescriptors[index];
 	desc.frameDataSize = frameSize;
@@ -339,7 +339,7 @@ void InterleavingFrames::setFrameParams(unsigned char index, unsigned char icc,
 	desc.durationInMicroseconds = durationInMicroseconds;
 
 	// Advance over the ADU descriptor, to get to the MPEG 'syncword':
-	unsigned char* ptr = &desc.frameData[0];
+	DP_U8* ptr = &desc.frameData[0];
 	(void) ADUdescriptor::getRemainingFrameSize(ptr);
 
 	// Replace the next 11 bits with (ii,icc):
@@ -369,7 +369,7 @@ public:
 	unsigned frameDataSize; // includes ADU descriptor and (modified) MPEG hdr
 	struct timeval presentationTime;
 	unsigned durationInMicroseconds;
-	unsigned char* frameData;
+	DP_U8* frameData;
 };
 
 DeinterleavingFrames::DeinterleavingFrames() :
@@ -416,14 +416,14 @@ Boolean DeinterleavingFrames::haveReleaseableFrame() {
 	}
 }
 
-void DeinterleavingFrames::getIncomingFrameParams(unsigned char*& dataPtr,
+void DeinterleavingFrames::getIncomingFrameParams(DP_U8*& dataPtr,
 		unsigned& bytesAvailable) {
 	// Use fDescriptors[MAX_CYCLE_SIZE] to store the incoming frame,
 	// prior to figuring out its real position:
 	DeinterleavingFrameDescriptor& desc = fDescriptors[MAX_CYCLE_SIZE];
 	if (desc.frameData == NULL) {
 		// There's no buffer yet, so allocate a new one:
-		desc.frameData = new unsigned char[MAX_FRAME_SIZE];
+		desc.frameData = new DP_U8[MAX_FRAME_SIZE];
 	}
 	dataPtr = desc.frameData;
 	bytesAvailable = MAX_FRAME_SIZE;
@@ -431,14 +431,14 @@ void DeinterleavingFrames::getIncomingFrameParams(unsigned char*& dataPtr,
 
 void DeinterleavingFrames::getIncomingFrameParamsAfter(unsigned frameSize,
 		struct timeval presentationTime, unsigned durationInMicroseconds,
-		unsigned char& icc, unsigned char& ii) {
+		DP_U8& icc, DP_U8& ii) {
 	DeinterleavingFrameDescriptor& desc = fDescriptors[MAX_CYCLE_SIZE];
 	desc.frameDataSize = frameSize;
 	desc.presentationTime = presentationTime;
 	desc.durationInMicroseconds = durationInMicroseconds;
 
 	// Advance over the ADU descriptor, to get to the MPEG 'syncword':
-	unsigned char* ptr = desc.frameData;
+	DP_U8* ptr = desc.frameData;
 	(void) ADUdescriptor::getRemainingFrameSize(ptr);
 
 	// Read the next 11 bits into (ii,icc), and replace them with all-1s:
@@ -448,7 +448,7 @@ void DeinterleavingFrames::getIncomingFrameParamsAfter(unsigned frameSize,
 	*ptr |= 0xE0;
 }
 
-void DeinterleavingFrames::getReleasingFrameParams(unsigned char*& dataPtr,
+void DeinterleavingFrames::getReleasingFrameParams(DP_U8*& dataPtr,
 		unsigned& bytesInUse, struct timeval& presentationTime,
 		unsigned& durationInMicroseconds) {
 	DeinterleavingFrameDescriptor& desc = fDescriptors[fNextIndexToRelease];
@@ -466,7 +466,7 @@ void DeinterleavingFrames::moveIncomingFrameIntoPlace() {
 	toDesc.presentationTime = fromDesc.presentationTime;
 
 	// Move the data pointer into place by swapping the data pointers:
-	unsigned char* tmp = toDesc.frameData;
+	DP_U8* tmp = toDesc.frameData;
 	toDesc.frameData = fromDesc.frameData;
 	fromDesc.frameData = tmp;
 

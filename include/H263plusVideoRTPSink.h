@@ -12,12 +12,12 @@
 class H263plusVideoRTPSink: public VideoRTPSink {
 public:
 	static H263plusVideoRTPSink* createNew(UsageEnvironment& env,
-			CommonPlay *cpObj, Groupsock* RTPgs, unsigned char rtpPayloadFormat,
+			CommonPlay *cpObj, Groupsock* RTPgs, DP_U8 rtpPayloadFormat,
 			u_int32_t rtpTimestampFrequency = 90000);
 
 protected:
 	H263plusVideoRTPSink(UsageEnvironment& env, CommonPlay *cpObj,
-			Groupsock* RTPgs, unsigned char rtpPayloadFormat,
+			Groupsock* RTPgs, DP_U8 rtpPayloadFormat,
 			u_int32_t rtpTimestampFrequency);
 	// called only by createNew()
 
@@ -26,10 +26,10 @@ protected:
 private:
 	// redefined virtual functions:
 	virtual void doSpecialFrameHandling(unsigned fragmentationOffset,
-			unsigned char* frameStart, unsigned numBytesInFrame,
+			DP_U8* frameStart, unsigned numBytesInFrame,
 			struct timeval framePresentationTime, unsigned numRemainingBytes);
 	virtual Boolean frameCanAppearAfterPacketStart(
-			unsigned char const* frameStart, unsigned numBytesInFrame) const;
+			DP_U8 const* frameStart, unsigned numBytesInFrame) const;
 	virtual unsigned specialHeaderSize() const;
 };
 

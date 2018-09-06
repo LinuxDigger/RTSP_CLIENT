@@ -15,7 +15,7 @@ typedef unsigned int            DP_U32;
 typedef unsigned long long      DP_U64;
 
 // Defines signed types
-typedef char                    DP_S8;
+typedef char                    DP_C_S8;
 typedef signed short            DP_S16;
 typedef int                     DP_S32;
 typedef signed long long        DP_S64;

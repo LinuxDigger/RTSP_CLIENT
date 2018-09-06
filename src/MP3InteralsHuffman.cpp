@@ -30,7 +30,7 @@ static unsigned debugCount = 0; /* for debugging */
 #define TRUNC_FAVORa
 
 void updateSideInfoForHuffman(MP3SideInfo& sideInfo, Boolean isMPEG2,
-		unsigned char const* mainDataPtr, unsigned p23L0, unsigned p23L1,
+		DP_U8 const* mainDataPtr, unsigned p23L0, unsigned p23L1,
 		unsigned& part23Length0a, unsigned& part23Length0aTruncation,
 		unsigned& part23Length0b, unsigned& part23Length0bTruncation,
 		unsigned& part23Length1a, unsigned& part23Length1aTruncation,
@@ -294,7 +294,7 @@ void updateSideInfoForHuffman(MP3SideInfo& sideInfo, Boolean isMPEG2,
 #endif
 }
 
-static void rsf_getline(char* line, unsigned max, unsigned char**fi) {
+static void rsf_getline(char* line, unsigned max, DP_U8**fi) {
 	unsigned i;
 	for (i = 0; i < max; ++i) {
 		line[i] = *(*fi)++;
@@ -306,7 +306,7 @@ static void rsf_getline(char* line, unsigned max, unsigned char**fi) {
 	line[i] = '\0';
 }
 
-static void rsfscanf(unsigned char **fi, unsigned int* v) {
+static void rsfscanf(DP_U8 **fi, unsigned int* v) {
 	while (sscanf((char*) *fi, "%x", v) == 0) {
 		/* skip past the next '\0' */
 		while (*(*fi)++ != '\0') {
@@ -335,8 +335,8 @@ struct huffcodetab {
 	unsigned int linmax; /*max number to be stored in linbits	*/
 	int ref; /*a positive value indicates a reference*/
 	HUFFBITS *table; /*pointer to array[xlen][ylen]		*/
-	unsigned char *hlen; /*pointer to array[xlen][ylen]		*/
-	unsigned char (*val)[2];/*decoder tree				*/
+	DP_U8 *hlen; /*pointer to array[xlen][ylen]		*/
+	DP_U8 (*val)[2];/*decoder tree				*/
 	unsigned int treelen; /*length of decoder tree		*/
 };
 
@@ -345,7 +345,7 @@ static struct huffcodetab rsf_ht[HTN]; // array of all huffcodetable headers
 /* 32,33 count1-tables			*/
 
 /* read the huffman decoder table */
-static int read_decoder_table(unsigned char* fi) {
+static int read_decoder_table(DP_U8* fi) {
 	int n, i, nn, t;
 	unsigned int v0, v1;
 	char command[100], line[100];
@@ -399,7 +399,7 @@ static int read_decoder_table(unsigned char* fi) {
 			}
 		} else if (strcmp(command, ".treedata") == 0) {
 			rsf_ht[n].ref = -1;
-			rsf_ht[n].val = (unsigned char (*)[2]) new unsigned char[2
+			rsf_ht[n].val = (DP_U8 (*)[2]) new DP_U8[2
 					* (rsf_ht[n].treelen)];
 			if ((rsf_ht[n].val == NULL) && (rsf_ht[n].treelen != 0)) {
 #ifdef DEBUG
@@ -411,8 +411,8 @@ static int read_decoder_table(unsigned char* fi) {
 				rsfscanf(&fi, &v0);
 				rsfscanf(&fi, &v1);
 				/*replaces        fscanf(fi,"%x %x",&v0, &v1);*/
-				rsf_ht[n].val[i][0] = (unsigned char) v0;
-				rsf_ht[n].val[i][1] = (unsigned char) v1;
+				rsf_ht[n].val[i][0] = (DP_U8) v0;
+				rsf_ht[n].val[i][1] = (DP_U8) v1;
 			}
 			rsf_getline(line, 99, &fi); /* read the rest of the line */
 		} else {
@@ -439,10 +439,10 @@ static void initialize_huffman() {
 	huffman_initialized = True;
 }
 
-static unsigned char const slen[2][16] = { { 0, 0, 0, 0, 3, 1, 1, 1, 2, 2, 2, 3,
+static DP_U8 const slen[2][16] = { { 0, 0, 0, 0, 3, 1, 1, 1, 2, 2, 2, 3,
 		3, 3, 4, 4 }, { 0, 1, 2, 3, 0, 1, 2, 3, 1, 2, 3, 1, 2, 3, 2, 3 } };
 
-static unsigned char const stab[3][6][4] = { { { 6, 5, 5, 5 }, { 6, 5, 7, 3 }, {
+static DP_U8 const stab[3][6][4] = { { { 6, 5, 5, 5 }, { 6, 5, 7, 3 }, {
 		11, 10, 0, 0 }, { 7, 7, 7, 0 }, { 6, 6, 6, 3 }, { 8, 8, 5, 0 } }, { { 9,
 		9, 9, 9 }, { 9, 9, 12, 6 }, { 18, 18, 0, 0 }, { 12, 12, 12, 0 }, { 12,
 		9, 9, 6 }, { 15, 12, 9, 0 } }, { { 6, 9, 9, 9 }, { 6, 9, 12, 6 }, { 15,
@@ -495,7 +495,7 @@ extern unsigned n_slen2[];
 extern unsigned i_slen2[];
 
 static unsigned rsf_get_scale_factors_2(MP3SideInfo::gr_info_s_t *gr_info) {
-	unsigned char const* pnt;
+	DP_U8 const* pnt;
 	int i;
 	unsigned int slen;
 	int n = 0;
@@ -532,13 +532,13 @@ static int rsf_huffman_decoder(BitVector& bv, struct huffcodetab const* h,
 		int* x, int* y, int* v, int* w); // forward
 
 void MP3HuffmanDecode(MP3SideInfo::gr_info_s_t* gr, Boolean isMPEG2,
-		unsigned char const* fromBasePtr, unsigned fromBitOffset,
+		DP_U8 const* fromBasePtr, unsigned fromBitOffset,
 		unsigned fromLength, unsigned& scaleFactorsLength,
 		MP3HuffmanEncodingInfo& hei) {
 	unsigned i;
 	int x, y, v, w;
 	struct huffcodetab *h;
-	BitVector bv((unsigned char*) fromBasePtr, fromBitOffset, fromLength);
+	BitVector bv((DP_U8*) fromBasePtr, fromBitOffset, fromLength);
 
 	/* Compute the size of the scale factors (& also advance bv): */
 	scaleFactorsLength = getScaleFactorsLength(gr, isMPEG2);
@@ -698,7 +698,7 @@ static int rsf_huffman_decoder(BitVector& bv, struct huffcodetab const* h, // pt
 }
 
 #ifdef DO_HUFFMAN_ENCODING
-inline int getNextSample(unsigned char const*& fromPtr) {
+inline int getNextSample(DP_U8 const*& fromPtr) {
 	int sample
 #ifdef FOUR_BYTE_SAMPLES
 	= (fromPtr[0]<<24) | (fromPtr[1]<<16) | (fromPtr[2]<<8) | fromPtr[3];
@@ -719,8 +719,8 @@ static void rsf_huffman_encoder(BitVector& bv,
 		int x, int y, int v, int w); // forward
 
 unsigned MP3HuffmanEncode(MP3SideInfo::gr_info_s_t const* gr,
-		unsigned char const* fromPtr,
-		unsigned char* toPtr, unsigned toBitOffset,
+		DP_U8 const* fromPtr,
+		DP_U8* toPtr, unsigned toBitOffset,
 		unsigned numHuffBits) {
 	unsigned i;
 	struct huffcodetab *h;
@@ -769,7 +769,7 @@ unsigned MP3HuffmanEncode(MP3SideInfo::gr_info_s_t const* gr,
 
 static Boolean lookupHuffmanTableEntry(struct huffcodetab const* h,
 		HUFFBITS bits, unsigned bitsLength,
-		unsigned char& xy) {
+		DP_U8& xy) {
 	unsigned point = 0;
 	unsigned mask = 1;
 	unsigned numBitsTestedSoFar = 0;
@@ -804,7 +804,7 @@ static Boolean lookupHuffmanTableEntry(struct huffcodetab const* h,
 
 static void buildHuffmanEncodingTable(struct huffcodetab* h) {
 	h->table = new unsigned long[256];
-	h->hlen = new unsigned char[256];
+	h->hlen = new DP_U8[256];
 	if (h->table == NULL || h->hlen == NULL) {h->table = NULL; return;}
 	for (unsigned i = 0; i < 256; ++i) {
 		h->table[i] = 0; h->hlen[i] = 0;
@@ -819,7 +819,7 @@ static void buildHuffmanEncodingTable(struct huffcodetab* h) {
 		powerOf2 *= 2;
 		for (HUFFBITS bits = 0; bits < powerOf2; ++bits) {
 			// Find the table value - if any - for 'bits' (length 'bitsLength'):
-			unsigned char xy;
+			DP_U8 xy;
 			if (lookupHuffmanTableEntry(h, bits, bitsLength, xy)) {
 				++numEntries;
 				if (numEntries == maxNumEntries) return; // we're done
@@ -832,7 +832,7 @@ static void buildHuffmanEncodingTable(struct huffcodetab* h) {
 }
 
 static void lookupXYandPutBits(BitVector& bv, struct huffcodetab const* h,
-		unsigned char xy) {
+		DP_U8 xy) {
 	HUFFBITS bits = h->table[xy];
 	unsigned bitsLength = h->hlen[xy];
 
@@ -863,7 +863,7 @@ static void rsf_huffman_encoder(BitVector& bv,
 	}
 
 	Boolean xIsNeg = False, yIsNeg = False, vIsNeg = False, wIsNeg = False;
-	unsigned char xy;
+	DP_U8 xy;
 
 #ifdef FOUR_BYTE_SAMPLES
 #else

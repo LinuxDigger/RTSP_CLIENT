@@ -72,21 +72,21 @@ MPEG4GenericRTPSink::createNew(UsageEnvironment& env, CommonPlay *cpObj,
 }
 
 Boolean MPEG4GenericRTPSink::frameCanAppearAfterPacketStart(
-		unsigned char const* /*frameStart*/,
+		DP_U8 const* /*frameStart*/,
 		unsigned /*numBytesInFrame*/) const {
 	// (For now) allow at most 1 frame in a single packet:
 	return False;
 }
 
 void MPEG4GenericRTPSink::doSpecialFrameHandling(unsigned fragmentationOffset,
-		unsigned char* frameStart, unsigned numBytesInFrame,
+		DP_U8* frameStart, unsigned numBytesInFrame,
 		struct timeval framePresentationTime, unsigned numRemainingBytes) {
 	// Set the "AU Header Section".  This is 4 bytes: 2 bytes for the
 	// initial "AU-headers-length" field, and 2 bytes for the first
 	// (and only) "AU Header":
 	unsigned fullFrameSize = fragmentationOffset + numBytesInFrame
 			+ numRemainingBytes;
-	unsigned char headers[4];
+	DP_U8 headers[4];
 	headers[0] = 0;
 	headers[1] = 16 /* bits */; // AU-headers-length
 	headers[2] = fullFrameSize >> 5;

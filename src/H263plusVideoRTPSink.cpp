@@ -8,7 +8,7 @@
 #include "H263plusVideoRTPSink.h"
 
 H263plusVideoRTPSink::H263plusVideoRTPSink(UsageEnvironment& env,
-		CommonPlay *cpObj, Groupsock* RTPgs, unsigned char rtpPayloadFormat,
+		CommonPlay *cpObj, Groupsock* RTPgs, DP_U8 rtpPayloadFormat,
 		u_int32_t rtpTimestampFrequency) :
 		VideoRTPSink(env, cpObj, RTPgs, rtpPayloadFormat, rtpTimestampFrequency,
 				"H263-1998") {
@@ -19,21 +19,21 @@ H263plusVideoRTPSink::~H263plusVideoRTPSink() {
 
 H263plusVideoRTPSink*
 H263plusVideoRTPSink::createNew(UsageEnvironment& env, CommonPlay *cpObj,
-		Groupsock* RTPgs, unsigned char rtpPayloadFormat,
+		Groupsock* RTPgs, DP_U8 rtpPayloadFormat,
 		u_int32_t rtpTimestampFrequency) {
 	return new H263plusVideoRTPSink(env, cpObj, RTPgs, rtpPayloadFormat,
 			rtpTimestampFrequency);
 }
 
 Boolean H263plusVideoRTPSink::frameCanAppearAfterPacketStart(
-		unsigned char const* /*frameStart*/,
+		DP_U8 const* /*frameStart*/,
 		unsigned /*numBytesInFrame*/) const {
 	// A packet can contain only one frame
 	return False;
 }
 
 void H263plusVideoRTPSink::doSpecialFrameHandling(unsigned fragmentationOffset,
-		unsigned char* frameStart, unsigned numBytesInFrame,
+		DP_U8* frameStart, unsigned numBytesInFrame,
 		struct timeval framePresentationTime, unsigned numRemainingBytes) {
 	if (fragmentationOffset == 0) {
 		// This packet contains the first (or only) fragment of the frame.
@@ -53,10 +53,10 @@ void H263plusVideoRTPSink::doSpecialFrameHandling(unsigned fragmentationOffset,
 					<< "H263plusVideoRTPSink::doSpecialFrameHandling(): unexpected non-zero first two bytes!\n";
 		}
 		frameStart[0] = specialHeader >> 8;
-		frameStart[1] = (unsigned char) specialHeader;
+		frameStart[1] = (DP_U8) specialHeader;
 	} else {
 		unsigned short specialHeader = 0;
-		setSpecialHeaderBytes((unsigned char*) &specialHeader, 2);
+		setSpecialHeaderBytes((DP_U8*) &specialHeader, 2);
 	}
 
 	if (numRemainingBytes == 0) {

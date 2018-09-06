@@ -24,9 +24,9 @@ public:
   virtual ~OutputSocket();
 
   virtual Boolean write(netAddressBits address, portNumBits portNum/*in network order*/, u_int8_t ttl,
-			unsigned char* buffer, unsigned bufferSize);
+			DP_U8* buffer, unsigned bufferSize);
   Boolean write(struct sockaddr_in& addressAndPort, u_int8_t ttl,
-		unsigned char* buffer, unsigned bufferSize) {
+		DP_U8* buffer, unsigned bufferSize) {
     return write(addressAndPort.sin_addr.s_addr, addressAndPort.sin_port, ttl, buffer, bufferSize);
   }
 
@@ -36,7 +36,7 @@ protected:
   portNumBits sourcePortNum() const {return fSourcePort.num();}
 
 private: // redefined virtual function
-  virtual Boolean handleRead(unsigned char* buffer, unsigned bufferMaxSize,
+  virtual Boolean handleRead(DP_U8* buffer, unsigned bufferMaxSize,
 			     unsigned& bytesRead,
 			     struct sockaddr_in& fromAddressAndPort);
 
@@ -110,7 +110,7 @@ public:
 
   void multicastSendOnly(); // send, but don't receive any multicast packets
 
-  virtual Boolean output(UsageEnvironment& env, unsigned char* buffer, unsigned bufferSize,
+  virtual Boolean output(UsageEnvironment& env, DP_U8* buffer, unsigned bufferSize,
 			 DirectedNetInterface* interfaceNotToFwdBackTo = NULL);
 
   DirectedNetInterfaceSet& members() { return fMembers; }
@@ -130,7 +130,7 @@ public:
   Boolean wasLoopedBackFromUs(UsageEnvironment& env, struct sockaddr_in& fromAddressAndPort);
 
 public: // redefined virtual functions
-  virtual Boolean handleRead(unsigned char* buffer, unsigned bufferMaxSize,
+  virtual Boolean handleRead(DP_U8* buffer, unsigned bufferMaxSize,
 			     unsigned& bytesRead,
 			     struct sockaddr_in& fromAddressAndPort);
 
@@ -142,7 +142,7 @@ private:
     // used to implement (the public) "removeDestination()", and "changeDestinationParameters()"
   int outputToAllMembersExcept(DirectedNetInterface* exceptInterface,
 			       u_int8_t ttlToFwd,
-			       unsigned char* data, unsigned size,
+			       DP_U8* data, unsigned size,
 			       netAddressBits sourceAddr);
 
 protected:

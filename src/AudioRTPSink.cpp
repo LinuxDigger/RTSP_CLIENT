@@ -8,7 +8,7 @@
 #include "AudioRTPSink.h"
 
 AudioRTPSink::AudioRTPSink(UsageEnvironment& env, CommonPlay *cpObj,
-		Groupsock* rtpgs, unsigned char rtpPayloadType,
+		Groupsock* rtpgs, DP_U8 rtpPayloadType,
 		unsigned rtpTimestampFrequency, char const* rtpPayloadFormatName,
 		unsigned numChannels) :
 		MultiFramedRTPSink(env, cpObj, rtpgs, rtpPayloadType,

@@ -48,7 +48,7 @@ private:
 	void afterGettingFrame1(unsigned frameSize,
 			struct timeval presentationTime);
 
-	Boolean updateTSPacketDurationEstimate(unsigned char* pkt, double timeNow);
+	Boolean updateTSPacketDurationEstimate(DP_U8* pkt, double timeNow);
 
 private:
 	u_int64_t fTSPacketCount;

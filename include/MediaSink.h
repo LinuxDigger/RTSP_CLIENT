@@ -70,7 +70,7 @@ public:
 			OutPacketBuffer::maxSize = newMaxSize;
 	}
 
-	unsigned char* curPtr() const {
+	DP_U8* curPtr() const {
 		return &fBuf[fPacketStart + fCurOffset];
 	}
 	unsigned totalBytesAvailable() const {
@@ -79,7 +79,7 @@ public:
 	unsigned totalBufferSize() const {
 		return fLimit;
 	}
-	unsigned char* packet() const {
+	DP_U8* packet() const {
 		return &fBuf[fPacketStart];
 	}
 	unsigned curPacketSize() const {
@@ -90,12 +90,12 @@ public:
 		fCurOffset += numBytes;
 	}
 
-	void enqueue(unsigned char const* from, unsigned numBytes);
+	void enqueue(DP_U8 const* from, unsigned numBytes);
 	void enqueueWord(u_int32_t word);
-	void insert(unsigned char const* from, unsigned numBytes,
+	void insert(DP_U8 const* from, unsigned numBytes,
 			unsigned toPosition);
 	void insertWord(u_int32_t word, unsigned toPosition);
-	void extract(unsigned char* to, unsigned numBytes, unsigned fromPosition);
+	void extract(DP_U8* to, unsigned numBytes, unsigned fromPosition);
 	u_int32_t extractWord(unsigned fromPosition);
 
 	void skipBytes(unsigned numBytes);
@@ -141,7 +141,7 @@ public:
 
 private:
 	unsigned fPacketStart, fCurOffset, fPreferred, fMax, fLimit;
-	unsigned char* fBuf;
+	DP_U8* fBuf;
 
 	unsigned fOverflowDataOffset, fOverflowDataSize;
 	struct timeval fOverflowPresentationTime;

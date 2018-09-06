@@ -187,7 +187,7 @@ public:
 		virtual void handleHTTPCmd_OPTIONS();
 		virtual void handleHTTPCmd_TunnelingGET(char const* sessionCookie);
 		virtual Boolean handleHTTPCmd_TunnelingPOST(char const* sessionCookie,
-				unsigned char const* extraData, unsigned extraDataSize);
+				DP_U8 const* extraData, unsigned extraDataSize);
 		virtual void handleHTTPCmd_StreamingGET(char const* urlSuffix,
 				char const* fullRequestStr);
 	protected:
@@ -198,7 +198,7 @@ public:
 		Boolean authenticationOK(char const* cmdName, char const* urlSuffix,
 				char const* fullRequestStr);
 		void changeClientInputSocket(int newSocketNum,
-				unsigned char const* extraData, unsigned extraDataSize);
+				DP_U8 const* extraData, unsigned extraDataSize);
 		// used to implement RTSP-over-HTTP tunneling
 		static void continueHandlingREGISTER(ParamsForREGISTER* params);
 		virtual void continueHandlingREGISTER1(ParamsForREGISTER* params);
@@ -214,7 +214,7 @@ public:
 		int& fClientInputSocket; // aliased to ::fOurSocket
 		int fClientOutputSocket;
 		Boolean fIsActive;
-		unsigned char* fLastCRLF;
+		DP_U8* fLastCRLF;
 		unsigned fRecursionCount;
 		char const* fCurrentCSeq;
 		Authenticator fCurrentAuthenticator; // used if access control is needed
@@ -281,7 +281,7 @@ public:
 	protected:
 		RTSPServer& fOurRTSPServer; // same as ::fOurServer
 		Boolean fIsMulticast, fStreamAfterSETUP;
-		unsigned char fTCPStreamIdCount; // used for (optional) RTP/TCP
+		DP_U8 fTCPStreamIdCount; // used for (optional) RTP/TCP
 		Boolean usesTCPTransport() const {
 			return fTCPStreamIdCount > 0;
 		}

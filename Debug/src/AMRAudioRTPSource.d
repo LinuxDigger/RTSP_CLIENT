@@ -1,4 +1,7 @@
 src/AMRAudioRTPSource.o: ../src/AMRAudioRTPSource.cpp \
+ /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/X86/include/Rtsp_server.h \
+ /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/X86/include/Rtsp_sys.h \
+ /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/X86/include/Rtsp_sys.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/AMRAudioRTPSource.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/AMRAudioSource.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/FramedSource.h \
@@ -19,6 +22,12 @@ src/AMRAudioRTPSource.o: ../src/AMRAudioRTPSource.cpp \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/RTPInterface.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/MultiFramedRTPSource.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/BitVector.h
+
+/home/jhb/nfs/TerminalC++Workspace/RTSP_Client/X86/include/Rtsp_server.h:
+
+/home/jhb/nfs/TerminalC++Workspace/RTSP_Client/X86/include/Rtsp_sys.h:
+
+/home/jhb/nfs/TerminalC++Workspace/RTSP_Client/X86/include/Rtsp_sys.h:
 
 /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/AMRAudioRTPSource.h:
 

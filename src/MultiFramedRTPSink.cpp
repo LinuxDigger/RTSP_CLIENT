@@ -31,7 +31,7 @@ void MultiFramedRTPSink::setPacketSizes(unsigned preferredPacketSize,
 #endif
 
 MultiFramedRTPSink::MultiFramedRTPSink(UsageEnvironment& env, CommonPlay *cpObj,
-		Groupsock* rtpGS, unsigned char rtpPayloadType,
+		Groupsock* rtpGS, DP_U8 rtpPayloadType,
 		unsigned rtpTimestampFrequency, char const* rtpPayloadFormatName,
 		unsigned numChannels) :
 		RTPSink(env, rtpGS, rtpPayloadType, rtpTimestampFrequency,
@@ -47,7 +47,7 @@ MultiFramedRTPSink::~MultiFramedRTPSink() {
 }
 
 void MultiFramedRTPSink::doSpecialFrameHandling(
-		unsigned /*fragmentationOffset*/, unsigned char* /*frameStart*/,
+		unsigned /*fragmentationOffset*/, DP_U8* /*frameStart*/,
 		unsigned /*numBytesInFrame*/, struct timeval framePresentationTime,
 		unsigned /*numRemainingBytes*/) {
 	// default implementation: If this is the first frame in the packet,
@@ -66,7 +66,7 @@ Boolean MultiFramedRTPSink::allowOtherFramesAfterLastFragment() const {
 }
 
 Boolean MultiFramedRTPSink::frameCanAppearAfterPacketStart(
-		unsigned char const* /*frameStart*/,
+		DP_U8 const* /*frameStart*/,
 		unsigned /*numBytesInFrame*/) const {
 	return True; // by default
 }
@@ -106,7 +106,7 @@ void MultiFramedRTPSink::setSpecialHeaderWord(unsigned word,
 	fOutBuf->insertWord(word, fSpecialHeaderPosition + 4 * wordPosition);
 }
 
-void MultiFramedRTPSink::setSpecialHeaderBytes(unsigned char const* bytes,
+void MultiFramedRTPSink::setSpecialHeaderBytes(DP_U8 const* bytes,
 		unsigned numBytes, unsigned bytePosition) {
 	fOutBuf->insert(bytes, numBytes, fSpecialHeaderPosition + bytePosition);
 }
@@ -117,7 +117,7 @@ void MultiFramedRTPSink::setFrameSpecificHeaderWord(unsigned word,
 			fCurFrameSpecificHeaderPosition + 4 * wordPosition);
 }
 
-void MultiFramedRTPSink::setFrameSpecificHeaderBytes(unsigned char const* bytes,
+void MultiFramedRTPSink::setFrameSpecificHeaderBytes(DP_U8 const* bytes,
 		unsigned numBytes, unsigned bytePosition) {
 	fOutBuf->insert(bytes, numBytes,
 			fCurFrameSpecificHeaderPosition + bytePosition);
@@ -126,7 +126,7 @@ void MultiFramedRTPSink::setFrameSpecificHeaderBytes(unsigned char const* bytes,
 void MultiFramedRTPSink::setFramePadding(unsigned numPaddingBytes) {
 	if (numPaddingBytes > 0) {
 		// Add the padding bytes (with the last one being the padding size):
-		unsigned char paddingBuffer[255]; //max padding
+		DP_U8 paddingBuffer[255]; //max padding
 		memset(paddingBuffer, 0, numPaddingBytes);
 		paddingBuffer[numPaddingBytes - 1] = numPaddingBytes;
 		fOutBuf->enqueue(paddingBuffer, numPaddingBytes);
@@ -301,7 +301,7 @@ void MultiFramedRTPSink::afterGettingFrame1(unsigned frameSize,
 		sendPacketIfNecessary();
 	} else {
 		// Use this frame in our outgoing packet:
-		unsigned char* frameStart = fOutBuf->curPtr();
+		DP_U8* frameStart = fOutBuf->curPtr();
 		fOutBuf->increment(numFrameBytesToUse);
 		// do this now, in case "doSpecialFrameHandling()" calls "setFramePadding()" to append padding bytes
 

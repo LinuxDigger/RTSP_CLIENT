@@ -1,4 +1,7 @@
 src/RTCP.o: ../src/RTCP.cpp \
+ /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/X86/include/Rtsp_server.h \
+ /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/X86/include/Rtsp_sys.h \
+ /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/X86/include/Rtsp_sys.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/RTCP.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/RTPSink.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/MediaSink.h \
@@ -20,6 +23,12 @@ src/RTCP.o: ../src/RTCP.cpp \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/RTPSource.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/GroupsockHelper.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/rtcp_from_spec.h
+
+/home/jhb/nfs/TerminalC++Workspace/RTSP_Client/X86/include/Rtsp_server.h:
+
+/home/jhb/nfs/TerminalC++Workspace/RTSP_Client/X86/include/Rtsp_sys.h:
+
+/home/jhb/nfs/TerminalC++Workspace/RTSP_Client/X86/include/Rtsp_sys.h:
 
 /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/RTCP.h:
 

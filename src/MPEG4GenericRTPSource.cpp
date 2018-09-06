@@ -20,7 +20,7 @@ public:
 
 private:
 	// redefined virtual functions
-	virtual unsigned nextEnclosedFrameSize(unsigned char*& framePtr,
+	virtual unsigned nextEnclosedFrameSize(DP_U8*& framePtr,
 			unsigned dataSize);
 private:
 	MPEG4GenericRTPSource* fOurSource;
@@ -44,7 +44,7 @@ struct AUHeader {
 
 MPEG4GenericRTPSource*
 MPEG4GenericRTPSource::createNew(UsageEnvironment& env, CommonPlay *cpObj,
-		Groupsock* RTPgs, unsigned char rtpPayloadFormat,
+		Groupsock* RTPgs, DP_U8 rtpPayloadFormat,
 		unsigned rtpTimestampFrequency, char const* mediumName,
 		char const* mode, unsigned sizeLength, unsigned indexLength,
 		unsigned indexDeltaLength) {
@@ -54,7 +54,7 @@ MPEG4GenericRTPSource::createNew(UsageEnvironment& env, CommonPlay *cpObj,
 }
 
 MPEG4GenericRTPSource::MPEG4GenericRTPSource(UsageEnvironment& env,
-		CommonPlay *cpObj, Groupsock* RTPgs, unsigned char rtpPayloadFormat,
+		CommonPlay *cpObj, Groupsock* RTPgs, DP_U8 rtpPayloadFormat,
 		unsigned rtpTimestampFrequency, char const* mediumName,
 		char const* mode, unsigned sizeLength, unsigned indexLength,
 		unsigned indexDeltaLength) :
@@ -88,7 +88,7 @@ MPEG4GenericRTPSource::~MPEG4GenericRTPSource() {
 
 Boolean MPEG4GenericRTPSource::processSpecialHeader(BufferedPacket* packet,
 		unsigned& resultSpecialHeaderSize) {
-	unsigned char* headerStart = packet->data();
+	DP_U8* headerStart = packet->data();
 	unsigned packetSize = packet->dataSize();
 
 	fCurrentPacketBeginsFrame = fCurrentPacketCompletesFrame;
@@ -156,7 +156,7 @@ MPEG4GenericBufferedPacket::~MPEG4GenericBufferedPacket() {
 }
 
 unsigned MPEG4GenericBufferedPacket::nextEnclosedFrameSize(
-		unsigned char*& /*framePtr*/, unsigned dataSize) {
+		DP_U8*& /*framePtr*/, unsigned dataSize) {
 	// WE CURRENTLY DON'T IMPLEMENT INTERLEAVING.  FIX THIS! #####
 	AUHeader* auHeader = fOurSource->fAUHeaders;
 	if (auHeader == NULL)
@@ -187,7 +187,7 @@ static unsigned const samplingFrequencyFromIndex[16] = { 96000, 88200, 64000,
 		0, 0 };
 
 unsigned samplingFrequencyFromAudioSpecificConfig(char const* configStr) {
-	unsigned char* config = NULL;
+	DP_U8* config = NULL;
 	unsigned result = 0; // if returned, indicates an error
 
 	do {
@@ -199,7 +199,7 @@ unsigned samplingFrequencyFromAudioSpecificConfig(char const* configStr) {
 
 		if (configSize < 2)
 			break;
-		unsigned char samplingFrequencyIndex = ((config[0] & 0x07) << 1)
+		DP_U8 samplingFrequencyIndex = ((config[0] & 0x07) << 1)
 				| (config[1] >> 7);
 		if (samplingFrequencyIndex < 15) {
 			result = samplingFrequencyFromIndex[samplingFrequencyIndex];

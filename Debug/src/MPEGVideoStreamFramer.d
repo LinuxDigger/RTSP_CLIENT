@@ -1,4 +1,7 @@
 src/MPEGVideoStreamFramer.o: ../src/MPEGVideoStreamFramer.cpp \
+ /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/X86/include/Rtsp_server.h \
+ /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/X86/include/Rtsp_sys.h \
+ /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/X86/include/Rtsp_sys.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/MPEGVideoStreamParser.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/StreamParser.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/FramedSource.h \
@@ -14,6 +17,12 @@ src/MPEGVideoStreamFramer.o: ../src/MPEGVideoStreamFramer.cpp \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/FramedFilter.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/GroupsockHelper.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/NetAddress.h
+
+/home/jhb/nfs/TerminalC++Workspace/RTSP_Client/X86/include/Rtsp_server.h:
+
+/home/jhb/nfs/TerminalC++Workspace/RTSP_Client/X86/include/Rtsp_sys.h:
+
+/home/jhb/nfs/TerminalC++Workspace/RTSP_Client/X86/include/Rtsp_sys.h:
 
 /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/MPEGVideoStreamParser.h:
 

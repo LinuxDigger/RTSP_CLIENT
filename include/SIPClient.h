@@ -20,7 +20,7 @@ enum inviteClientState {
 class SIPClient: public Medium {
 public:
 	static SIPClient* createNew(UsageEnvironment& env,
-			unsigned char desiredAudioRTPPayloadFormat,
+			DP_U8 desiredAudioRTPPayloadFormat,
 			char const* mimeSubtype = NULL, int verbosityLevel = 0,
 			char const* applicationName = NULL);
 
@@ -59,7 +59,7 @@ protected:
 	virtual ~SIPClient();
 
 private:
-	SIPClient(UsageEnvironment& env, unsigned char desiredAudioRTPPayloadFormat,
+	SIPClient(UsageEnvironment& env, DP_U8 desiredAudioRTPPayloadFormat,
 			char const* mimeSubtype, int verbosityLevel,
 			char const* applicationName);
 	// called only by createNew();
@@ -91,7 +91,7 @@ private:
 
 private:
 	// Set for all calls:
-	unsigned char fDesiredAudioRTPPayloadFormat;
+	DP_U8 fDesiredAudioRTPPayloadFormat;
 	char* fMIMESubtype;
 	unsigned fMIMESubtypeSize;
 	int fVerbosityLevel;

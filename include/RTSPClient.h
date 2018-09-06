@@ -16,7 +16,7 @@
 class CommonPlay;
 class RTSPClient: public Medium {
 public:
-	static RTSPClient* createNew(UsageEnvironment& env, char const* rtspURL,
+	static RTSPClient* createNew(UsageEnvironment& env,  char const* rtspURL,
 			CommonPlay *cpObj = NULL, int verbosityLevel = 1,
 			char const* applicationName = NULL,
 			portNumBits tunnelOverHTTPPortNum = 0, int socketNumToServer = -1);
@@ -325,8 +325,8 @@ private:
 	static Boolean checkForHeader(char const* line, char const* headerName,
 			unsigned headerNameLength, char const*& headerParams);
 	Boolean parseTransportParams(char const* paramsStr, char*& serverAddressStr,
-			portNumBits& serverPortNum, unsigned char& rtpChannelId,
-			unsigned char& rtcpChannelId);
+			portNumBits& serverPortNum, DP_U8& rtpChannelId,
+			DP_U8& rtcpChannelId);
 	Boolean parseScaleParam(char const* paramStr, float& scale);
 	Boolean parseSpeedParam(char const* paramStr, float& speed);
 	Boolean parseRTPInfoParams(char const*& paramStr, u_int16_t& seqNum,
@@ -385,7 +385,7 @@ private:
 	unsigned fUserAgentHeaderStrLen;
 	int fInputSocketNum, fOutputSocketNum;
 	char* fBaseURL;
-	unsigned char fTCPStreamIdCount; // used for (optional) RTP/TCP
+	DP_U8 fTCPStreamIdCount; // used for (optional) RTP/TCP
 	char* fLastSessionId;
 	unsigned fSessionTimeoutParameter; // optionally set in response "Session:" headers
 	char* fResponseBuffer;

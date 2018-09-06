@@ -23,7 +23,7 @@ public:
 	//   file name suffix).  The default behavior ("oneFilePerFrame" == False)
 	//   is to output all incoming data into a single file.
 
-	virtual void addData(unsigned char const* data, unsigned dataSize,
+	virtual void addData(DP_U8 const* data, unsigned dataSize,
 			struct timeval presentationTime);
 	// (Available in case a client wants to add extra data to the output file)
 
@@ -47,13 +47,15 @@ protected:
 			unsigned numTruncatedBytes, struct timeval presentationTime);
 
 	FILE* fOutFid;
-	unsigned char* fBuffer;
+	DP_U8* fBuffer;
 	unsigned fBufferSize;
 	char* fPerFrameFileNamePrefix; // used if "oneFilePerFrame" is True
 	char* fPerFrameFileNameBuffer; // used if "oneFilePerFrame" is True
 	struct timeval fPrevPresentationTime;
 	unsigned fSamePresentationTimeCounter;
 	unsigned short _cliID;
+	bool fGetIDRFrame;
+	struct timeval tvStart;
 };
 
 #endif /* INCLUDE_FILESINK_H_ */

@@ -1,4 +1,7 @@
 src/MediaSession.o: ../src/MediaSession.cpp \
+ /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/X86/include/Rtsp_server.h \
+ /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/X86/include/Rtsp_sys.h \
+ /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/X86/include/Rtsp_sys.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/liveMedia.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/DVVideoRTPSource.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/MultiFramedRTPSource.h \
@@ -60,6 +63,12 @@ src/MediaSession.o: ../src/MediaSession.cpp \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/Base64.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/ParseSPS.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/H265ParserSPS.h
+
+/home/jhb/nfs/TerminalC++Workspace/RTSP_Client/X86/include/Rtsp_server.h:
+
+/home/jhb/nfs/TerminalC++Workspace/RTSP_Client/X86/include/Rtsp_sys.h:
+
+/home/jhb/nfs/TerminalC++Workspace/RTSP_Client/X86/include/Rtsp_sys.h:
 
 /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/liveMedia.h:
 

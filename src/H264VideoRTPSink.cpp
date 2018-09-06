@@ -13,7 +13,7 @@
 ////////// H264VideoRTPSink implementation //////////
 
 H264VideoRTPSink::H264VideoRTPSink(UsageEnvironment& env, CommonPlay *cpObj,
-		Groupsock* RTPgs, unsigned char rtpPayloadFormat, u_int8_t const* sps,
+		Groupsock* RTPgs, DP_U8 rtpPayloadFormat, u_int8_t const* sps,
 		unsigned spsSize, u_int8_t const* pps, unsigned ppsSize) :
 		H264or5VideoRTPSink(264, env, cpObj, RTPgs, rtpPayloadFormat,
 		NULL, 0, sps, spsSize, pps, ppsSize) {
@@ -23,12 +23,12 @@ H264VideoRTPSink::~H264VideoRTPSink() {
 }
 
 H264VideoRTPSink* H264VideoRTPSink::createNew(UsageEnvironment& env,
-		CommonPlay *cpObj, Groupsock* RTPgs, unsigned char rtpPayloadFormat) {
+		CommonPlay *cpObj, Groupsock* RTPgs, DP_U8 rtpPayloadFormat) {
 	return new H264VideoRTPSink(env, cpObj, RTPgs, rtpPayloadFormat);
 }
 
 H264VideoRTPSink* H264VideoRTPSink::createNew(UsageEnvironment& env,
-		CommonPlay *cpObj, Groupsock* RTPgs, unsigned char rtpPayloadFormat,
+		CommonPlay *cpObj, Groupsock* RTPgs, DP_U8 rtpPayloadFormat,
 		u_int8_t const* sps, unsigned spsSize, u_int8_t const* pps,
 		unsigned ppsSize) {
 	return new H264VideoRTPSink(env, cpObj, RTPgs, rtpPayloadFormat, sps,
@@ -36,7 +36,7 @@ H264VideoRTPSink* H264VideoRTPSink::createNew(UsageEnvironment& env,
 }
 
 H264VideoRTPSink* H264VideoRTPSink::createNew(UsageEnvironment& env,
-		CommonPlay *cpObj, Groupsock* RTPgs, unsigned char rtpPayloadFormat,
+		CommonPlay *cpObj, Groupsock* RTPgs, DP_U8 rtpPayloadFormat,
 		char const* sPropParameterSetsStr) {
 	u_int8_t* sps = NULL;
 	unsigned spsSize = 0;

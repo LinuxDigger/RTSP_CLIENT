@@ -73,6 +73,6 @@ private:
 };
 
 // Definitions of external C functions that implement various MP3 operations:
-extern "C" int mp3ZeroOutSideInfo(unsigned char*, unsigned, unsigned);
+extern "C" int mp3ZeroOutSideInfo(DP_U8*, unsigned, unsigned);
 
 #endif /* INCLUDE_MP3ADU_H_ */

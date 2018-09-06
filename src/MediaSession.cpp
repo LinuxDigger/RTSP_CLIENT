@@ -476,7 +476,7 @@ Boolean MediaSession::parseSDPAttribute_source_filter(char const* sdpLine) {
 	return parseSourceFilterAttribute(sdpLine, fSourceFilterAddr);
 }
 
-char* MediaSession::lookupPayloadFormat(unsigned char rtpPayloadType,
+char* MediaSession::lookupPayloadFormat(DP_U8 rtpPayloadType,
 		unsigned& freq, unsigned& nCh) {
 	// Look up the codec name and timestamp frequency for known (static)
 	// RTP payload formats.
@@ -724,12 +724,13 @@ MediaSubsessionIterator::MediaSubsessionIterator(MediaSession const& session) :
 MediaSubsessionIterator::~MediaSubsessionIterator() {
 }
 
+//static MediaSubsessionIterator* setupIter
+//segmentation fault
 MediaSubsession* MediaSubsessionIterator::next() {
 	MediaSubsession* result = fNextPtr;
-
 	if (fNextPtr != NULL)
+		//fNext seg fault
 		fNextPtr = fNextPtr->fNext;
-
 	return result;
 }
 
@@ -1028,7 +1029,7 @@ Boolean MediaSubsession::initiate(int useSpecialRTPoffset) {
 					<< "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^create rtcp "
 					<< endl;
 			fRTCPInstance = RTCPInstance::createNew(env(), fRTCPSocket,
-					totSessionBandwidth, (unsigned char const*) fParent.CNAME(),
+					totSessionBandwidth, (DP_U8 const*) fParent.CNAME(),
 					NULL /* we're a client */, fRTPSource, False, fcpObj);
 			if (fRTCPInstance == NULL) {
 				env().setResultMsg("Failed to create RTCP instance");
@@ -1362,7 +1363,7 @@ Boolean MediaSubsession::parseSDPAttribute_fmtp(char const* sdpLine) {
 					setAttribute(nameStr, valueStr);
 				}
 				unsigned len = strlen(valueStr);
-				unsigned char* base64ss = base64Decode(valueStr, len, false);
+				DP_U8* base64ss = base64Decode(valueStr, len, false);
 				cout << "nameStrrrrrrrrrrrrr : " << nameStr << " val:  "
 						<< valueStr << endl;
 				//01 is end
@@ -1373,7 +1374,7 @@ Boolean MediaSubsession::parseSDPAttribute_fmtp(char const* sdpLine) {
 						break;
 					if (iPos % 10 == 0 && iPos != 0)
 						printf("\n");
-					printf("%02x ", ((unsigned char*) base64ss)[iPos]);
+					printf("%02x ", ((DP_U8*) base64ss)[iPos]);
 				}
 				printf("\n");
 				int width = 0;
@@ -1381,9 +1382,9 @@ Boolean MediaSubsession::parseSDPAttribute_fmtp(char const* sdpLine) {
 				int fps = 0;
 				//sprop-parameter-sets 264
 				//sprop-sps 265
-				unsigned char ssbackup[iPos] = { 0 };
+				DP_U8 ssbackup[iPos] = { 0 };
 				memcpy(ssbackup, base64ss, iPos);
-				unsigned char nal_unit_type = (ssbackup[0] & 0x7E) >> 1;
+				DP_U8 nal_unit_type = (ssbackup[0] & 0x7E) >> 1;
 				printf("nal_unit_type::::::::::::: %d", nal_unit_type);
 
 				vc_params_t params;
@@ -1391,6 +1392,8 @@ Boolean MediaSubsession::parseSDPAttribute_fmtp(char const* sdpLine) {
 					if (h264_decode_sps(ssbackup, iPos, width, height, fps)) {
 						cout << "width : " << width << " height " << height
 								<< " fps " << fps << endl;
+						//server sps pps
+						//end
 					} else {
 					}
 				} else if (strcmp(nameStr, "sprop-sps") == 0) {

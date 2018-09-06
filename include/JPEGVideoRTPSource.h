@@ -17,7 +17,7 @@ class JPEGVideoRTPSource: public MultiFramedRTPSource {
 public:
   static JPEGVideoRTPSource*
   createNew(UsageEnvironment& env,CommonPlay *cpObj, Groupsock* RTPgs,
-	    unsigned char rtpPayloadFormat = 26,
+	    DP_U8 rtpPayloadFormat = 26,
 	    unsigned rtpPayloadFrequency = 90000,
 	    unsigned defaultWidth = 0, unsigned defaultHeight = 0);
 
@@ -26,7 +26,7 @@ protected:
 
 private:
   JPEGVideoRTPSource(UsageEnvironment& env,CommonPlay *cpObj, Groupsock* RTPgs,
-		     unsigned char rtpPayloadFormat,
+		     DP_U8 rtpPayloadFormat,
 		     unsigned rtpTimestampFrequency,
 		     unsigned defaultWidth, unsigned defaultHeight);
       // called only by createNew()

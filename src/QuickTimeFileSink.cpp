@@ -48,7 +48,7 @@ public:
 	SubsessionBuffer(unsigned bufferSize) :
 			fBufferSize(bufferSize) {
 		reset();
-		fData = new unsigned char[bufferSize];
+		fData = new DP_U8[bufferSize];
 	}
 	virtual ~SubsessionBuffer() {
 		delete[] fData;
@@ -60,10 +60,10 @@ public:
 		fBytesInUse += numBytes;
 	}
 
-	unsigned char* dataStart() {
+	DP_U8* dataStart() {
 		return &fData[0];
 	}
-	unsigned char* dataEnd() {
+	DP_U8* dataEnd() {
 		return &fData[fBytesInUse];
 	}
 	unsigned bytesInUse() const {
@@ -83,7 +83,7 @@ public:
 private:
 	unsigned fBufferSize;
 	struct timeval fPresentationTime;
-	unsigned char* fData;
+	DP_U8* fData;
 	unsigned fBytesInUse;
 };
 
@@ -213,9 +213,9 @@ private:
 		unsigned startSampleNumber;
 		unsigned short seqNum;
 		unsigned rtpHeader;
-		unsigned char numSpecialHeaders; // used when our RTP source has special headers
+		DP_U8 numSpecialHeaders; // used when our RTP source has special headers
 		unsigned specialHeaderBytesLength; // ditto
-		unsigned char specialHeaderBytes[SPECIAL_HEADER_BUFFER_SIZE]; // ditto
+		DP_U8 specialHeaderBytes[SPECIAL_HEADER_BUFFER_SIZE]; // ditto
 		unsigned packetSizes[256];
 	} fPrevFrameState;
 };
@@ -391,7 +391,7 @@ Boolean QuickTimeFileSink::continuePlaying() {
 			continue;
 
 		haveActiveSubsessions = True;
-		unsigned char* toPtr = ioState->fBuffer->dataEnd();
+		DP_U8* toPtr = ioState->fBuffer->dataEnd();
 		unsigned toSize = ioState->fBuffer->bytesAvailable();
 		subsessionSource->getNextFrame(toPtr, toSize, afterGettingFrame,
 				ioState, onSourceClosure, ioState);
@@ -799,7 +799,7 @@ void SubsessionIOState::afterGettingFrame(unsigned packetDataSize,
 }
 
 void SubsessionIOState::useFrame(SubsessionBuffer& buffer) {
-	unsigned char* const frameSource = buffer.dataStart();
+	DP_U8* const frameSource = buffer.dataStart();
 	unsigned const frameSize = buffer.bytesInUse();
 	struct timeval const& presentationTime = buffer.presentationTime();
 	int64_t const destFileOffset = TellFile64(fOurSink.fOutFid);
@@ -931,7 +931,7 @@ void SubsessionIOState::useFrameForHinting(unsigned frameSize,
 		unsigned const maxPacketSize = 1450;
 		unsigned short numPTEntries = (fPrevFrameState.frameSize
 				+ (maxPacketSize - 1)) / maxPacketSize; // normal case
-		unsigned char* immediateDataPtr = NULL;
+		DP_U8* immediateDataPtr = NULL;
 		unsigned immediateDataBytesRemaining = 0;
 		if (haveSpecialHeaders) { // special case
 			numPTEntries = fPrevFrameState.numSpecialHeaders;
@@ -959,7 +959,7 @@ void SubsessionIOState::useFrameForHinting(unsigned frameSize,
 							fPrevFrameState.frameSize - i * maxPacketSize; // normal case
 			unsigned sampleNumber = fPrevFrameState.startSampleNumber;
 
-			unsigned char immediateDataLen = 0;
+			DP_U8 immediateDataLen = 0;
 			if (haveSpecialHeaders) { // special case
 				++numDTEntries; // to include a Data Table entry for the special hdr
 				if (immediateDataBytesRemaining > 0) {
@@ -999,12 +999,12 @@ void SubsessionIOState::useFrameForHinting(unsigned frameSize,
 			if (haveSpecialHeaders) {
 				//   use the "Immediate Data" format (1):
 				hintSampleSize += fOurSink.addByte(1); // Source
-				unsigned char len =
+				DP_U8 len =
 						immediateDataLen > 14 ? 14 : immediateDataLen;
 				hintSampleSize += fOurSink.addByte(len); // Length
 				totalPacketSize += len;
 				fHINF.dimm += len;
-				unsigned char j;
+				DP_U8 j;
 				for (j = 0; j < len; ++j) {
 					hintSampleSize += fOurSink.addByte(immediateDataPtr[j]); // Data
 				}
@@ -1145,7 +1145,7 @@ Boolean SubsessionIOState::syncOK(struct timeval presentationTime) {
 						return False;
 
 					// if audio is in sync, wait for the next IDR frame to start
-					unsigned char* const frameSource = fBuffer->dataStart();
+					DP_U8* const frameSource = fBuffer->dataStart();
 					if (*frameSource != H264_IDR_FRAME)
 						return False;
 				}
@@ -1223,14 +1223,14 @@ ChunkDescriptor* ChunkDescriptor::extendChunk(int64_t newOffsetInFile,
 ////////// QuickTime-specific implementation //////////
 
 unsigned QuickTimeFileSink::addWord64(u_int64_t word) {
-	addByte((unsigned char) (word >> 56));
-	addByte((unsigned char) (word >> 48));
-	addByte((unsigned char) (word >> 40));
-	addByte((unsigned char) (word >> 32));
-	addByte((unsigned char) (word >> 24));
-	addByte((unsigned char) (word >> 16));
-	addByte((unsigned char) (word >> 8));
-	addByte((unsigned char) (word));
+	addByte((DP_U8) (word >> 56));
+	addByte((DP_U8) (word >> 48));
+	addByte((DP_U8) (word >> 40));
+	addByte((DP_U8) (word >> 32));
+	addByte((DP_U8) (word >> 24));
+	addByte((DP_U8) (word >> 16));
+	addByte((DP_U8) (word >> 8));
+	addByte((DP_U8) (word));
 
 	return 8;
 }
@@ -1245,8 +1245,8 @@ unsigned QuickTimeFileSink::addWord(unsigned word) {
 }
 
 unsigned QuickTimeFileSink::addHalfWord(unsigned short halfWord) {
-	addByte((unsigned char) (halfWord >> 8));
-	addByte((unsigned char) halfWord);
+	addByte((DP_U8) (halfWord >> 8));
+	addByte((DP_U8) halfWord);
 
 	return 2;
 }
@@ -1279,7 +1279,7 @@ unsigned QuickTimeFileSink::addArbitraryString(char const* str,
 					<< "\") saw string longer than we know how to handle ("
 					<< strLength << "\n";
 		}
-		size += addByte((unsigned char) strLength);
+		size += addByte((DP_U8) strLength);
 	}
 
 	while (*str != '\0') {
@@ -1897,7 +1897,7 @@ if (strcmp(subsession.mediumName(), "audio") == 0) {
 
 // Add the source's 'config' information:
 unsigned configSize;
-unsigned char* config = parseGeneralConfigStr(subsession.fmtp_config(),
+DP_U8* config = parseGeneralConfigStr(subsession.fmtp_config(),
 		configSize);
 size += addByte(configSize);
 for (unsigned i = 0; i < configSize; ++i) {
@@ -1983,9 +1983,9 @@ psets[comma_pos] = '\0';
 char const* sps_b64 = psets;
 char const* pps_b64 = &psets[comma_pos + 1];
 unsigned sps_count;
-unsigned char* sps_data = base64Decode(sps_b64, sps_count, false);
+DP_U8* sps_data = base64Decode(sps_b64, sps_count, false);
 unsigned pps_count;
-unsigned char* pps_data = base64Decode(pps_b64, pps_count, false);
+DP_U8* pps_data = base64Decode(pps_b64, pps_count, false);
 
 // Then add the decoded data:
 size += addByte(0x01); // configuration version

@@ -9,14 +9,14 @@
 
 MPEG1or2VideoRTPSource*
 MPEG1or2VideoRTPSource::createNew(UsageEnvironment& env, CommonPlay *cpObj,
-		Groupsock* RTPgs, unsigned char rtpPayloadFormat,
+		Groupsock* RTPgs, DP_U8 rtpPayloadFormat,
 		unsigned rtpTimestampFrequency) {
 	return new MPEG1or2VideoRTPSource(env, cpObj, RTPgs, rtpPayloadFormat,
 			rtpTimestampFrequency);
 }
 
 MPEG1or2VideoRTPSource::MPEG1or2VideoRTPSource(UsageEnvironment& env,
-		CommonPlay *cpObj, Groupsock* RTPgs, unsigned char rtpPayloadFormat,
+		CommonPlay *cpObj, Groupsock* RTPgs, DP_U8 rtpPayloadFormat,
 		unsigned rtpTimestampFrequency) :
 		MultiFramedRTPSource(env, cpObj, RTPgs, rtpPayloadFormat,
 				rtpTimestampFrequency) {
@@ -45,7 +45,7 @@ Boolean MPEG1or2VideoRTPSource::processSpecialHeader(BufferedPacket* packet,
 }
 
 Boolean MPEG1or2VideoRTPSource::packetIsUsableInJitterCalculation(
-		unsigned char* packet, unsigned packetSize) {
+		DP_U8* packet, unsigned packetSize) {
 	// There's a 4-byte video-specific header
 	if (packetSize < 4)
 		return False;

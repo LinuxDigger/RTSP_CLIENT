@@ -19,7 +19,7 @@
 ////////// SIPClient //////////
 
 SIPClient* SIPClient::createNew(UsageEnvironment& env,
-		unsigned char desiredAudioRTPPayloadFormat, char const* mimeSubtype,
+		DP_U8 desiredAudioRTPPayloadFormat, char const* mimeSubtype,
 		int verbosityLevel, char const* applicationName) {
 	return new SIPClient(env, desiredAudioRTPPayloadFormat, mimeSubtype,
 			verbosityLevel, applicationName);
@@ -39,7 +39,7 @@ void SIPClient::setUserAgentString(char const* userAgentName) {
 }
 
 SIPClient::SIPClient(UsageEnvironment& env,
-		unsigned char desiredAudioRTPPayloadFormat, char const* mimeSubtype,
+		DP_U8 desiredAudioRTPPayloadFormat, char const* mimeSubtype,
 		int verbosityLevel, char const* applicationName) :
 		Medium(env), fT1(500000 /* 500 ms */), fDesiredAudioRTPPayloadFormat(
 				desiredAudioRTPPayloadFormat), fVerbosityLevel(verbosityLevel), fCSeq(
@@ -70,7 +70,7 @@ SIPClient::SIPClient(UsageEnvironment& env,
 
 	// Now, find out our source port number.  Hack: Do this by first trying to
 	// send a 0-length packet, so that the "getSourcePort()" call will work.
-	fOurSocket->output(envir(), (unsigned char*) "", 0);
+	fOurSocket->output(envir(), (DP_U8*) "", 0);
 	Port srcPort(0);
 	getSourcePort(env, fOurSocket->socketNum(), srcPort);
 	if (srcPort.num() != 0) {
@@ -589,7 +589,7 @@ unsigned SIPClient::getResponseCode() {
 					unsigned bytesRead2;
 					struct sockaddr_in fromAddr;
 					Boolean readSuccess
-					= fOurSocket->handleRead((unsigned char*)ptr,
+					= fOurSocket->handleRead((DP_U8*)ptr,
 							numExtraBytesNeeded,
 							bytesRead2, fromAddr);
 					if (!readSuccess) break;
@@ -884,7 +884,7 @@ Boolean SIPClient::sendRequest(char const* requestString,
 	}
 	// NOTE: We should really check that "requestLength" is not #####
 	// too large for UDP (see RFC 3261, section 18.1.1) #####
-	return fOurSocket->output(envir(), (unsigned char*) requestString,
+	return fOurSocket->output(envir(), (DP_U8*) requestString,
 			requestLength);
 }
 
@@ -903,7 +903,7 @@ unsigned SIPClient::getResponse(char*& responseBuffer,
 	while (bytesRead < (int) responseBufferSize) {
 		unsigned bytesReadNow;
 		struct sockaddr_in fromAddr;
-		unsigned char* toPosn = (unsigned char*) (responseBuffer + bytesRead);
+		DP_U8* toPosn = (DP_U8*) (responseBuffer + bytesRead);
 		Boolean readSuccess = fOurSocket->handleRead(toPosn,
 				responseBufferSize - bytesRead, bytesReadNow, fromAddr);
 		if (!readSuccess || bytesReadNow == 0) {

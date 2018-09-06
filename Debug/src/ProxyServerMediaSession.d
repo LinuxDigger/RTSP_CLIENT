@@ -1,4 +1,7 @@
 src/ProxyServerMediaSession.o: ../src/ProxyServerMediaSession.cpp \
+ /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/X86/include/Rtsp_server.h \
+ /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/X86/include/Rtsp_sys.h \
+ /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/X86/include/Rtsp_sys.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/RTSPCommon.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/Boolean.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/GroupsockHelper.h \
@@ -87,6 +90,12 @@ src/ProxyServerMediaSession.o: ../src/ProxyServerMediaSession.cpp \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/EfficientAddOrUpdate.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/EfficientAddOrUpdate.hpp \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/Mutex.h
+
+/home/jhb/nfs/TerminalC++Workspace/RTSP_Client/X86/include/Rtsp_server.h:
+
+/home/jhb/nfs/TerminalC++Workspace/RTSP_Client/X86/include/Rtsp_sys.h:
+
+/home/jhb/nfs/TerminalC++Workspace/RTSP_Client/X86/include/Rtsp_sys.h:
 
 /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/RTSPCommon.h:
 

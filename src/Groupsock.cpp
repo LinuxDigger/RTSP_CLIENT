@@ -32,7 +32,7 @@ OutputSocket::~OutputSocket() {
 }
 
 Boolean OutputSocket::write(netAddressBits address, portNumBits portNum,
-		u_int8_t ttl, unsigned char* buffer, unsigned bufferSize) {
+		u_int8_t ttl, DP_U8* buffer, unsigned bufferSize) {
 	struct in_addr destAddr;
 	destAddr.s_addr = address;
 	if ((unsigned) ttl == fLastSentTTL) {
@@ -62,7 +62,7 @@ Boolean OutputSocket::write(netAddressBits address, portNumBits portNum,
 }
 
 // By default, we don't do reads:
-Boolean OutputSocket::handleRead(unsigned char* /*buffer*/,
+Boolean OutputSocket::handleRead(DP_U8* /*buffer*/,
 		unsigned /*bufferMaxSize*/, unsigned& /*bytesRead*/,
 		struct sockaddr_in& /*fromAddressAndPort*/) {
 	return True;
@@ -253,7 +253,7 @@ void Groupsock::multicastSendOnly() {
 #endif
 }
 
-Boolean Groupsock::output(UsageEnvironment& env, unsigned char* buffer,
+Boolean Groupsock::output(UsageEnvironment& env, DP_U8* buffer,
 		unsigned bufferSize, DirectedNetInterface* interfaceNotToFwdBackTo) {
 	do {
 		// First, do the datagram send, to each destination:
@@ -300,7 +300,7 @@ Boolean Groupsock::output(UsageEnvironment& env, unsigned char* buffer,
 }
 
 ////
-Boolean Groupsock::handleRead(unsigned char* buffer, unsigned bufferMaxSize,
+Boolean Groupsock::handleRead(DP_U8* buffer, unsigned bufferMaxSize,
 		unsigned& bytesRead, struct sockaddr_in& fromAddressAndPort) {
 	// Read data from the socket, and relay it across any attached tunnels
 	//##### later make this code more general - independent of tunnels
@@ -400,7 +400,7 @@ void Groupsock::removeDestinationFrom(destRecord*& dests, unsigned sessionId) {
 }
 
 int Groupsock::outputToAllMembersExcept(DirectedNetInterface* exceptInterface,
-		u_int8_t ttlToFwd, unsigned char* data, unsigned size,
+		u_int8_t ttlToFwd, DP_U8* data, unsigned size,
 		netAddressBits sourceAddr) {
 	// Don't forward TTL-0 packets
 	if (ttlToFwd == 0)

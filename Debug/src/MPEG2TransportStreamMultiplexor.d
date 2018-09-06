@@ -1,5 +1,8 @@
 src/MPEG2TransportStreamMultiplexor.o: \
  ../src/MPEG2TransportStreamMultiplexor.cpp \
+ /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/X86/include/Rtsp_server.h \
+ /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/X86/include/Rtsp_sys.h \
+ /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/X86/include/Rtsp_sys.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/MPEG2TransportStreamMultiplexor.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/FramedSource.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/MediaSource.h \
@@ -12,6 +15,12 @@ src/MPEG2TransportStreamMultiplexor.o: \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/TaskScheduler.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/MPEG1or2Demux.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/MPEG1or2Demux.h
+
+/home/jhb/nfs/TerminalC++Workspace/RTSP_Client/X86/include/Rtsp_server.h:
+
+/home/jhb/nfs/TerminalC++Workspace/RTSP_Client/X86/include/Rtsp_sys.h:
+
+/home/jhb/nfs/TerminalC++Workspace/RTSP_Client/X86/include/Rtsp_sys.h:
 
 /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/MPEG2TransportStreamMultiplexor.h:
 

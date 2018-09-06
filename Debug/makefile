@@ -44,7 +44,7 @@ all: RTSP_Client
 RTSP_Client: $(OBJS) $(USER_OBJS)
 	@echo 'Building target: $@'
 	@echo 'Invoking: GCC C++ Linker'
-	g++  -o "RTSP_Client" $(OBJS) $(USER_OBJS) $(LIBS)
+	g++ -L/home/jhb/nfs/TerminalC++Workspace/RTSP_Client/X86/lib -o "RTSP_Client" $(OBJS) $(USER_OBJS) $(LIBS)
 	@echo 'Finished building target: $@'
 	@echo ' '
 

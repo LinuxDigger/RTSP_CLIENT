@@ -21,7 +21,7 @@ public:
   virtual ~MPEGVideoStreamParser();
 
 public:
-  void registerReadInterest(unsigned char* to, unsigned maxSize);
+  void registerReadInterest(DP_U8* to, unsigned maxSize);
 
   virtual unsigned parse() = 0;
       // returns the size of the frame that was acquired, or 0 if none was
@@ -66,7 +66,7 @@ protected:
       } else {
 	// a sync word might begin in "curWord", although not at its start
 	saveByte(curWord>>24);
-	unsigned char newByte = get1Byte();
+	DP_U8 newByte = get1Byte();
 	curWord = (curWord<<8)|newByte;
       }
     }
@@ -81,7 +81,7 @@ protected:
 	curWord = get4Bytes();
       } else {
 	// a sync word might begin in "curWord", although not at its start
-	unsigned char newByte = get1Byte();
+	DP_U8 newByte = get1Byte();
 	curWord = (curWord<<8)|newByte;
       }
     }
@@ -91,12 +91,12 @@ protected:
   MPEGVideoStreamFramer* fUsingSource;
 
   // state of the frame that's currently being read:
-  unsigned char* fStartOfFrame;
-  unsigned char* fTo;
-  unsigned char* fLimit;
+  DP_U8* fStartOfFrame;
+  DP_U8* fTo;
+  DP_U8* fLimit;
   unsigned fNumTruncatedBytes;
   unsigned curFrameSize() { return fTo - fStartOfFrame; }
-  unsigned char* fSavedTo;
+  DP_U8* fSavedTo;
   unsigned fSavedNumTruncatedBytes;
 
 private: // redefined virtual functions

@@ -77,7 +77,7 @@ MPEG4VideoStreamFramer::createNew(UsageEnvironment& env, CommonPlay *cpObj,
 	return new MPEG4VideoStreamFramer(env, cpObj, inputSource);
 }
 
-unsigned char* MPEG4VideoStreamFramer::getConfigBytes(
+DP_U8* MPEG4VideoStreamFramer::getConfigBytes(
 		unsigned& numBytes) const {
 	numBytes = fNumConfigBytes;
 	return fConfigBytes;
@@ -111,10 +111,10 @@ void MPEG4VideoStreamFramer::startNewConfig() {
 	fNumNewConfigBytes = 0;
 }
 
-void MPEG4VideoStreamFramer::appendToNewConfig(unsigned char* newConfigBytes,
+void MPEG4VideoStreamFramer::appendToNewConfig(DP_U8* newConfigBytes,
 		unsigned numNewBytes) {
 	// Allocate a new block of memory for the new config bytes:
-	unsigned char* configNew = new unsigned char[fNumNewConfigBytes
+	DP_U8* configNew = new DP_U8[fNumNewConfigBytes
 			+ numNewBytes];
 
 	// Copy the old, then the new, config bytes there:

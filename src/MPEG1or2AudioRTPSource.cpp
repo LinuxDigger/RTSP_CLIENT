@@ -9,14 +9,14 @@
 
 MPEG1or2AudioRTPSource*
 MPEG1or2AudioRTPSource::createNew(UsageEnvironment& env, CommonPlay *cpObj,
-		Groupsock* RTPgs, unsigned char rtpPayloadFormat,
+		Groupsock* RTPgs, DP_U8 rtpPayloadFormat,
 		unsigned rtpTimestampFrequency) {
 	return new MPEG1or2AudioRTPSource(env, cpObj, RTPgs, rtpPayloadFormat,
 			rtpTimestampFrequency);
 }
 
 MPEG1or2AudioRTPSource::MPEG1or2AudioRTPSource(UsageEnvironment& env,
-		CommonPlay *cpObj, Groupsock* rtpGS, unsigned char rtpPayloadFormat,
+		CommonPlay *cpObj, Groupsock* rtpGS, DP_U8 rtpPayloadFormat,
 		unsigned rtpTimestampFrequency) :
 		MultiFramedRTPSource(env, cpObj, rtpGS, rtpPayloadFormat,
 				rtpTimestampFrequency) {

@@ -18,7 +18,7 @@ public:
 
 private:
 	// redefined virtual functions
-	virtual unsigned nextEnclosedFrameSize(unsigned char*& framePtr,
+	virtual unsigned nextEnclosedFrameSize(DP_U8*& framePtr,
 			unsigned dataSize);
 private:
 	H264VideoRTPSource& fOurSource;
@@ -34,14 +34,14 @@ private:
 
 H264VideoRTPSource*
 H264VideoRTPSource::createNew(UsageEnvironment& env, CommonPlay *cpObj,
-		Groupsock* RTPgs, unsigned char rtpPayloadFormat,
+		Groupsock* RTPgs, DP_U8 rtpPayloadFormat,
 		unsigned rtpTimestampFrequency) {
 	return new H264VideoRTPSource(env, cpObj, RTPgs, rtpPayloadFormat,
 			rtpTimestampFrequency);
 }
 
 H264VideoRTPSource::H264VideoRTPSource(UsageEnvironment& env, CommonPlay *cpObj,
-		Groupsock* RTPgs, unsigned char rtpPayloadFormat,
+		Groupsock* RTPgs, DP_U8 rtpPayloadFormat,
 		unsigned rtpTimestampFrequency) :
 		MultiFramedRTPSource(env, cpObj, RTPgs, rtpPayloadFormat,
 				rtpTimestampFrequency, new H264BufferedPacketFactory), fCurPacketNALUnitType(
@@ -53,7 +53,7 @@ H264VideoRTPSource::~H264VideoRTPSource() {
 
 Boolean H264VideoRTPSource::processSpecialHeader(BufferedPacket* packet,
 		unsigned& resultSpecialHeaderSize) {
-	unsigned char* headerStart = packet->data();
+	DP_U8* headerStart = packet->data();
 	unsigned packetSize = packet->dataSize();
 	unsigned numBytesToSkip;
 
@@ -78,8 +78,8 @@ Boolean H264VideoRTPSource::processSpecialHeader(BufferedPacket* packet,
 		// If the start bit is set, we reconstruct the original NAL header into byte 1:
 		if (packetSize < 2)
 			return False;
-		unsigned char startBit = headerStart[1] & 0x80;
-		unsigned char endBit = headerStart[1] & 0x40;
+		DP_U8 startBit = headerStart[1] & 0x80;
+		DP_U8 endBit = headerStart[1] & 0x40;
 		if (startBit) {
 			fCurrentPacketBeginsFrame = True;
 
@@ -150,7 +150,7 @@ H264BufferedPacket::H264BufferedPacket(H264VideoRTPSource& ourSource) :
 H264BufferedPacket::~H264BufferedPacket() {
 }
 
-unsigned H264BufferedPacket::nextEnclosedFrameSize(unsigned char*& framePtr,
+unsigned H264BufferedPacket::nextEnclosedFrameSize(DP_U8*& framePtr,
 		unsigned dataSize) {
 	unsigned resultNALUSize = 0; // if an error occurs
 

@@ -17,7 +17,7 @@ public:
 
 private:
 	// redefined virtual functions
-	virtual unsigned nextEnclosedFrameSize(unsigned char*& framePtr,
+	virtual unsigned nextEnclosedFrameSize(DP_U8*& framePtr,
 			unsigned dataSize);
 };
 
@@ -31,14 +31,14 @@ private:
 
 VorbisAudioRTPSource*
 VorbisAudioRTPSource::createNew(UsageEnvironment& env, CommonPlay *cpObj,
-		Groupsock* RTPgs, unsigned char rtpPayloadFormat,
+		Groupsock* RTPgs, DP_U8 rtpPayloadFormat,
 		unsigned rtpTimestampFrequency) {
 	return new VorbisAudioRTPSource(env, cpObj, RTPgs, rtpPayloadFormat,
 			rtpTimestampFrequency);
 }
 
 VorbisAudioRTPSource::VorbisAudioRTPSource(UsageEnvironment& env,
-		CommonPlay *cpObj, Groupsock* RTPgs, unsigned char rtpPayloadFormat,
+		CommonPlay *cpObj, Groupsock* RTPgs, DP_U8 rtpPayloadFormat,
 		unsigned rtpTimestampFrequency) :
 		MultiFramedRTPSource(env, cpObj, RTPgs, rtpPayloadFormat,
 				rtpTimestampFrequency, new VorbisBufferedPacketFactory), fCurPacketIdent(
@@ -50,7 +50,7 @@ VorbisAudioRTPSource::~VorbisAudioRTPSource() {
 
 Boolean VorbisAudioRTPSource::processSpecialHeader(BufferedPacket* packet,
 		unsigned& resultSpecialHeaderSize) {
-	unsigned char* headerStart = packet->data();
+	DP_U8* headerStart = packet->data();
 	unsigned packetSize = packet->dataSize();
 
 	resultSpecialHeaderSize = 4;
@@ -85,7 +85,7 @@ VorbisBufferedPacket::VorbisBufferedPacket() {
 VorbisBufferedPacket::~VorbisBufferedPacket() {
 }
 
-unsigned VorbisBufferedPacket::nextEnclosedFrameSize(unsigned char*& framePtr,
+unsigned VorbisBufferedPacket::nextEnclosedFrameSize(DP_U8*& framePtr,
 		unsigned dataSize) {
 	if (dataSize < 2) {
 		// There's not enough space for a 2-byte header.  TARFU!  Just return the data that's left:

@@ -1,5 +1,8 @@
 src/H264VideoStreamDiscreteFramer.o: \
  ../src/H264VideoStreamDiscreteFramer.cpp \
+ /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/X86/include/Rtsp_server.h \
+ /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/X86/include/Rtsp_sys.h \
+ /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/X86/include/Rtsp_sys.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/H264VideoStreamDiscreteFramer.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/H264or5VideoStreamDiscreteFramer.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/H264or5VideoStreamFramer.h \
@@ -14,6 +17,12 @@ src/H264VideoStreamDiscreteFramer.o: \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/UsageEnvironment.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/NetCommon.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/TaskScheduler.h
+
+/home/jhb/nfs/TerminalC++Workspace/RTSP_Client/X86/include/Rtsp_server.h:
+
+/home/jhb/nfs/TerminalC++Workspace/RTSP_Client/X86/include/Rtsp_sys.h:
+
+/home/jhb/nfs/TerminalC++Workspace/RTSP_Client/X86/include/Rtsp_sys.h:
 
 /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/H264VideoStreamDiscreteFramer.h:
 

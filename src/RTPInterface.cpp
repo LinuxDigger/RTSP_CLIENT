@@ -37,10 +37,10 @@ public:
 	SocketDescriptor(UsageEnvironment& env, int socketNum);
 	virtual ~SocketDescriptor();
 
-	void registerRTPInterface(unsigned char streamChannelId,
+	void registerRTPInterface(DP_U8 streamChannelId,
 			RTPInterface* rtpInterface);
-	RTPInterface* lookupRTPInterface(unsigned char streamChannelId);
-	void deregisterRTPInterface(unsigned char streamChannelId);
+	RTPInterface* lookupRTPInterface(DP_U8 streamChannelId);
+	void deregisterRTPInterface(DP_U8 streamChannelId);
 
 	void setServerRequestAlternativeByteHandler(
 			ServerRequestAlternativeByteHandler* handler, void* clientData) {
@@ -127,7 +127,7 @@ RTPInterface::~RTPInterface() {
 	delete fTCPStreams;
 }
 
-void RTPInterface::setStreamSocket(int sockNum, unsigned char streamChannelId) {
+void RTPInterface::setStreamSocket(int sockNum, DP_U8 streamChannelId) {
 	fGS->removeAllDestinations();
 	envir().taskScheduler().disableBackgroundHandling(fGS->socketNum()); // turn off any reading on our datagram socket
 	fGS->reset(); // and close our datagram socket, because we won't be using it anymore
@@ -135,7 +135,7 @@ void RTPInterface::setStreamSocket(int sockNum, unsigned char streamChannelId) {
 	addStreamSocket(sockNum, streamChannelId);
 }
 
-void RTPInterface::addStreamSocket(int sockNum, unsigned char streamChannelId) {
+void RTPInterface::addStreamSocket(int sockNum, DP_U8 streamChannelId) {
 	if (sockNum < 0)
 		return;
 
@@ -156,7 +156,7 @@ void RTPInterface::addStreamSocket(int sockNum, unsigned char streamChannelId) {
 }
 
 static void deregisterSocket(UsageEnvironment& env, int sockNum,
-		unsigned char streamChannelId) {
+		DP_U8 streamChannelId) {
 	SocketDescriptor* socketDescriptor = lookupSocketDescriptor(env, sockNum,
 			False);
 	if (socketDescriptor != NULL) {
@@ -167,7 +167,7 @@ static void deregisterSocket(UsageEnvironment& env, int sockNum,
 }
 
 void RTPInterface::removeStreamSocket(int sockNum,
-		unsigned char streamChannelId) {
+		DP_U8 streamChannelId) {
 	// Remove - from our list of 'TCP streams' - the record of the (sockNum,streamChannelId) pair.
 	// (However "streamChannelId" == 0xFF is a special case, meaning remove all
 	//  (sockNum,*) pairs.)
@@ -181,7 +181,7 @@ void RTPInterface::removeStreamSocket(int sockNum,
 							|| streamChannelId
 									== (*streamsPtr)->fStreamChannelId)) {
 				// Delete the record pointed to by *streamsPtr :
-				unsigned char streamChannelIdToRemove =
+				DP_U8 streamChannelIdToRemove =
 						(*streamsPtr)->fStreamChannelId;
 				tcpStreamRecord* next = (*streamsPtr)->fNext;
 				(*streamsPtr)->fNext = NULL;
@@ -219,7 +219,7 @@ void RTPInterface::clearServerRequestAlternativeByteHandler(
 	setServerRequestAlternativeByteHandler(env, socketNum, NULL, NULL);
 }
 
-Boolean RTPInterface::sendPacket(unsigned char* packet, unsigned packetSize) {
+Boolean RTPInterface::sendPacket(DP_U8* packet, unsigned packetSize) {
 	Boolean success = True; // we'll return False instead if any of the sends fail
 
 	// Normal case: Send as a UDP packet:
@@ -259,9 +259,9 @@ void RTPInterface::startNetworkReading(
 	}
 }
 
-Boolean RTPInterface::handleRead(unsigned char* buffer, unsigned bufferMaxSize,
+Boolean RTPInterface::handleRead(DP_U8* buffer, unsigned bufferMaxSize,
 		unsigned& bytesRead, struct sockaddr_in& fromAddress, int& tcpSocketNum,
-		unsigned char& tcpStreamChannelId, Boolean& packetReadWasIncomplete) {
+		DP_U8& tcpStreamChannelId, Boolean& packetReadWasIncomplete) {
 	packetReadWasIncomplete = False; // by default
 	Boolean readSuccess;
 	if (fNextTCPReadStreamSocketNum < 0) {
@@ -326,7 +326,7 @@ void RTPInterface::stopNetworkReading() {
 ////////// Helper Functions - Implementation /////////
 
 Boolean RTPInterface::sendRTPorRTCPPacketOverTCP(u_int8_t* packet,
-		unsigned packetSize, int socketNum, unsigned char streamChannelId) {
+		unsigned packetSize, int socketNum, DP_U8 streamChannelId) {
 #ifdef DEBUG_SEND
 	fprintf(stderr, "sendRTPorRTCPPacketOverTCP: %d bytes over channel %d (socket %d)\n",
 			packetSize, streamChannelId, socketNum); fflush(stderr);
@@ -433,7 +433,7 @@ SocketDescriptor::~SocketDescriptor() {
 
 		while ((rtpInterface = (RTPInterface*) (iter->next(key))) != NULL) {
 			u_int64_t streamChannelIdLong = (u_int64_t) key;
-			unsigned char streamChannelId = (unsigned char) streamChannelIdLong;
+			DP_U8 streamChannelId = (DP_U8) streamChannelIdLong;
 
 			rtpInterface->removeStreamSocket(fOurSocketNum, streamChannelId);
 		}
@@ -456,7 +456,7 @@ SocketDescriptor::~SocketDescriptor() {
 	}
 }
 
-void SocketDescriptor::registerRTPInterface(unsigned char streamChannelId,
+void SocketDescriptor::registerRTPInterface(DP_U8 streamChannelId,
 		RTPInterface* rtpInterface) {
 	Boolean isFirstRegistration = fSubChannelHashTable->IsEmpty();
 #if defined(DEBUG_SEND)||defined(DEBUG_RECEIVE)
@@ -475,12 +475,12 @@ void SocketDescriptor::registerRTPInterface(unsigned char streamChannelId,
 }
 
 RTPInterface* SocketDescriptor::lookupRTPInterface(
-		unsigned char streamChannelId) {
+		DP_U8 streamChannelId) {
 	char const* lookupArg = (char const*) (long) streamChannelId;
 	return (RTPInterface*) (fSubChannelHashTable->Lookup(lookupArg));
 }
 
-void SocketDescriptor::deregisterRTPInterface(unsigned char streamChannelId) {
+void SocketDescriptor::deregisterRTPInterface(DP_U8 streamChannelId) {
 #if defined(DEBUG_SEND)||defined(DEBUG_RECEIVE)
 	fprintf(stderr, "SocketDescriptor(socket %d)::deregisterRTPInterface(channel %d)\n", fOurSocketNum, streamChannelId);
 #endif
@@ -637,7 +637,7 @@ Boolean SocketDescriptor::tcpReadHandler1(int mask) {
 ////////// tcpStreamRecord implementation //////////
 
 tcpStreamRecord::tcpStreamRecord(int streamSocketNum,
-		unsigned char streamChannelId, tcpStreamRecord* next) :
+		DP_U8 streamChannelId, tcpStreamRecord* next) :
 		fNext(next), fStreamSocketNum(streamSocketNum), fStreamChannelId(
 				streamChannelId) {
 }

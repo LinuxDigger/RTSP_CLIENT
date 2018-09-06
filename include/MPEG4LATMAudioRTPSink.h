@@ -13,13 +13,13 @@
 class MPEG4LATMAudioRTPSink: public AudioRTPSink {
 public:
 	static MPEG4LATMAudioRTPSink* createNew(UsageEnvironment& env,CommonPlay *cpObj,
-			Groupsock* RTPgs, unsigned char rtpPayloadFormat,
+			Groupsock* RTPgs, DP_U8 rtpPayloadFormat,
 			u_int32_t rtpTimestampFrequency, char const* streamMuxConfigString,
 			unsigned numChannels, Boolean allowMultipleFramesPerPacket = False);
 
 protected:
 	MPEG4LATMAudioRTPSink(UsageEnvironment& env,CommonPlay *cpObj, Groupsock* RTPgs,
-			unsigned char rtpPayloadFormat, u_int32_t rtpTimestampFrequency,
+			DP_U8 rtpPayloadFormat, u_int32_t rtpTimestampFrequency,
 			char const* streamMuxConfigString, unsigned numChannels,
 			Boolean allowMultipleFramesPerPacket);
 	// called only by createNew()
@@ -29,10 +29,10 @@ protected:
 private:
 	// redefined virtual functions:
 	virtual void doSpecialFrameHandling(unsigned fragmentationOffset,
-			unsigned char* frameStart, unsigned numBytesInFrame,
+			DP_U8* frameStart, unsigned numBytesInFrame,
 			struct timeval framePresentationTime, unsigned numRemainingBytes);
 	virtual Boolean
-	frameCanAppearAfterPacketStart(unsigned char const* frameStart,
+	frameCanAppearAfterPacketStart(DP_U8 const* frameStart,
 			unsigned numBytesInFrame) const;
 
 	virtual char const* auxSDPLine(); // for the "a=fmtp:" SDP line

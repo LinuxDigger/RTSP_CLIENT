@@ -70,7 +70,7 @@ void MPEG4VideoStreamDiscreteFramer::afterGettingFrame1(unsigned frameSize,
 			}
 			fNumConfigBytes = i < frameSize ? i - 3 : frameSize;
 			delete[] fConfigBytes;
-			fConfigBytes = new unsigned char[fNumConfigBytes];
+			fConfigBytes = new DP_U8[fNumConfigBytes];
 			for (unsigned j = 0; j < fNumConfigBytes; ++j)
 				fConfigBytes[j] = fTo[j];
 

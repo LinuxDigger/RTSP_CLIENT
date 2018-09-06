@@ -52,7 +52,7 @@ protected:
 	Boolean fLeavePresentationTimesUnmodified;
 	void const* fOurProfile;
 	struct timeval fNextFramePresentationTime;
-	unsigned char fSavedInitialBlocks[DV_SAVED_INITIAL_BLOCKS_SIZE];
+	DP_U8 fSavedInitialBlocks[DV_SAVED_INITIAL_BLOCKS_SIZE];
 	char fInitialBlocksPresent;
 	Boolean fSourceIsSeekable;
 };

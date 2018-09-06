@@ -111,7 +111,7 @@ char const* VorbisAudioRTPSink::auxSDPLine() {
 }
 
 void VorbisAudioRTPSink::doSpecialFrameHandling(unsigned fragmentationOffset,
-		unsigned char* frameStart, unsigned numBytesInFrame,
+		DP_U8* frameStart, unsigned numBytesInFrame,
 		struct timeval framePresentationTime, unsigned numRemainingBytes) {
 	// Set the 4-byte "payload header", as defined in RFC 5215, section 2.2:
 	u_int8_t header[4];
@@ -155,7 +155,7 @@ void VorbisAudioRTPSink::doSpecialFrameHandling(unsigned fragmentationOffset,
 }
 
 Boolean VorbisAudioRTPSink::frameCanAppearAfterPacketStart(
-		unsigned char const* /*frameStart*/,
+		DP_U8 const* /*frameStart*/,
 		unsigned /*numBytesInFrame*/) const {
 	// We allow more than one frame to be packed into an outgoing RTP packet, but no more than 15:
 	return numFramesUsedSoFar() <= 15;

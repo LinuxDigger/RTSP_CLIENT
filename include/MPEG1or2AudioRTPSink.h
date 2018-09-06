@@ -25,7 +25,7 @@ protected:
 private:
 	// redefined virtual functions:
 	virtual void doSpecialFrameHandling(unsigned fragmentationOffset,
-			unsigned char* frameStart, unsigned numBytesInFrame,
+			DP_U8* frameStart, unsigned numBytesInFrame,
 			struct timeval framePresentationTime, unsigned numRemainingBytes);
 	virtual unsigned specialHeaderSize() const;
 };

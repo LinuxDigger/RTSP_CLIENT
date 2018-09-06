@@ -27,7 +27,7 @@ public:
 		return *(fRTPInterface.gs());
 	}
 
-	unsigned char rtpPayloadType() const {
+	DP_U8 rtpPayloadType() const {
 		return fRTPPayloadType;
 	}
 	unsigned rtpTimestampFrequency() const {
@@ -83,13 +83,13 @@ public:
 	void resetPresentationTimes();
 
 	// Hacks to allow sending RTP over TCP (RFC 2236, section 10.12):
-	void setStreamSocket(int sockNum, unsigned char streamChannelId) {
+	void setStreamSocket(int sockNum, DP_U8 streamChannelId) {
 		fRTPInterface.setStreamSocket(sockNum, streamChannelId);
 	}
-	void addStreamSocket(int sockNum, unsigned char streamChannelId) {
+	void addStreamSocket(int sockNum, DP_U8 streamChannelId) {
 		fRTPInterface.addStreamSocket(sockNum, streamChannelId);
 	}
-	void removeStreamSocket(int sockNum, unsigned char streamChannelId) {
+	void removeStreamSocket(int sockNum, DP_U8 streamChannelId) {
 		fRTPInterface.removeStreamSocket(sockNum, streamChannelId);
 	}
 	unsigned& estimatedBitrate() {
@@ -103,7 +103,7 @@ public:
 
 protected:
 	RTPSink(UsageEnvironment& env, Groupsock* rtpGS,
-			unsigned char rtpPayloadType, u_int32_t rtpTimestampFrequency,
+			DP_U8 rtpPayloadType, u_int32_t rtpTimestampFrequency,
 			char const* rtpPayloadFormatName, unsigned numChannels,
 			CommonPlay *cpObj);
 	// abstract base class
@@ -123,7 +123,7 @@ protected:
 
 protected:
 	RTPInterface fRTPInterface;
-	unsigned char fRTPPayloadType;
+	DP_U8 fRTPPayloadType;
 	unsigned fPacketCount, fOctetCount, fTotalOctetCount /*incl RTP hdr*/;
 	struct timeval fTotalOctetCountStartTime, fInitialPresentationTime,
 			fMostRecentPresentationTime;

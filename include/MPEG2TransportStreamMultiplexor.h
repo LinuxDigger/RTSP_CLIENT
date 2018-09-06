@@ -25,10 +25,10 @@ protected:
 	MPEG2TransportStreamMultiplexor(UsageEnvironment& env, CommonPlay *cpObj);
 	virtual ~MPEG2TransportStreamMultiplexor();
 
-	virtual void awaitNewBuffer(unsigned char* oldBuffer) = 0;
+	virtual void awaitNewBuffer(DP_U8* oldBuffer) = 0;
 	// implemented by subclasses
 
-	void handleNewBuffer(unsigned char* buffer, unsigned bufferSize,
+	void handleNewBuffer(DP_U8* buffer, unsigned bufferSize,
 			int mpegVersion, MPEG1or2Demux::SCR scr, int16_t PID = -1);
 	// called by "awaitNewBuffer()"
 	// Note: For MPEG-4 video, set "mpegVersion" to 4; for H.264 video, set "mpegVersion" to 5.
@@ -41,7 +41,7 @@ private:
 	virtual void doGetNextFrame();
 
 private:
-	void deliverDataToClient(u_int8_t pid, unsigned char* buffer,
+	void deliverDataToClient(u_int8_t pid, DP_U8* buffer,
 			unsigned bufferSize, unsigned& startPositionInBuffer);
 
 	void deliverPATPacket();
@@ -64,7 +64,7 @@ private:
 	u_int8_t fPCR_PID, fCurrentPID;
 	// Note: We map 8-bit stream_ids directly to PIDs
 	MPEG1or2Demux::SCR fPCR;
-	unsigned char* fInputBuffer;
+	DP_U8* fInputBuffer;
 	unsigned fInputBufferSize, fInputBufferBytesUsed;
 	Boolean fIsFirstAdaptationField;
 };

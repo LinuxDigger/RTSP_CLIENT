@@ -24,7 +24,7 @@ void MPEGVideoStreamParser::restoreSavedParserState() {
 	fNumTruncatedBytes = fSavedNumTruncatedBytes;
 }
 
-void MPEGVideoStreamParser::registerReadInterest(unsigned char* to,
+void MPEGVideoStreamParser::registerReadInterest(DP_U8* to,
 		unsigned maxSize) {
 	fStartOfFrame = fTo = fSavedTo = to;
 	fLimit = to + maxSize;

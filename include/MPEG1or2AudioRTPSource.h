@@ -17,7 +17,7 @@ class MPEG1or2AudioRTPSource: public MultiFramedRTPSource {
 public:
   static MPEG1or2AudioRTPSource*
   createNew(UsageEnvironment& env, CommonPlay *cpObj,Groupsock* RTPgs,
-	    unsigned char rtpPayloadFormat = 14,
+	    DP_U8 rtpPayloadFormat = 14,
 	    unsigned rtpTimestampFrequency = 90000);
 
 protected:
@@ -25,7 +25,7 @@ protected:
 
 private:
   MPEG1or2AudioRTPSource(UsageEnvironment& env,CommonPlay *cpObj, Groupsock* RTPgs,
-		     unsigned char rtpPayloadFormat,
+		     DP_U8 rtpPayloadFormat,
 		     unsigned rtpTimestampFrequency);
       // called only by createNew()
 

@@ -8,7 +8,7 @@
 #include "VideoRTPSink.h"
 
 VideoRTPSink::VideoRTPSink(UsageEnvironment& env, CommonPlay *cpObj,
-		Groupsock* rtpgs, unsigned char rtpPayloadType,
+		Groupsock* rtpgs, DP_U8 rtpPayloadType,
 		unsigned rtpTimestampFrequency, char const* rtpPayloadFormatName) :
 		MultiFramedRTPSink(env, cpObj, rtpgs, rtpPayloadType,
 				rtpTimestampFrequency, rtpPayloadFormatName) {

@@ -20,7 +20,7 @@ public:
 		return fProfileAndLevelIndication;
 	}
 
-	unsigned char* getConfigBytes(unsigned& numBytes) const;
+	DP_U8* getConfigBytes(unsigned& numBytes) const;
 
 	void setConfigInfo(u_int8_t profileAndLevelIndication,
 			char const* configStr);
@@ -34,7 +34,7 @@ protected:
 	virtual ~MPEG4VideoStreamFramer();
 
 	void startNewConfig();
-	void appendToNewConfig(unsigned char* newConfigBytes, unsigned numNewBytes);
+	void appendToNewConfig(DP_U8* newConfigBytes, unsigned numNewBytes);
 	void completeNewConfig();
 
 private:
@@ -43,11 +43,11 @@ private:
 
 protected:
 	u_int8_t fProfileAndLevelIndication;
-	unsigned char* fConfigBytes;
+	DP_U8* fConfigBytes;
 	unsigned fNumConfigBytes;
 
 private:
-	unsigned char* fNewConfigBytes;
+	DP_U8* fNewConfigBytes;
 	unsigned fNumNewConfigBytes;
 	friend class MPEG4VideoStreamParser;
 	// hack

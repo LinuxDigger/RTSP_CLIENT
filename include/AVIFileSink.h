@@ -66,7 +66,7 @@ private:
 
 	unsigned addWord(unsigned word); // outputs "word" in little-endian order
 	unsigned addHalfWord(unsigned short halfWord);
-	unsigned addByte(unsigned char byte) {
+	unsigned addByte(DP_U8 byte) {
 		putc(byte, fOutFid);
 		return 1;
 	}

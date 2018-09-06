@@ -18,7 +18,7 @@ class BufferedPacketFactory;
 class MultiFramedRTPSource: public RTPSource {
 protected:
 	MultiFramedRTPSource(UsageEnvironment& env, CommonPlay *cpObj,
-			Groupsock* RTPgs, unsigned char rtpPayloadFormat,
+			Groupsock* RTPgs, DP_U8 rtpPayloadFormat,
 			unsigned rtpTimestampFrequency,
 			BufferedPacketFactory* packetFactory = NULL);
 	// virtual base class
@@ -29,7 +29,7 @@ protected:
 	// Subclasses redefine this to handle any special, payload format
 	// specific header that follows the RTP header.
 
-	virtual Boolean packetIsUsableInJitterCalculation(unsigned char* packet,
+	virtual Boolean packetIsUsableInJitterCalculation(DP_U8* packet,
 			unsigned packetSize);
 	// The default implementation returns True, but this can be redefined
 
@@ -58,7 +58,7 @@ private:
 	BufferedPacket* fPacketReadInProgress;
 	Boolean fNeedDelivery;
 	Boolean fPacketLossInFragmentedFrame;
-	unsigned char* fSavedTo;
+	DP_U8* fSavedTo;
 	unsigned fSavedMaxSize;
 
 	// A buffer to (optionally) hold incoming pkts that have been reorderered
@@ -88,8 +88,8 @@ public:
 			Boolean rtpMarkerBit, struct timeval timeReceived);
 	void skip(unsigned numBytes); // used to skip over an initial header
 	void removePadding(unsigned numBytes); // used to remove trailing bytes
-	void appendData(unsigned char* newData, unsigned numBytes);
-	void use(unsigned char* to, unsigned toSize, unsigned& bytesUsed,
+	void appendData(DP_U8* newData, unsigned numBytes);
+	void use(DP_U8* to, unsigned toSize, unsigned& bytesUsed,
 			unsigned& bytesTruncated, unsigned short& rtpSeqNo,
 			unsigned& rtpTimestamp, struct timeval& presentationTime,
 			Boolean& hasBeenSyncedUsingRTCP, Boolean& rtpMarkerBit);
@@ -105,7 +105,7 @@ public:
 		return fTimeReceived;
 	}
 
-	unsigned char* data() const {
+	DP_U8* data() const {
 		return &fBuf[fHead];
 	}
 	unsigned dataSize() const {
@@ -123,15 +123,15 @@ public:
 
 protected:
 	virtual void reset();
-	virtual unsigned nextEnclosedFrameSize(unsigned char*& framePtr,
+	virtual unsigned nextEnclosedFrameSize(DP_U8*& framePtr,
 			unsigned dataSize);
 	// The above function has been deprecated.  Instead, new subclasses should use:
-	virtual void getNextEnclosedFrameParameters(unsigned char*& framePtr,
+	virtual void getNextEnclosedFrameParameters(DP_U8*& framePtr,
 			unsigned dataSize, unsigned& frameSize,
 			unsigned& frameDurationInMicroseconds);
 
 	unsigned fPacketSize;
-	unsigned char* fBuf;
+	DP_U8* fBuf;
 	unsigned fHead;
 	unsigned fTail;
 

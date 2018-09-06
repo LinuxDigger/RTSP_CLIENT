@@ -8,7 +8,7 @@
 #include "VP8VideoRTPSink.h"
 
 VP8VideoRTPSink::VP8VideoRTPSink(UsageEnvironment& env, CommonPlay *cpObj,
-		Groupsock* RTPgs, unsigned char rtpPayloadFormat) :
+		Groupsock* RTPgs, DP_U8 rtpPayloadFormat) :
 		VideoRTPSink(env, cpObj, RTPgs, rtpPayloadFormat, 90000, "VP8") {
 }
 
@@ -17,19 +17,19 @@ VP8VideoRTPSink::~VP8VideoRTPSink() {
 
 VP8VideoRTPSink*
 VP8VideoRTPSink::createNew(UsageEnvironment& env, CommonPlay *cpObj,
-		Groupsock* RTPgs, unsigned char rtpPayloadFormat) {
+		Groupsock* RTPgs, DP_U8 rtpPayloadFormat) {
 	return new VP8VideoRTPSink(env, cpObj, RTPgs, rtpPayloadFormat);
 }
 
 Boolean VP8VideoRTPSink::frameCanAppearAfterPacketStart(
-		unsigned char const* /*frameStart*/,
+		DP_U8 const* /*frameStart*/,
 		unsigned /*numBytesInFrame*/) const {
 	// A packet can contain only one frame
 	return False;
 }
 
 void VP8VideoRTPSink::doSpecialFrameHandling(unsigned fragmentationOffset,
-		unsigned char* /*frameStart*/, unsigned /*numBytesInFrame*/,
+		DP_U8* /*frameStart*/, unsigned /*numBytesInFrame*/,
 		struct timeval framePresentationTime, unsigned numRemainingBytes) {
 	// Set the "VP8 Payload Descriptor" (just the minimal required 1-byte version):
 	u_int8_t vp8PayloadDescriptor = fragmentationOffset == 0 ? 0x10 : 0x00;

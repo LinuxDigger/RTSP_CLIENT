@@ -14,7 +14,7 @@ class TheoraVideoRTPSource: public MultiFramedRTPSource {
 public:
 	static TheoraVideoRTPSource*
 	createNew(UsageEnvironment& env,CommonPlay *cpObj, Groupsock* RTPgs,
-			unsigned char rtpPayloadFormat);
+			DP_U8 rtpPayloadFormat);
 
 	u_int32_t curPacketIdent() const {
 		return fCurPacketIdent;
@@ -22,7 +22,7 @@ public:
 
 protected:
 	TheoraVideoRTPSource(UsageEnvironment& env,CommonPlay *cpObj, Groupsock* RTPgs,
-			unsigned char rtpPayloadFormat);
+			DP_U8 rtpPayloadFormat);
 	// called only by createNew()
 
 	virtual ~TheoraVideoRTPSource();

@@ -1,4 +1,7 @@
 src/QuickTimeFileSink.o: ../src/QuickTimeFileSink.cpp \
+ /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/X86/include/Rtsp_server.h \
+ /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/X86/include/Rtsp_sys.h \
+ /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/X86/include/Rtsp_sys.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/QuickTimeFileSink.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/MediaSession.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/Media.h \
@@ -32,6 +35,12 @@ src/QuickTimeFileSink.o: ../src/QuickTimeFileSink.cpp \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/MPEG4LATMAudioRTPSource.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/Base64.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/strDup.h
+
+/home/jhb/nfs/TerminalC++Workspace/RTSP_Client/X86/include/Rtsp_server.h:
+
+/home/jhb/nfs/TerminalC++Workspace/RTSP_Client/X86/include/Rtsp_sys.h:
+
+/home/jhb/nfs/TerminalC++Workspace/RTSP_Client/X86/include/Rtsp_sys.h:
 
 /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/QuickTimeFileSink.h:
 

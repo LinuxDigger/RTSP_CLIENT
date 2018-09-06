@@ -238,9 +238,9 @@ void RTSPClient::sendDummyUDPPackets(MediaSubsession& subsession,
 	u_int32_t const dummy = 0xFEEDFACE;
 	for (unsigned i = 0; i < numDummyPackets; ++i) {
 		if (gs1 != NULL)
-			gs1->output(envir(), (unsigned char*) &dummy, sizeof dummy);
+			gs1->output(envir(), (DP_U8*) &dummy, sizeof dummy);
 		if (gs2 != NULL)
-			gs2->output(envir(), (unsigned char*) &dummy, sizeof dummy);
+			gs2->output(envir(), (DP_U8*) &dummy, sizeof dummy);
 	}
 }
 
@@ -840,7 +840,7 @@ Boolean RTSPClient::setRequestFields(RequestRecord* request, char*& cmdURL,
 			} seedData;
 			gettimeofday(&seedData.timestamp, NULL);
 			seedData.counter = ++fSessionCookieCounter;
-			our_MD5Data((unsigned char*) (&seedData), sizeof seedData,
+			our_MD5Data((DP_U8*) (&seedData), sizeof seedData,
 					fSessionCookie);
 			// DSS seems to require that the 'session cookie' string be 22 bytes long:
 			fSessionCookie[23] = '\0';
@@ -1179,7 +1179,7 @@ Boolean RTSPClient::checkForHeader(char const* line, char const* headerName,
 
 Boolean RTSPClient::parseTransportParams(char const* paramsStr,
 		char*& serverAddressStr, portNumBits& serverPortNum,
-		unsigned char& rtpChannelId, unsigned char& rtcpChannelId) {
+		DP_U8& rtpChannelId, DP_U8& rtcpChannelId) {
 	// Initialize the return parameters to 'not found' values:
 	serverAddressStr = NULL;
 	serverPortNum = 0;
@@ -1210,8 +1210,8 @@ Boolean RTSPClient::parseTransportParams(char const* paramsStr,
 			delete[] foundServerAddressStr;
 			foundServerAddressStr = strDup(field + 7);
 		} else if (sscanf(field, "interleaved=%u-%u", &rtpCid, &rtcpCid) == 2) {
-			rtpChannelId = (unsigned char) rtpCid;
-			rtcpChannelId = (unsigned char) rtcpCid;
+			rtpChannelId = (DP_U8) rtpCid;
+			rtcpChannelId = (DP_U8) rtcpCid;
 			foundChannelIds = True;
 		} else if (strcmp(field, "unicast") == 0) {
 			isMulticast = False;
@@ -1326,7 +1326,7 @@ Boolean RTSPClient::handleSETUPResponse(MediaSubsession& subsession,
 		// Parse the "Transport:" header parameters:
 		char* serverAddressStr;
 		portNumBits serverPortNum;
-		unsigned char rtpChannelId, rtcpChannelId;
+		DP_U8 rtpChannelId, rtcpChannelId;
 		if (!parseTransportParams(transportParamsStr, serverAddressStr,
 				serverPortNum, rtpChannelId, rtcpChannelId)) {
 			envir().setResultMsg("Missing or bad \"Transport:\" header");
@@ -1792,7 +1792,7 @@ void RTSPClient::incomingDataHandler1() {
 	struct sockaddr_in dummy; // 'from' address - not used
 
 	int bytesRead = readSocket(envir(), fInputSocketNum,
-			(unsigned char*) &fResponseBuffer[fResponseBytesAlreadySeen],
+			(DP_U8*) &fResponseBuffer[fResponseBytesAlreadySeen],
 			fResponseBufferBytesLeft, dummy);
 	handleResponseBytes(bytesRead);  //1800lines
 }

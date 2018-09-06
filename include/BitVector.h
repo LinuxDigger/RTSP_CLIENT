@@ -12,10 +12,10 @@
 
 class BitVector {
 public:
-	BitVector(unsigned char* baseBytePtr, unsigned baseBitOffset,
+	BitVector(DP_U8* baseBytePtr, unsigned baseBitOffset,
 			unsigned totNumBits);
 
-	void setup(unsigned char* baseBytePtr, unsigned baseBitOffset,
+	void setup(DP_U8* baseBytePtr, unsigned baseBitOffset,
 			unsigned totNumBits);
 
 	void putBits(unsigned from, unsigned numBits); // "numBits" <= 32
@@ -44,15 +44,15 @@ public:
 	int get_expGolombSigned(); // signed version of the above
 
 private:
-	unsigned char* fBaseBytePtr;
+	DP_U8* fBaseBytePtr;
 	unsigned fBaseBitOffset;
 	unsigned fTotNumBits;
 	unsigned fCurBitIndex;
 };
 
 // A general bit copy operation:
-void shiftBits(unsigned char* toBasePtr, unsigned toBitOffset,
-		unsigned char const* fromBasePtr, unsigned fromBitOffset,
+void shiftBits(DP_U8* toBasePtr, unsigned toBitOffset,
+		DP_U8 const* fromBasePtr, unsigned fromBitOffset,
 		unsigned numBits);
 
 #endif /* INCLUDE_BITVECTOR_H_ */
