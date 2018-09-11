@@ -22,6 +22,7 @@ CPP_SRCS += \
 ../src/CommonPlay.cpp \
 ../src/CycleQueue.cpp \
 ../src/DP_RTSP_CLIENT_CycleQueue.cpp \
+../src/DP_RTSP_CLIENT_DataQueue.cpp \
 ../src/DP_RTSP_CLIENT_Interface.cpp \
 ../src/DVVideoRTPSink.cpp \
 ../src/DVVideoRTPSource.cpp \
@@ -163,6 +164,7 @@ OBJS += \
 ./src/CommonPlay.o \
 ./src/CycleQueue.o \
 ./src/DP_RTSP_CLIENT_CycleQueue.o \
+./src/DP_RTSP_CLIENT_DataQueue.o \
 ./src/DP_RTSP_CLIENT_Interface.o \
 ./src/DVVideoRTPSink.o \
 ./src/DVVideoRTPSource.o \
@@ -302,6 +304,7 @@ CPP_DEPS += \
 ./src/CommonPlay.d \
 ./src/CycleQueue.d \
 ./src/DP_RTSP_CLIENT_CycleQueue.d \
+./src/DP_RTSP_CLIENT_DataQueue.d \
 ./src/DP_RTSP_CLIENT_Interface.d \
 ./src/DVVideoRTPSink.d \
 ./src/DVVideoRTPSource.d \

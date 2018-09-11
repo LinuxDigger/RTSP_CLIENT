@@ -36,6 +36,10 @@ FileSink::FileSink(UsageEnvironment& env, FILE* fid, unsigned bufferSize,
 	}
 	fPrevPresentationTime.tv_sec = ~0;
 	fPrevPresentationTime.tv_usec = 0;
+	fStartCode[0] = 0x00;
+	fStartCode[1] = 0x00;
+	fStartCode[2] = 0x00;
+	fStartCode[3] = 0x01;
 	////0000000000000
 	cout << "_cliIDZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ: " << _cliID << endl;
 }
@@ -61,9 +65,9 @@ FileSink* FileSink::createNew(UsageEnvironment& env, char const* fileName,
 			perFrameFileNamePrefix = fileName;
 		} else {
 			// Normal case: create the fid once
-			fid = OpenOutputFile(env, fileName);
-			if (fid == NULL)
-				break;
+//			fid = OpenOutputFile(env, fileName);
+//			if (fid == NULL)
+//				break;
 			perFrameFileNamePrefix = NULL;
 		}
 
@@ -79,7 +83,8 @@ FileSink* FileSink::createNew(UsageEnvironment& env, char const* fileName,
 Boolean FileSink::continuePlaying() {
 	if (fSource == NULL)
 		return False;
-
+//	afterGettingFrameGetData
+//	afterGettingFrame
 	//从上面的代码中可以看到getNextFrame()函数的第一个参数为分别在各自类中定义的buffer，
 	//我们继续以openRTSP为运行程序来分析，fBuffer为FileSink类里定义的指针：DP_U8* fBuffer
 	fSource->getNextFrame(fBuffer, fBufferSize, afterGettingFrame, this,
@@ -134,7 +139,8 @@ void FileSink::afterGettingFrame(void* clientData, unsigned frameSize,
 	FileSink* sink = (FileSink*) clientData;
 //	afterGettingFrame
 //	afterGettingFrameGetData
-	sink->afterGettingFrame(frameSize, numTruncatedBytes, presentationTime);
+	sink->afterGettingFrameGetData(frameSize, numTruncatedBytes,
+			presentationTime);
 }
 
 void FileSink::addData(DP_U8 const* data, unsigned dataSize,
@@ -177,6 +183,7 @@ void FileSink::addData(DP_U8 const* data, unsigned dataSize,
 //		start[3] = 0x01;
 //		fwrite(start, 1, 4, fOutFid);
 #if 1
+		//search the first SPS - PPS - IDR
 		if (((data[0] & 0x1F) != 7) && (fGetIDRFrame == false)) {
 			return;
 		} else if (fGetIDRFrame == true) {
@@ -193,43 +200,52 @@ void FileSink::addData(DP_U8 const* data, unsigned dataSize,
 			fwrite(start, 1, 4, fOutFid);
 		}
 #endif
+#if 0
 		struct timeval tv;
 		gettimeofday(&tv, NULL);
 //		cout << " start ! second : " << tvStart.tv_sec << "use : "
 //				<< tvStart.tv_usec << endl;
 //		cout << " second : " << tv.tv_sec << "use : " << tv.tv_usec << endl;
+
 		DP_RTSP_SERVER_MEDIA_STREAM_INFO_S MediaStream;
 		memset(&MediaStream, 0, sizeof(DP_RTSP_SERVER_MEDIA_STREAM_INFO_S));
 		if (dataSize != 4) {
 			MediaStream.enFrameType = DP_RTSP_SERVER_H264_FRAME_I;
 			MediaStream.u32TimeStamp = 0;
-//			MediaStream.pu8FrameStream = (DP_P_U8) malloc(250 * 1024);
 			MediaStream.s32FrameSize = dataSize + 4;
 
-			DP_U8 start[4] = { 0 };
-			start[0] = 0x00;
-			start[1] = 0x00;
-			start[2] = 0x00;
-			start[3] = 0x01;
-			DP_U8 buff[dataSize + 4] = { 0 };
-			memcpy(buff, start, 4);
-			memcpy(buff + 4, data, dataSize);
+//			DP_U8 start[4] = { 0 };
+//			start[0] = 0x00;
+//			start[1] = 0x00;
+//			start[2] = 0x00;
+//			start[3] = 0x01;
+//			DP_U8 buff[dataSize + 4] = { 0 };
+//			memcpy(buff, start, 4);
+//			memcpy(buff + 4, data, dataSize);
 
 			static DP_U32 combinFramePos = 0;
 			static DP_U8 *u8CombinFrame = NULL;
 			if ((data[0] & 0x1F) == 7 || ((data[0] & 0x1F) == 8)) {
 				u8CombinFrame = (DP_U8*) realloc(u8CombinFrame,
 						combinFramePos + dataSize + 4);
-				memcpy(u8CombinFrame + combinFramePos, buff, dataSize + 4);
+				memcpy(u8CombinFrame + combinFramePos, fStartCode, 4);
+				memcpy(u8CombinFrame + combinFramePos + 4, data, dataSize);
 				combinFramePos += dataSize + 4;
 				return;
 			} else if ((data[0] & 0x1F) == 5) {
 				u8CombinFrame = (DP_U8*) realloc(u8CombinFrame,
 						combinFramePos + dataSize + 4);
-				memcpy(u8CombinFrame + combinFramePos, buff, dataSize + 4);
+				memcpy(u8CombinFrame + combinFramePos, fStartCode, 4);
+				memcpy(u8CombinFrame + combinFramePos, data, dataSize);
 				MediaStream.pu8FrameStream = u8CombinFrame;
-			} else
-				MediaStream.pu8FrameStream = buff;
+			} else {
+				DP_U8 aFrame[dataSize + 4] = {0};
+				memcpy(aFrame, fStartCode, 4);
+				memcpy(aFrame + 4, fBuffer, dataSize);
+				MediaStream.pu8FrameStream = aFrame;
+				MediaStream.s32FrameSize = dataSize + 4;
+			}
+//				MediaStream.pu8FrameStream = buff;
 
 			DP_RTSP_SERVER_MediaStreamInput(0, 0, MediaStream);
 			if ((data[0] & 0x1F) == 7 || ((data[0] & 0x1F) == 8)
@@ -238,21 +254,20 @@ void FileSink::addData(DP_U8 const* data, unsigned dataSize,
 				u8CombinFrame = NULL;
 				combinFramePos = 0;
 			}
-//			stCombinFrame.clear();
-//			cout << "MediaStreamlen::::::::::::::::::"<<MediaStream.s32FrameSize<<endl;
-#if 0
-			unsigned int iPos = 0;
-			for (iPos = 0; iPos < 200; iPos++) {
-				if (iPos != 0 && (MediaStream.pu8FrameStream)[iPos] == 0x00
-						&& (MediaStream.pu8FrameStream)[iPos - 1] == 0x01)
-				break;
-				if (iPos % 10 == 0 && iPos != 0)
-				printf("\n");
-				printf("%02x ", ((DP_U8*) MediaStream.pu8FrameStream)[iPos]);
-			}
 #endif
+#if 0
+		unsigned int iPos = 0;
+		for (iPos = 0; iPos < 200; iPos++) {
+			if (iPos != 0 && (MediaStream.pu8FrameStream)[iPos] == 0x00
+					&& (MediaStream.pu8FrameStream)[iPos - 1] == 0x01)
+			break;
+			if (iPos % 10 == 0 && iPos != 0)
+			printf("\n");
+			printf("%02x ", ((DP_U8*) MediaStream.pu8FrameStream)[iPos]);
 		}
-//		fwrite(data, 1, dataSize, fOutFid);
+	}
+#endif
+		fwrite(data, 1, dataSize, fOutFid);
 //		cout << "dataSize : " << dataSize << "clid: " << envir()._cliID << endl;
 //		if (dataSize == 6)
 //			exit(0);
@@ -302,20 +317,118 @@ void FileSink::afterGettingFrameGetData(unsigned frameSize,
 				<< " bytes of trailing data was dropped!  Correct this by increasing the \"bufferSize\" parameter in the \"createNew()\" call to at least "
 				<< fBufferSize + numTruncatedBytes << "\n";
 	}
-#if 1
-	DP_RTSP_CLIENT_FRAME_DATA_S stFrameData(_cliID);
-	stFrameData.pu8Data = new DP_U8[frameSize + 4];
-	memset(stFrameData.pu8Data, 0, frameSize + 4);
-//	if (video) {
-	stFrameData.pu8Data[0] = 0x00;
-	stFrameData.pu8Data[1] = 0x00;
-	stFrameData.pu8Data[2] = 0x00;
-	stFrameData.pu8Data[3] = 0x01;
-	memcpy(stFrameData.pu8Data + 4, fBuffer, frameSize);
+	unsigned int iPos = 0;
+//	printf("\n");
+//	for (iPos = 0; iPos < 50; iPos++) {
+//		if (iPos != 0 && (fBuffer)[iPos] == 0x00 && (fBuffer)[iPos - 1] == 0x01)
+//			break;
+//		if (iPos % 10 == 0 && iPos != 0)
+//			printf("\n");
+//		printf("%02x ", ((DP_U8*) fBuffer)[iPos]);
 //	}
-//	sleep(1);
-	DP_RTSP_CLIENT_Client::_mDataQueueSet[_cliID]->DP_RTSP_CLIENT_PutData(
-			&stFrameData, sizeof(DP_RTSP_CLIENT_FRAME_DATA_S));
+//	printf("\n");
+#if 1
+//#define h264 1
+	do {
+//		if (h264) {
+		if (fBuffer[0] != 0x00) {
+			if (((fBuffer[0] & 0x1F) != 7) && (fGetIDRFrame == false)) {
+				break;
+			} else if (fGetIDRFrame == true) {
+			} else {
+//			gettimeofday(&tvStart, NULL);
+				//			cout << " start ! second : " << tvStart.tv_sec << "use : "
+				//					<< tvStart.tv_usec << endl;
+				fGetIDRFrame = true;
+			}
+
+			DP_RTSP_CLIENT_FRAME_DATA_S stFrameData(_cliID);
+			stFrameData.enFrameType = DP_RTSP_CLINET_CODEC_H264;
+			//deal with
+			DP_RTSP_SERVER_MEDIA_STREAM_INFO_S MediaStream;
+			memset(&MediaStream, 0, sizeof(DP_RTSP_SERVER_MEDIA_STREAM_INFO_S));
+			MediaStream.enFrameType = DP_RTSP_SERVER_H264_FRAME_I;
+			MediaStream.u32TimeStamp = 0;
+			static DP_U32 combinFrameSize = 0;
+			static DP_U8 *u8CombinFrame = NULL;
+			//7-->SPS 8-->PPS 5-->IDR
+			if ((fBuffer[0] & 0x1F) == 7 || (fBuffer[0] & 0x1F) == 8) {
+				u8CombinFrame = (DP_U8*) realloc(u8CombinFrame,
+						combinFrameSize + frameSize + 4);
+				memcpy(u8CombinFrame + combinFrameSize, fStartCode, 4);
+				memcpy(u8CombinFrame + combinFrameSize + 4, fBuffer, frameSize);
+				combinFrameSize += frameSize + 4;
+				break;
+			}
+//			if ((fBuffer[0] & 0x1F) == 8) {
+//				u8CombinFrame = (DP_U8*) realloc(u8CombinFrame,
+//						combinFramePos + frameSize + 4);
+//				memcpy(u8CombinFrame + combinFramePos, fStartCode, 4);
+//				memcpy(u8CombinFrame + combinFramePos + 4, fBuffer, frameSize);
+//				combinFramePos += frameSize + 4;
+//				break;
+//			}
+			else if ((fBuffer[0] & 0x1F) == 5) {
+				u8CombinFrame = (DP_U8*) realloc(u8CombinFrame,
+						combinFrameSize + frameSize + 4);
+				memcpy(u8CombinFrame + combinFrameSize, fStartCode, 4);
+				memcpy(u8CombinFrame + combinFrameSize + 4, fBuffer, frameSize);
+				combinFrameSize += frameSize + 4;
+//				MediaStream.pu8FrameStream = u8CombinFrame;
+//				MediaStream.s32FrameSize = combinFramePos + frameSize + 4;
+			} else {
+#if 0
+//				DP_U8 aFrame[frameSize + 4] = { 0 };
+//				memcpy(aFrame, fStartCode, 4);
+//				memcpy(aFrame + 4, fBuffer, frameSize);
+//				MediaStream.pu8FrameStream = aFrame;
+//				MediaStream.s32FrameSize = frameSize + 4;
+//				DP_RTSP_SERVER_MediaStreamInput(0, 0, MediaStream);
+#endif
+				stFrameData.pu8Data = new DP_U8[frameSize + 4];
+				memset(stFrameData.pu8Data, 0, frameSize + 4);
+				memcpy(stFrameData.pu8Data, fStartCode, 4);
+				memcpy(stFrameData.pu8Data + 4, fBuffer, frameSize);
+				stFrameData.u32FrameSize = frameSize + 4;
+				DP_RTSP_CLIENT_Client::_mDataQueueSet[_cliID]->DP_RTSP_CLIENT_PutData(
+						&stFrameData, sizeof(DP_RTSP_CLIENT_FRAME_DATA_S));
+				break;
+			}
+#if 0
+//			DP_RTSP_SERVER_MediaStreamInput(0, 0, MediaStream);
+#endif
+
+			stFrameData.pu8Data = new DP_U8[combinFrameSize];
+			memset(stFrameData.pu8Data, 0, combinFrameSize);
+			memcpy(stFrameData.pu8Data, u8CombinFrame, combinFrameSize);
+			DP_RTSP_CLIENT_Client::_mDataQueueSet[_cliID]->DP_RTSP_CLIENT_PutData(
+					&stFrameData, sizeof(DP_RTSP_CLIENT_FRAME_DATA_S));
+			//when to free u8CombinFrame?????????????????///delete 7 8
+			if ((fBuffer[0] & 0x1F) == 7 || ((fBuffer[0] & 0x1F) == 8)
+					|| (fBuffer[0] & 0x1F) == 5) {
+				free(u8CombinFrame);
+				u8CombinFrame = NULL;
+				combinFrameSize = 0;
+			}
+
+//			DP_RTSP_CLIENT_FRAME_DATA_S stFrameData(_cliID);
+//			stFrameData.pu8Data = new DP_U8[combinFramePos + 4];
+//			memset(stFrameData.pu8Data, 0, combinFramePos + 4);
+			//	if (video) {
+//			stFrameData.pu8Data[0] = 0x00;
+//			stFrameData.pu8Data[1] = 0x00;
+//			stFrameData.pu8Data[2] = 0x00;
+//			stFrameData.pu8Data[3] = 0x01;
+//			memcpy(stFrameData.pu8Data + 4, fBuffer, frameSize);
+//			DP_RTSP_CLIENT_Client::_mDataQueueSet[_cliID]->DP_RTSP_CLIENT_PutData(
+//					&stFrameData, sizeof(DP_RTSP_CLIENT_FRAME_DATA_S));
+//				}
+			// 265 etc.
+//			}
+//		} else {
+//
+		}
+	} while (0);
 #endif
 #if 0 //
 
@@ -325,22 +438,23 @@ void FileSink::afterGettingFrameGetData(unsigned frameSize,
 		if (flag++ == 1)
 		exit(0);
 	}
-	if (fOutFid == NULL || fflush(fOutFid) == EOF) {
-		// The output file has closed.  Handle this the same way as if the input source had closed:
-		if (fSource != NULL)
-		fSource->stopGettingFrames();
-		onSourceClosure();
-		return;
-	}
+#endif
+//	if (fOutFid == NULL || fflush(fOutFid) == EOF) {
+//		// The output file has closed.  Handle this the same way as if the input source had closed:
+//		if (fSource != NULL)
+//			fSource->stopGettingFrames();
+//		onSourceClosure();
+//		return;
+//	}
 
 	if (fPerFrameFileNameBuffer != NULL) {
 		if (fOutFid != NULL) {
 			fclose(fOutFid);
 			fOutFid = NULL;
+
 		}
 	}
-#endif
 
-	// Then try getting the next frame:
+// Then try getting the next frame:
 	continuePlaying();
 }

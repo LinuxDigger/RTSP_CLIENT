@@ -41,15 +41,14 @@ DP_S32 main(DP_S32 argc, char**argv) {
 
 	DEMO_HANDLE_S handle_h265 = { 0 };
 	//添加URL唯一标识
-	handle_h265.HandleId = DP_RTSP_SERVER_AddMediaName((DP_U8*) "h2644",
-			5);
+	handle_h265.HandleId = DP_RTSP_SERVER_AddMediaName((DP_U8*) "h2644", 5);
 	if (handle_h265.HandleId < DP_RTSP_SERVER_RETVAL_SUCCESS) {
 		DP_RTSP_SERVER_UnInit();
 		return 0;
 	}
 
 	//添加编码参数
-	DP_RTSP_SERVER_CODE_PARAM_S CodeParam ;
+	DP_RTSP_SERVER_CODE_PARAM_S CodeParam;
 	CodeParam.enMediaType = DP_RTSP_SERVER_MEDIA_H264;
 	CodeParam.unMedia.stMediaVideo.s8VideoFarmeRate = 30;
 	handle_h265.V_StreamId = DP_RTSP_SERVER_CodeParamBindMediaName(
@@ -70,7 +69,6 @@ DP_S32 main(DP_S32 argc, char**argv) {
 	DP_RTSP_SERVER_SetMediaSPS_PPS_VPS(handle_h265.HandleId,
 			handle_h265.V_StreamId, SdpInfo);
 	//开启运行Server
-//	DP_RTSP_SERVER_MEDIA_STREAM_INFO_S
 	DP_RTSP_SERVER_Start();
 	DP_RTSP_CLIENT_Client client;
 #if 1
@@ -79,6 +77,19 @@ DP_S32 main(DP_S32 argc, char**argv) {
 			NULL,
 			NULL);
 	cout << "MAIN!!!!!!!!!!!!!!!!!!!!retCli :::::::: " << retCli << endl;
+	DP_RTSP_CLIENT_FRAME_DATA_S stGetData(retCli);
+	DP_RTSP_SERVER_MEDIA_STREAM_INFO_S MediaStream;
+	memset(&MediaStream, 0, sizeof(DP_RTSP_SERVER_MEDIA_STREAM_INFO_S));
+	MediaStream.enFrameType = DP_RTSP_SERVER_H264_FRAME_I;
+	MediaStream.u32TimeStamp = 0;
+	while (1) {
+
+//		DP_RTSP_CLIENT_Client::_mDataQueueSet[retCli]->DSP_GetData(
+//				&stGetData, sizeof(DP_RTSP_CLIENT_FRAME_DATA_S));
+		MediaStream.s32FrameSize = stGetData.u32FrameSize;
+		MediaStream.pu8FrameStream = stGetData.pu8Data;
+		DP_RTSP_SERVER_MediaStreamInput(0, 0, MediaStream);
+	}
 #endif
 #if 0
 	DP_S32 retCli2 = client.DP_RTSP_CLIENT_Init(

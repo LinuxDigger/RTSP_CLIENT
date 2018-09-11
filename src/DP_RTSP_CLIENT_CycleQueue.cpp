@@ -41,7 +41,7 @@ DP_U32 DP_RTSP_CLIENT_CycleQueue::DP_RTSP_CLIENT_PutData(const void *buff,
 		memcpy(
 				(DP_U8 *) m_cycleQueue->_buffer
 						+ m_cycleQueue->_in % m_cycleQueue->_size, buff, len);
-		memcpy(m_cycleQueue->_buffer, buff + len, size - len);
+		memcpy(m_cycleQueue->_buffer, (DP_U8 *) buff + len, size - len);
 		m_cycleQueue->_in += size;
 		m_cycleQueue->_out += size;
 		ret = size;
@@ -70,14 +70,38 @@ DP_U32 DP_RTSP_CLIENT_CycleQueue::DP_RTSP_CLIENT_PutData(const void *buff,
 		}
 	}
 
-	cout << "m_cycleQueue->_in:::::::::::::::::::CCCCCCCCCCCCCCCC "
-			<< m_cycleQueue->_in << "m_cycleQueue-> out : "
-			<< m_cycleQueue->_out << endl;
+//	cout << "m_cycleQueue->_in:::::::::::::::::::CCCCCCCCCCCCCCCC "
+//			<< m_cycleQueue->_in << " m_cycleQueue-> out : "
+//			<< m_cycleQueue->_out << endl;
 	ret = size;
 	pthread_mutex_unlock(&mutex);
 	return ret;
 }
-//DP_U32 DP_RTSP_CLIENT_CycleQueue::DP_RTSP_CLIENT_GetData(void *buff,
-//		DP_U32 len) {
-//
-//}
+DP_U32 DP_RTSP_CLIENT_CycleQueue::DP_RTSP_CLIENT_GetData(void *buff,
+		DP_U32 len) {
+	DP_U32 ret = 0;
+	pthread_mutex_lock(&mutex);
+	DP_U32 size = 0;
+	len = minimum(len, m_cycleQueue->_in - m_cycleQueue->_out);
+	/* first get the data from fifo->out until the end of the buffer */
+	size = minimum(len,
+			m_cycleQueue->_size
+					- (m_cycleQueue->_out & (m_cycleQueue->_size - 1)));
+	memcpy(buff,
+			(DP_U8*) m_cycleQueue->_buffer
+					+ (m_cycleQueue->_out & (m_cycleQueue->_size - 1)), size);
+	/* then get the rest (if any) from the beginning of the buffer */
+	memcpy((DP_U8*) buff + size, m_cycleQueue->_buffer, len - size);
+	m_cycleQueue->_out += len;
+
+	if (m_cycleQueue->_in == m_cycleQueue->_out)
+		m_cycleQueue->_in = m_cycleQueue->_out = 0;
+
+	ret = len;
+
+	pthread_mutex_unlock(&mutex);
+
+
+
+	return ret;
+}

@@ -15,7 +15,7 @@
 #include "EfficientAddOrUpdate.h"
 #include "Mutex.h"
 using namespace std;
-
+//#pragma comment(lib, "pthreadVC2.lib")     //必须加上这句
 class DP_RTSP_CLIENT_FrameDataMemManage;
 typedef DP_RTSP_CLIENT_FrameDataMemManage FrameDataMemManage;
 #pragma pack(push, 1)
@@ -48,19 +48,33 @@ typedef enum _DP_RTSP_CLINET_CODEC_TYPE_E {
 	DP_RTSP_CLINET_CODEC_BUTT
 } DP_RTSP_CLINET_CODEC_TYPE_E;
 
+typedef enum _DP_RTSP_CLIENT_H264_FRAMETYPE_E {
+	DP_RTSP_CLIENT_H264_IDR_FRAMETYPE = 5,
+	DP_RTSP_CLIENT_H264_SPS_FRAMETYPE = 7,
+	DP_RTSP_CLIENT_H264_PPS_FRAMETYPE = 8
+} DP_RTSP_CLIENT_H264_FRAMETYPE_E;
+
+typedef enum _DP_RTSP_CLIENT_H265_FRAMETYPE_E {
+	DP_RTSP_CLIENT_H265_IDR_RANGELOW_FRAMETYPE = 16,
+	DP_RTSP_CLIENT_H265_IDR_RANGEHIGH_FRAMETYPE = 21,
+	DP_RTSP_CLIENT_H265_VPS_FRAMETYPE = 32,
+	DP_RTSP_CLIENT_H265_SPS_FRAMETYPE = 33,
+	DP_RTSP_CLIENT_H265_PPS_FRAMETYPE = 34
+} DP_RTSP_CLIENT_H265_FRAMETYPE_E;
+
 typedef struct _DP_RTSP_CLIENT_CODEC_PARAM_S {
 	DP_RTSP_CLINET_CODEC_TYPE_E enMediaType;
 	union {
 		struct _VIDEO_MEDIA_INFO_S {
-			DP_S32 s32VideoFrmRate;
+//			DP_S32 s32VideoFrmRate;
 //			DP_S32 s32VideoBitrate;
 			DP_S32 s32VideoWidth;
 			DP_S32 s32VideoHeigth;
 		} stVidMediaInfo;
 		struct Audio_Media_S {
-			DP_S32 s32AudioBitWidth;
-			DP_S32 s32AudioChannel;
-			DP_S32 s32AudioSampleRate;
+//			DP_S32 s32AudioBitWidth;
+//			DP_S32 s32AudioChannel;
+//			DP_S32 s32AudioSampleRate;
 		} stAudioMediaInfo;
 	} _unMedia;
 } DP_RTSP_CLIENT_CODEC_PARAM_S;
@@ -69,7 +83,8 @@ typedef struct _DP_RTSP_CLIENT_FRAME_DATA_S {
 	_DP_RTSP_CLIENT_FRAME_DATA_S(DP_U16 u16CliID) :
 			u16ClientID(u16CliID), pu8Data(NULL), u32Timestamp(0), u32FrameSize(
 					0), u32FrameSequence(0), enFrameType(
-					DP_RTSP_CLINET_CODEC_BUTT), stCodecParam(NULL) {
+					DP_RTSP_CLINET_CODEC_BUTT), bIsCodecParamChanged(false) {
+		pthread_rwlock_init(&rwLock, NULL);
 	}
 	DP_U16 u16ClientID;
 	DP_U8* pu8Data;
@@ -77,7 +92,18 @@ typedef struct _DP_RTSP_CLIENT_FRAME_DATA_S {
 	DP_U32 u32FrameSize;
 	DP_U32 u32FrameSequence;
 	DP_RTSP_CLINET_CODEC_TYPE_E enFrameType;
-	DP_RTSP_CLIENT_CODEC_PARAM_S *stCodecParam;
+	DP_Bool bIsCodecParamChanged;
+//	DP_RTSP_CLIENT_CODEC_PARAM_S *stCodecParam;
+	pthread_rwlock_t rwLock;
+	void RDLock() {
+		pthread_rwlock_rdlock(&rwLock);
+	}
+	void WRLock() {
+		pthread_rwlock_wrlock(&rwLock);
+	}
+	void UNLock() {
+		pthread_rwlock_unlock(&rwLock);
+	}
 } DP_RTSP_CLIENT_FRAME_DATA_S;
 
 #pragma pack(pop)
@@ -112,6 +138,13 @@ public:
 //	DP_Bool DP_RTSPClient_StopPullStream(DP_S32 clientID);
 
 	DP_S32 DP_RTSP_CLIENT_Close(DP_U16 s32CliID);
+
+	static DP_U8 DP_RTSP_CLIENT_H264NaluFlag(DP_U8 frame) {
+		return (frame & 0x1F);
+	}
+	static DP_U8 DP_RTSP_CLIENT_H265NaluFlag(DP_U8 frame) {
+		return (frame & 0x7E) >> 1;
+	}
 
 	static map<DP_U16, pthread_cond_t*> mCliCondSet;
 	static map<DP_U16, pthread_mutex_t*> mCliMuxSet;

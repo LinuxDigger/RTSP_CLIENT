@@ -29,7 +29,8 @@ public:
 
 protected:
 	FileSink(UsageEnvironment& env, FILE* fid, unsigned bufferSize,
-			char const* perFrameFileNamePrefix, unsigned short clientID, CommonPlay *cpObj);
+			char const* perFrameFileNamePrefix, unsigned short clientID,
+			CommonPlay *cpObj);
 	// called only by createNew()
 	virtual ~FileSink();
 
@@ -53,9 +54,13 @@ protected:
 	char* fPerFrameFileNameBuffer; // used if "oneFilePerFrame" is True
 	struct timeval fPrevPresentationTime;
 	unsigned fSamePresentationTimeCounter;
+
 	unsigned short _cliID;
 	bool fGetIDRFrame;
 	struct timeval tvStart;
+	DP_U8 fStartCode[4];
+//	 bool fGetSPSFrame;
+//	bool fGetPPSFrame;
 };
 
 #endif /* INCLUDE_FILESINK_H_ */
