@@ -349,15 +349,17 @@ void FileSink::afterGettingFrameGetData(unsigned frameSize,
 			memset(&MediaStream, 0, sizeof(DP_RTSP_SERVER_MEDIA_STREAM_INFO_S));
 			MediaStream.enFrameType = DP_RTSP_SERVER_H264_FRAME_I;
 			MediaStream.u32TimeStamp = 0;
-			static DP_U32 combinFrameSize = 0;
-			static DP_U8 *u8CombinFrame = NULL;
+//			static DP_U32 _mCombinFrameSize = 0;
+//			static DP_U8 *_mCombinFrame = NULL;
 			//7-->SPS 8-->PPS 5-->IDR
 			if ((fBuffer[0] & 0x1F) == 7 || (fBuffer[0] & 0x1F) == 8) {
-				u8CombinFrame = (DP_U8*) realloc(u8CombinFrame,
-						combinFrameSize + frameSize + 4);
-				memcpy(u8CombinFrame + combinFrameSize, fStartCode, 4);
-				memcpy(u8CombinFrame + combinFrameSize + 4, fBuffer, frameSize);
-				combinFrameSize += frameSize + 4;
+				_mCombinFrame[_cliID] = (DP_U8*) realloc(_mCombinFrame[_cliID],
+						_mCombinFrameSize[_cliID] + frameSize + 4);
+				memcpy(_mCombinFrame[_cliID] + _mCombinFrameSize[_cliID],
+						fStartCode, 4);
+				memcpy(_mCombinFrame[_cliID] + _mCombinFrameSize[_cliID] + 4,
+						fBuffer, frameSize);
+				_mCombinFrameSize[_cliID] += frameSize + 4;
 				break;
 			}
 //			if ((fBuffer[0] & 0x1F) == 8) {
@@ -369,11 +371,13 @@ void FileSink::afterGettingFrameGetData(unsigned frameSize,
 //				break;
 //			}
 			else if ((fBuffer[0] & 0x1F) == 5) {
-				u8CombinFrame = (DP_U8*) realloc(u8CombinFrame,
-						combinFrameSize + frameSize + 4);
-				memcpy(u8CombinFrame + combinFrameSize, fStartCode, 4);
-				memcpy(u8CombinFrame + combinFrameSize + 4, fBuffer, frameSize);
-				combinFrameSize += frameSize + 4;
+				_mCombinFrame[_cliID] = (DP_U8*) realloc(_mCombinFrame[_cliID],
+						_mCombinFrameSize[_cliID] + frameSize + 4);
+				memcpy(_mCombinFrame[_cliID] + _mCombinFrameSize[_cliID],
+						fStartCode, 4);
+				memcpy(_mCombinFrame[_cliID] + _mCombinFrameSize[_cliID] + 4,
+						fBuffer, frameSize);
+				_mCombinFrameSize[_cliID] += frameSize + 4;
 //				MediaStream.pu8FrameStream = u8CombinFrame;
 //				MediaStream.s32FrameSize = combinFramePos + frameSize + 4;
 			} else {
@@ -390,25 +394,35 @@ void FileSink::afterGettingFrameGetData(unsigned frameSize,
 				memcpy(stFrameData.pu8Data, fStartCode, 4);
 				memcpy(stFrameData.pu8Data + 4, fBuffer, frameSize);
 				stFrameData.u32FrameSize = frameSize + 4;
-				DP_RTSP_CLIENT_Client::_mDataQueueSet[_cliID]->DP_RTSP_CLIENT_PutData(
-						&stFrameData, sizeof(DP_RTSP_CLIENT_FRAME_DATA_S));
+				DP_S32 ret =
+						DP_RTSP_CLIENT_Client::_mDataQueueSet[_cliID]->DP_RTSP_CLIENT_RecvData(
+								0, stFrameData.u32FrameSize,
+								_mCliRecvFrameSequence[_cliID],
+								DP_RTSP_CLINET_CODEC_H264, stFrameData.pu8Data);
+				cout << "stFrameData.u32FrameSize:::: "
+						<< stFrameData.u32FrameSize << "ret:: " << ret
+						<< " _cliID:: " << _cliID << endl;
 				break;
 			}
 #if 0
 //			DP_RTSP_SERVER_MediaStreamInput(0, 0, MediaStream);
 #endif
 
-			stFrameData.pu8Data = new DP_U8[combinFrameSize];
-			memset(stFrameData.pu8Data, 0, combinFrameSize);
-			memcpy(stFrameData.pu8Data, u8CombinFrame, combinFrameSize);
-			DP_RTSP_CLIENT_Client::_mDataQueueSet[_cliID]->DP_RTSP_CLIENT_PutData(
-					&stFrameData, sizeof(DP_RTSP_CLIENT_FRAME_DATA_S));
+			stFrameData.pu8Data = new DP_U8[_mCombinFrameSize[_cliID]];
+			memset(stFrameData.pu8Data, 0, _mCombinFrameSize[_cliID]);
+			memcpy(stFrameData.pu8Data, _mCombinFrame[_cliID],
+					_mCombinFrameSize[_cliID]);
+			DP_U32 rett =
+					DP_RTSP_CLIENT_Client::_mDataQueueSet[_cliID]->DP_RTSP_CLIENT_RecvData(
+							0, _mCombinFrameSize[_cliID],
+							_mCliRecvFrameSequence[_cliID],
+							DP_RTSP_CLINET_CODEC_H264, stFrameData.pu8Data);
 			//when to free u8CombinFrame?????????????????///delete 7 8
 			if ((fBuffer[0] & 0x1F) == 7 || ((fBuffer[0] & 0x1F) == 8)
 					|| (fBuffer[0] & 0x1F) == 5) {
-				free(u8CombinFrame);
-				u8CombinFrame = NULL;
-				combinFrameSize = 0;
+				free(_mCombinFrame[_cliID]);
+				_mCombinFrame[_cliID] = NULL;
+				_mCombinFrameSize[_cliID] = 0;
 			}
 
 //			DP_RTSP_CLIENT_FRAME_DATA_S stFrameData(_cliID);

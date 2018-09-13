@@ -7,6 +7,7 @@
 
 #include "BasicTaskScheduler0.h"
 #include <iostream>
+#include "RTSPClient.h"
 using namespace std;
 ////////// A subclass of DelayQueueEntry,
 //////////     used to implement BasicTaskScheduler0::scheduleDelayedTask()
@@ -17,6 +18,8 @@ public:
 			CommonPlay *cpObj) :
 			DelayQueueEntry(timeToDelay), fProc(proc), fClientData(clientData), fcpObj(
 					cpObj) {
+//		RTSPClient* rtspClient = (RTSPClient*) clientData;
+//		cout << "AlarmHandler() :::: "<<rtspClient->url()<<endl;
 	}
 
 private:

@@ -47,7 +47,10 @@ CommonPlay::CommonPlay(unsigned short cliID) :
 }
 
 CommonPlay::~CommonPlay() {
-
+	if (ourAuthenticator != NULL) {
+		delete ourAuthenticator;
+		ourAuthenticator = NULL;
+	}
 }
 
 void CommonPlay::continueAfterClientCreation1() {
@@ -81,7 +84,7 @@ void CommonPlay::continueAfterOPTIONS(RTSPClient*, int resultCode,
 	cpObj->getSDPDescription(continueAfterDESCRIBE);
 }
 
-void CommonPlay::setEnvURL(UsageEnvironment& envv,  const char*URL) {
+void CommonPlay::setEnvURL(UsageEnvironment& envv, const char*URL) {
 	env = &envv;
 	streamURL = URL;
 }
@@ -520,8 +523,10 @@ void CommonPlay::setupStreams() {
 }
 
 ////
-void CommonPlay::continueAfterPLAY(RTSPClient*, int resultCode,
+void CommonPlay::continueAfterPLAY(RTSPClient*rtspClient, int resultCode,
 		char* resultString, CommonPlay *cpObj) {
+	cout << "cpObj->duration]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]"
+			<< endl;
 	if (resultCode != 0) {
 		*cpObj->env << "Failed to start playing session: " << resultString
 				<< "\n";
@@ -552,7 +557,12 @@ void CommonPlay::continueAfterPLAY(RTSPClient*, int resultCode,
 // repeating the playing
 	Boolean timerIsBeingUsed = False;
 	double secondsToDelay = cpObj->duration;
+	//........>0 origin
+//	if (cpObj->duration == 0) {
 	if (cpObj->duration > 0) {
+		cout
+				<< "cpObj->durationnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn"
+				<< endl;
 		// First, adjust "duration" based on any change to the play range (that was specified in the "PLAY" response):
 		double rangeAdjustment = (cpObj->session->playEndTime()
 				- cpObj->session->playStartTime())
@@ -569,6 +579,13 @@ void CommonPlay::continueAfterPLAY(RTSPClient*, int resultCode,
 				cpObj->env->taskScheduler().scheduleDelayedTask(uSecsToDelay,
 						(TaskFunc*) sessionTimerHandler, (void*) NULL, cpObj);
 	}
+
+	cout << "cpObj->duration : " << cpObj->duration << endl;
+//	int64_t uSecsToDelay = (int64_t) (secondsToDelay * 1000000.0 * 60);
+	int64_t uSecsToDelay = (int64_t) (1000000.0 * 60);
+
+	cpObj->sessionTimerTask = cpObj->env->taskScheduler().scheduleDelayedTask(
+			uSecsToDelay, (TaskFunc*) sessionTimerHandler, rtspClient, cpObj);
 
 	char const* actionString =
 			cpObj->createReceivers ?
@@ -669,12 +686,34 @@ void CommonPlay::sessionAfterPlaying(void* /*clientData*/, CommonPlay *cpObj) {
 		cpObj->startPlayingSession(cpObj->session, cpObj->initialSeekTime,
 				cpObj->endTime, cpObj->scale, cpObj->continueAfterPLAY);
 	}
+	struct timeval tv;
+	gettimeofday(&tv, NULL);
+	cout << "now time ::::::::::::" << tv.tv_sec << endl;
 }
 
-void CommonPlay::sessionTimerHandler(void* /*clientData*/, CommonPlay *cpObj) {
+void CommonPlay::sessionTimerHandler(void* clientData, CommonPlay *cpObj) {
 	cpObj->sessionTimerTask = NULL;
+	struct timeval tv;
+	gettimeofday(&tv, NULL);
+	cout << "now time :::::::::::sessionTimerHandler():" << tv.tv_usec << endl;
+	cout << "333333333333333333333333333333333333333" << endl;
+	int64_t uSecsToDelay = (int64_t) (1000000.0 * 3);
+//	cpObj->startPlayingSession(cpObj->session, cpObj->initialSeekTime,
+//					cpObj->endTime, cpObj->scale, cpObj->continueAfterPLAY);
 
-	sessionAfterPlaying();
+	RTSPClient* rtspClient = (RTSPClient*) clientData;
+	if (rtspClient == NULL)
+		cout << "nulllllllllllllllll" << endl;
+	else
+		cout << "rtspClient != NULL ::::url : " << rtspClient->url() << endl;
+	cout << rtspClient->url() << endl;
+	rtspClient->sendGetParameterCommand(*cpObj->session, continueAfterGetParam,
+	NULL);
+
+//	rtspClient->sendOptionsCommand(responseHandler, authenticator)
+//	cpObj->sessionTimerTask = cpObj->env->taskScheduler().scheduleDelayedTask(
+//			uSecsToDelay, (TaskFunc*) sessionTimerHandler, (void*) NULL, cpObj);
+//	sessionAfterPlaying((void*) NULL, cpObj);
 }
 
 void CommonPlay::periodicFileOutputTimerHandler(void* /*clientData*/,
@@ -739,6 +778,11 @@ void CommonPlay::scheduleNextQOSMeasurement(CommonPlay *cpObj) {
 	cpObj->qosMeasurementTimerTask =
 			cpObj->env->taskScheduler().scheduleDelayedTask(usecsToDelay,
 					(TaskFunc*) periodicQOSMeasurement, (void*) NULL, cpObj);
+}
+
+void CommonPlay::setUsrnamePassword(const DP_C_S8 *usrname,
+		const DP_C_S8 *password) {
+	ourAuthenticator = new Authenticator(usrname, password);
 }
 
 static void periodicQOSMeasurement(void* /*clientData*/, CommonPlay *cpObj) {
@@ -986,6 +1030,37 @@ void CommonPlay::continueAfterTEARDOWN(RTSPClient*, int /*resultCode*/,
 	exit(cpObj->shutdownExitCode);
 }
 
+void CommonPlay::continueAfterGetParam(RTSPClient* client, int resultCode,
+		char* resultString, CommonPlay *cpObj) {
+
+	int64_t uSecsToDelay = (int64_t) (1000000.0 * 60);
+	cpObj->sessionTimerTask = cpObj->env->taskScheduler().scheduleDelayedTask(
+			uSecsToDelay, (TaskFunc*) sessionTimerHandler, client, cpObj);
+
+//	UsageEnvironment& env = rtspClient->envir(); // alias
+
+//	StreamClientState& scs = ((ourRTSPClient*) rtspClient)->scs; // alias
+//
+//do {
+
+	// Set a timer to be handled at the end of the stream's expected duration (if the stream does not already signal its end
+
+	// using a RTCP "BYE").  This is optional.  If, instead, you want to keep the stream active - e.g., so you can later
+
+	// 'seek' back within it and do another RTSP "PLAY" - then you can omit this code.
+
+	// (Alternatively, if you don't want to receive the entire stream, you could set this timer for some shorter value.)
+//
+//	if (scs.duration > 0)
+//
+//	{
+//
+//		unsigned uSecsToDelay = (unsigned)(scs.duration*1000000);
+//
+//		scs.streamTimerTask = env.taskScheduler().scheduleDelayedTask(uSecsToDelay, (TaskFunc*)streamTimerHandler, rtspClient);
+//
+//	}
+}
 void CommonPlay::signalHandlerShutdown(int /*sig*/) {
 	*env << "Got shutdown signal\n";
 	waitForResponseToTEARDOWN = False; // to ensure that we end, even if the server does not respond to our TEARDOWN
@@ -1034,7 +1109,7 @@ void CommonPlay::checkForPacketArrival(void* /*clientData*/,
 	} else {
 		notifyTheUser = numSubsessionsWithReceivedData >= numSubsessionsToCheck
 				&& numSubsessionsThatHaveBeenSynced == numSubsessionsChecked;
-		// Note: A subsession with no active sources is considered to be synced
+// Note: A subsession with no active sources is considered to be synced
 	}
 	if (notifyTheUser) {
 		struct timeval timeNow;
@@ -1073,15 +1148,15 @@ void CommonPlay::checkInterPacketGaps(void* /*clientData*/, CommonPlay *cpObj) {
 	}
 
 	if (newTotNumPacketsReceived == cpObj->totNumPacketsReceived) {
-		// No additional packets have been received since the last time we
-		// checked, so end this stream:
+// No additional packets have been received since the last time we
+// checked, so end this stream:
 		*cpObj->env
 				<< "Closing session, because we stopped receiving packets.\n";
 		cpObj->interPacketGapCheckTimerTask = NULL;
 		sessionAfterPlaying();
 	} else {
 		cpObj->totNumPacketsReceived = newTotNumPacketsReceived;
-		// Check again, after the specified delay:
+// Check again, after the specified delay:
 		cpObj->interPacketGapCheckTimerTask =
 				cpObj->env->taskScheduler().scheduleDelayedTask(
 						cpObj->interPacketGapMaxTime * 1000000,

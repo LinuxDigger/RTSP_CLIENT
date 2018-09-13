@@ -189,6 +189,7 @@ unsigned RTSPClient::sendSetParameterCommand(MediaSession& session,
 	return result;
 }
 
+// heartbeat
 unsigned RTSPClient::sendGetParameterCommand(MediaSession& session,
 		responseHandler* responseHandler, char const* parameterName,
 		Authenticator* authenticator) {

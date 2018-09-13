@@ -41,6 +41,7 @@ CPP_SRCS += \
 ../src/H261VideoRTPSource.cpp \
 ../src/H263plusVideoRTPSink.cpp \
 ../src/H263plusVideoRTPSource.cpp \
+../src/H264ParserSPS.cpp \
 ../src/H264VedioFileSink.cpp \
 ../src/H264VideoRTPSink.cpp \
 ../src/H264VideoRTPSource.cpp \
@@ -101,7 +102,6 @@ CPP_SRCS += \
 ../src/OggFileSink.cpp \
 ../src/OnDemandServerMediaSubsession.cpp \
 ../src/OutputFile.cpp \
-../src/ParserSPS.cpp \
 ../src/ProxyServerMediaSession.cpp \
 ../src/QCELPAudioRTPSource.cpp \
 ../src/QuickTimeFileSink.cpp \
@@ -183,6 +183,7 @@ OBJS += \
 ./src/H261VideoRTPSource.o \
 ./src/H263plusVideoRTPSink.o \
 ./src/H263plusVideoRTPSource.o \
+./src/H264ParserSPS.o \
 ./src/H264VedioFileSink.o \
 ./src/H264VideoRTPSink.o \
 ./src/H264VideoRTPSource.o \
@@ -243,7 +244,6 @@ OBJS += \
 ./src/OggFileSink.o \
 ./src/OnDemandServerMediaSubsession.o \
 ./src/OutputFile.o \
-./src/ParserSPS.o \
 ./src/ProxyServerMediaSession.o \
 ./src/QCELPAudioRTPSource.o \
 ./src/QuickTimeFileSink.o \
@@ -323,6 +323,7 @@ CPP_DEPS += \
 ./src/H261VideoRTPSource.d \
 ./src/H263plusVideoRTPSink.d \
 ./src/H263plusVideoRTPSource.d \
+./src/H264ParserSPS.d \
 ./src/H264VedioFileSink.d \
 ./src/H264VideoRTPSink.d \
 ./src/H264VideoRTPSource.d \
@@ -383,7 +384,6 @@ CPP_DEPS += \
 ./src/OggFileSink.d \
 ./src/OnDemandServerMediaSubsession.d \
 ./src/OutputFile.d \
-./src/ParserSPS.d \
 ./src/ProxyServerMediaSession.d \
 ./src/QCELPAudioRTPSource.d \
 ./src/QuickTimeFileSink.d \

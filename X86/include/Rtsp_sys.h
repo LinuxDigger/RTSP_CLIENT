@@ -24,7 +24,7 @@ typedef enum _RTSP_BOOL_E{
 
 
 typedef unsigned char 		DP_U8;
-typedef  signed char 		DP_S8;
+typedef signed char 		DP_S8;
 typedef DP_U8*				DP_P_U8;
 typedef DP_S8*				DP_P_S8;
 

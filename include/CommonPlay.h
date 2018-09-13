@@ -50,6 +50,8 @@ public:
 			char* resultString, CommonPlay *cpObj);
 	static void continueAfterTEARDOWN(RTSPClient* client, int resultCode,
 			char* resultString, CommonPlay *cpObj);
+	static void continueAfterGetParam(RTSPClient* client, int resultCode,
+			char* resultString, CommonPlay *cpObj);
 
 	void createOutputFiles(char const* periodicFilenameSuffix);
 	void createPeriodicOutputFiles();
@@ -123,6 +125,7 @@ public:
 	}
 
 	static void scheduleNextQOSMeasurement(CommonPlay *cpObj);
+	void setUsrnamePassword(const DP_C_S8 *usrname, const DP_C_S8 *password);
 public:
 
 	char const* progName;

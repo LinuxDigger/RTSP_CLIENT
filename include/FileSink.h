@@ -10,6 +10,7 @@
 
 #include "MediaSink.h"
 #include "DP_RTSP_CLIENT_CycleQueue.h"
+#include <map>
 //class MediaSink;
 class FileSink: public MediaSink {
 public:
@@ -59,6 +60,13 @@ protected:
 	bool fGetIDRFrame;
 	struct timeval tvStart;
 	DP_U8 fStartCode[4];
+	map<DP_U16, DP_U32> _mCliRecvFrameSequence;
+	map<DP_U16, DP_U32> _mCombinFrameSize;
+	map<DP_U16, DP_U8 *> _mCombinFrame;
+	//
+//	static DP_U32 combinFrameSize = 0;
+//	static DP_U8 *u8CombinFrame = NULL;
+
 //	 bool fGetSPSFrame;
 //	bool fGetPPSFrame;
 };

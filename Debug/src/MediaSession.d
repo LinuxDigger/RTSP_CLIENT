@@ -61,7 +61,7 @@ src/MediaSession.o: ../src/MediaSession.cpp \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/strDup.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/MediaSession.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/Base64.h \
- /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/ParseSPS.h \
+ /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/H264ParserSPS.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/H265ParserSPS.h
 
 /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/X86/include/Rtsp_server.h:
@@ -188,6 +188,6 @@ src/MediaSession.o: ../src/MediaSession.cpp \
 
 /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/Base64.h:
 
-/home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/ParseSPS.h:
+/home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/H264ParserSPS.h:
 
 /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/H265ParserSPS.h:

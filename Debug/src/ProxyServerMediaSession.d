@@ -89,6 +89,8 @@ src/ProxyServerMediaSession.o: ../src/ProxyServerMediaSession.cpp \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/DP_RTSP_CLIENT_Interface.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/EfficientAddOrUpdate.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/EfficientAddOrUpdate.hpp \
+ /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/DP_RTSP_CLIENT_DataQueue.h \
+ /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/DP_RTSP_CLIENT_DataStructureDef.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/Mutex.h
 
 /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/X86/include/Rtsp_server.h:
@@ -270,5 +272,9 @@ src/ProxyServerMediaSession.o: ../src/ProxyServerMediaSession.cpp \
 /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/EfficientAddOrUpdate.h:
 
 /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/EfficientAddOrUpdate.hpp:
+
+/home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/DP_RTSP_CLIENT_DataQueue.h:
+
+/home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/DP_RTSP_CLIENT_DataStructureDef.h:
 
 /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/Mutex.h:
