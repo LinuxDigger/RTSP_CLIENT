@@ -9,6 +9,8 @@
 #include <iostream>
 #include "CommonPlay.h"
 #include "FileSink.h"
+#include "Logger.h"
+using namespace FrameWork;
 using namespace std;
 
 map<unsigned short, MediaSubsessionIterator*> CommonPlay::mSetupIter;
@@ -66,7 +68,7 @@ void CommonPlay::continueAfterClientCreation1() {
 
 void CommonPlay::continueAfterOPTIONS(RTSPClient*, int resultCode,
 		char* resultString, CommonPlay *cpObj) {
-	cout << "after options -----------------------------------" << endl;
+	Logger::GetInstance().Debug("after options -----------------------------------");
 	if (cpObj->sendOptionsRequestOnly) {
 		if (resultCode != 0) {
 			*cpObj->env << cpObj->clientProtocolName
@@ -91,9 +93,8 @@ void CommonPlay::setEnvURL(UsageEnvironment& envv, const char*URL) {
 
 void CommonPlay::continueAfterDESCRIBE(RTSPClient*, int resultCode,
 		char* resultString, CommonPlay *cpObj) {
-	cout
-			<< "after describe ======================================================================="
-			<< endl;
+	Logger::GetInstance().Debug(
+			"after describe =======================================================================");
 	if (resultCode != 0) {
 		*cpObj->env << "Failed to get a SDP description for the URL \""
 				<< cpObj->streamURL << "\": " << resultString << "\n";
@@ -102,17 +103,14 @@ void CommonPlay::continueAfterDESCRIBE(RTSPClient*, int resultCode,
 	}
 
 	char* sdpDescription = resultString;
-	cout << "sdp : " << cpObj->streamURL << endl;
-//	sleep(10);
-	*cpObj->env << "Opened URL \"" << cpObj->streamURL
-			<< "\", returning a SDP description:\n" << sdpDescription << "\n";
+	Logger::GetInstance().Info(
+			"Opened URL \" %s \", returning a SDP description:  %s",
+			cpObj->streamURL, sdpDescription);
 
 	// Create a media session object from this SDP description:
 //	sleep(10);
 	cpObj->session = MediaSession::createNew(*cpObj->env, sdpDescription,
 			cpObj);
-	cout << "getSessionName():::::" << cpObj->session->getSessionName()
-			<< " env . cliID " << cpObj->env->_cliID << endl;
 	delete[] sdpDescription;
 	if (cpObj->session == NULL) {
 		*cpObj->env
@@ -152,8 +150,6 @@ void CommonPlay::continueAfterDESCRIBE(RTSPClient*, int resultCode,
 		}
 
 		if (cpObj->createReceivers) {
-			cout << "initiate in describe &&&&&&&&&&&&&&&&&&&&&&&&&&&&&"
-					<< endl;
 			if (!subsession->initiate(cpObj->simpleRTPoffsetArg)) {
 				*cpObj->env << "Unable to create receiver for \""
 						<< subsession->mediumName() << "/"
@@ -172,13 +168,14 @@ void CommonPlay::continueAfterDESCRIBE(RTSPClient*, int resultCode,
 							<< subsession->clientPortNum() + 1;
 				}
 				*cpObj->env << ")\n";
-				cout << "videoFPSaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-						<< subsession->videoFPS();  //0
-				cout << "videoWidthaaaaaaaaaaaaaaaaaaaaaaa"
-						<< subsession->videoWidth() << " height "
-						//0
-						<< subsession->videoHeight() << " codecName "
-						<< subsession->codecName();
+
+//				cout << "videoFPSaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+//						<< subsession->videoFPS();  //0
+//				cout << "videoWidthaaaaaaaaaaaaaaaaaaaaaaa"
+//						<< subsession->videoWidth() << " height "
+//						//0
+//						<< subsession->videoHeight() << " codecName "
+//						<< subsession->codecName();
 
 				madeProgress = True;
 
@@ -239,14 +236,14 @@ MediaSubsession *subsession;
 Boolean madeProgress = False;
 void CommonPlay::continueAfterSETUP(RTSPClient* client, int resultCode,
 		char* resultString, CommonPlay *cpObj) {
-	cout
-			<< "aftersetup ======================================================================="
-			<< endl;
+	Logger::GetInstance().Debug(
+			"aftersetup =======================================================================");
 	if (resultCode == 0) {
 		*cpObj->env << "Setup \"" << subsession->mediumName() << "/"
 				<< subsession->codecName() << "\" subsession (";
 		if (subsession->rtcpIsMuxed()) {
-			*cpObj->env << "client port " << subsession->clientPortNum();
+			Logger::GetInstance().Debug("client port %d",
+					subsession->clientPortNum());
 		} else {
 			*cpObj->env << "client ports " << subsession->clientPortNum() << "-"
 					<< subsession->clientPortNum() + 1;
@@ -445,9 +442,9 @@ void CommonPlay::createPeriodicOutputFiles() {
 }
 
 void CommonPlay::setupStreams() {
-	cout
-			<< "setup stream ======================================================================= / create file env cliID: "
-			<< env->_cliID << endl;
+	Logger::GetInstance().Debug(
+			"setup stream ======================================================================= / create file env cliID: %d",
+			env->_cliID);
 //	static MediaSubsessionIterator* setupIter = NULL;
 
 //	MediaSubsessionIterator* setupIter = NULL; // enter a inf loop
@@ -525,8 +522,9 @@ void CommonPlay::setupStreams() {
 ////
 void CommonPlay::continueAfterPLAY(RTSPClient*rtspClient, int resultCode,
 		char* resultString, CommonPlay *cpObj) {
-	cout << "cpObj->duration]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]"
-			<< endl;
+	Logger::GetInstance().Debug(
+			"continueAfterPLAY ]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]cliID::: %d ",
+			cpObj->env->_cliID);
 	if (resultCode != 0) {
 		*cpObj->env << "Failed to start playing session: " << resultString
 				<< "\n";
@@ -535,8 +533,6 @@ void CommonPlay::continueAfterPLAY(RTSPClient*rtspClient, int resultCode,
 		return;
 	} else {
 		*cpObj->env << "Started playing session\n";
-		cout << "cliID:::::::::::::::::::::::::::::::::::::"
-				<< cpObj->env->_cliID << endl;
 
 		pthread_mutex_lock(
 				DP_RTSP_CLIENT_Client::mCliMuxSet[cpObj->env->_cliID]);
@@ -560,9 +556,6 @@ void CommonPlay::continueAfterPLAY(RTSPClient*rtspClient, int resultCode,
 	//........>0 origin
 //	if (cpObj->duration == 0) {
 	if (cpObj->duration > 0) {
-		cout
-				<< "cpObj->durationnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn"
-				<< endl;
 		// First, adjust "duration" based on any change to the play range (that was specified in the "PLAY" response):
 		double rangeAdjustment = (cpObj->session->playEndTime()
 				- cpObj->session->playStartTime())
@@ -580,7 +573,6 @@ void CommonPlay::continueAfterPLAY(RTSPClient*rtspClient, int resultCode,
 						(TaskFunc*) sessionTimerHandler, (void*) NULL, cpObj);
 	}
 
-	cout << "cpObj->duration : " << cpObj->duration << endl;
 //	int64_t uSecsToDelay = (int64_t) (secondsToDelay * 1000000.0 * 60);
 	int64_t uSecsToDelay = (int64_t) (1000000.0 * 60);
 
@@ -686,34 +678,18 @@ void CommonPlay::sessionAfterPlaying(void* /*clientData*/, CommonPlay *cpObj) {
 		cpObj->startPlayingSession(cpObj->session, cpObj->initialSeekTime,
 				cpObj->endTime, cpObj->scale, cpObj->continueAfterPLAY);
 	}
-	struct timeval tv;
-	gettimeofday(&tv, NULL);
-	cout << "now time ::::::::::::" << tv.tv_sec << endl;
 }
 
 void CommonPlay::sessionTimerHandler(void* clientData, CommonPlay *cpObj) {
 	cpObj->sessionTimerTask = NULL;
-	struct timeval tv;
-	gettimeofday(&tv, NULL);
-	cout << "now time :::::::::::sessionTimerHandler():" << tv.tv_usec << endl;
-	cout << "333333333333333333333333333333333333333" << endl;
-	int64_t uSecsToDelay = (int64_t) (1000000.0 * 3);
-//	cpObj->startPlayingSession(cpObj->session, cpObj->initialSeekTime,
-//					cpObj->endTime, cpObj->scale, cpObj->continueAfterPLAY);
+	Logger::GetInstance().Debug("333333333333333333333333333333333333333");
+	int64_t uSecsToDelay = (int64_t) (1000000.0 * 60);
 
 	RTSPClient* rtspClient = (RTSPClient*) clientData;
-	if (rtspClient == NULL)
-		cout << "nulllllllllllllllll" << endl;
-	else
-		cout << "rtspClient != NULL ::::url : " << rtspClient->url() << endl;
 	cout << rtspClient->url() << endl;
 	rtspClient->sendGetParameterCommand(*cpObj->session, continueAfterGetParam,
 	NULL);
 
-//	rtspClient->sendOptionsCommand(responseHandler, authenticator)
-//	cpObj->sessionTimerTask = cpObj->env->taskScheduler().scheduleDelayedTask(
-//			uSecsToDelay, (TaskFunc*) sessionTimerHandler, (void*) NULL, cpObj);
-//	sessionAfterPlaying((void*) NULL, cpObj);
 }
 
 void CommonPlay::periodicFileOutputTimerHandler(void* /*clientData*/,
@@ -1012,9 +988,9 @@ void CommonPlay::shutdown(int exitCode) {
 
 void CommonPlay::continueAfterTEARDOWN(RTSPClient*, int /*resultCode*/,
 		char* resultString, CommonPlay *cpObj) {
-	cout
-			<< "continueAfterTEARDOWNTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTmSetupIter : "
-			<< CommonPlay::mSetupIter.size() << endl;
+	Logger::GetInstance().Debug(
+			"continueAfterTEARDOWNTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTmSetupIter : %d",
+			CommonPlay::mSetupIter.size());
 	delete[] resultString;
 
 // Now that we've stopped any more incoming data from arriving, close our output files:

@@ -7,7 +7,8 @@
 
 #include "H264or5VideoFileSink.h"
 #include "H264VideoRTPSource.h" // for "parseSPropParameterSets()"
-
+#include "Logger.h"
+using namespace FrameWork;
 ////////// H264or5VideoFileSink //////////
 
 H264or5VideoFileSink::H264or5VideoFileSink(UsageEnvironment& env,
@@ -17,7 +18,8 @@ H264or5VideoFileSink::H264or5VideoFileSink(UsageEnvironment& env,
 		CommonPlay *cpObj) :
 		FileSink(env, fid, bufferSize, perFrameFileNamePrefix, clientID, cpObj), fHaveWrittenFirstFrame(
 				False) {
-	cout << "MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM: "<<clientID<<endl;
+	Logger::GetInstance().Debug(
+			"MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM: %d", clientID);
 	fSPropParameterSetsStr[0] = sPropParameterSetsStr1;
 	fSPropParameterSetsStr[1] = sPropParameterSetsStr2;
 	fSPropParameterSetsStr[2] = sPropParameterSetsStr3;

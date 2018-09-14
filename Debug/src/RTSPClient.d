@@ -34,7 +34,9 @@ src/RTSPClient.o: ../src/RTSPClient.cpp \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/Locale.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/GroupsockHelper.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/ourMD5.h \
- /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/strDup.h
+ /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/strDup.h \
+ /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/Logger.h \
+ /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/Mutex.h
 
 /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/X86/include/Rtsp_server.h:
 
@@ -107,3 +109,7 @@ src/RTSPClient.o: ../src/RTSPClient.cpp \
 /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/ourMD5.h:
 
 /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/strDup.h:
+
+/home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/Logger.h:
+
+/home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/Mutex.h:

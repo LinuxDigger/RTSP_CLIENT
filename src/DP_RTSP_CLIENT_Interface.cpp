@@ -15,8 +15,8 @@
 #include "BasicTaskScheduler0.h"
 #include "EfficientAddOrUpdate.h"
 #include "CommonPlay.h"
-
-//#include "openRTSP.h"
+#include "Logger.h"
+using namespace FrameWork;
 using namespace std;
 
 map<DP_U16, pthread_cond_t*> DP_RTSP_CLIENT_Client::mCliCondSet;
@@ -63,9 +63,8 @@ DP_S32 DP_RTSP_CLIENT_Client::DP_RTSP_CLIENT_Init(const char *ps8URL,
 	ClientInitArgs_S stCliArgs(_u16ClientNum, ps8URL, enStreamType,
 			enNetProtocol, u32FrmNums, pu8UsrName, pu8UsrPassword, this);
 	if (pthread_create(&tid, NULL, sClientInit, (void*) &stCliArgs) == 0) {
-		cout
-				<< "Thread create successfully............................................!"
-				<< endl;
+		Logger::GetInstance().Debug(
+				"Thread create successfully............................................!");
 		DP_RTSP_CLIENT_DataQueue *dataQueue = new DP_RTSP_CLIENT_DataQueue(
 				_u16ClientNum, u32FrmNums);
 //		DP_RTSP_CLIENT_CycleQueue *cycQ = new DP_RTSP_CLIENT_CycleQueue(
@@ -73,18 +72,17 @@ DP_S32 DP_RTSP_CLIENT_Client::DP_RTSP_CLIENT_Init(const char *ps8URL,
 //		cycQ->DSP_QueueInit();
 		efficientAddOrUpdate(_mDataQueueSet, _u16ClientNum, dataQueue);
 		if (pthread_cond_timedwait(cond, mutex, &outtime) != 0) {
-			cout
-					<< "error cond ++++++++++++++++++++++++++++++++++++++++++++++++++++++!"
-					<< endl;
+			Logger::GetInstance().Debug(
+					"error cond ++++++++++++++++++++++++++++++++++++++++++++++++++++++!");
 			//erase a queue
 			//check!!!!!!!!!!
 			_mDataQueueSet.erase(_u16ClientNum);
 			///close connection
 			return DP_RetError;
 		} else {
-			cout
-					<< "cond time wait == 0000000000000000000000000000000000000000000 : "
-					<< _u16ClientNum << endl;
+			Logger::GetInstance().Info(
+					"cond time wait == 0000000000000000000000000000000000000000000 : %d",
+					_u16ClientNum);
 			//init a queue according a uID.put it in map
 		}
 		pthread_cond_destroy(cond);
@@ -122,8 +120,9 @@ void* DP_RTSP_CLIENT_Client::sClientInit(void*args) {
 //		return NULL;
 //	}
 	cp.continueAfterClientCreation1();
-	cout << "stCliArgs...IDXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX: "
-			<< env->_cliID << endl;
+	Logger::GetInstance().Debug(
+			"stCliArgs...IDXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX:%d ",
+			env->_cliID);
 	env->taskScheduler().doEventLoop(); // does not return
 	return NULL;
 }

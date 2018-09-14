@@ -154,8 +154,6 @@ RTCPInstance::RTCPInstance(UsageEnvironment& env, Groupsock* RTCPgs,
 		fSource->registerForMultiplexedRTCPPackets(this);
 	} else {
 		// Arrange to handle incoming reports from the network:
-		cout << "RTCP constructor @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
-				<< endl;
 		TaskScheduler::BackgroundHandlerProc* handler =
 				(TaskScheduler::BackgroundHandlerProc*) &incomingReportHandler;
 		fRTCPInterface.startNetworkReading(handler);

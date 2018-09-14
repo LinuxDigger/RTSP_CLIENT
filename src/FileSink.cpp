@@ -12,7 +12,8 @@
 #include "DP_RTSP_CLIENT_Interface.h"
 #include <iostream>
 #include <string.h>
-
+#include "Logger.h"
+using namespace FrameWork;
 //
 #include "Rtsp_server.h"
 
@@ -41,7 +42,8 @@ FileSink::FileSink(UsageEnvironment& env, FILE* fid, unsigned bufferSize,
 	fStartCode[2] = 0x00;
 	fStartCode[3] = 0x01;
 	////0000000000000
-	cout << "_cliIDZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ: " << _cliID << endl;
+	Logger::GetInstance().Debug(
+			"_cliIDZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ %d", clientID);
 }
 
 FileSink::~FileSink() {
@@ -399,9 +401,9 @@ void FileSink::afterGettingFrameGetData(unsigned frameSize,
 								0, stFrameData.u32FrameSize,
 								_mCliRecvFrameSequence[_cliID],
 								DP_RTSP_CLINET_CODEC_H264, stFrameData.pu8Data);
-				cout << "stFrameData.u32FrameSize:::: "
-						<< stFrameData.u32FrameSize << "ret:: " << ret
-						<< " _cliID:: " << _cliID << endl;
+				Logger::GetInstance().Info(
+						"stFrameData.u32FrameSize :%d ret %d cliID: %d",
+						stFrameData.u32FrameSize, ret, _cliID);
 				break;
 			}
 #if 0

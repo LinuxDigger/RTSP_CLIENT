@@ -7,7 +7,10 @@
 
 #include "DP_RTSP_CLIENT_DataQueue.h"
 #include "DP_RTSP_CLIENT_Interface.h"
+#include "Logger.h"
+using namespace FrameWork;
 class DP_RTSP_CLIENT_Client;
+
 DP_RTSP_CLIENT_DataQueue::DP_RTSP_CLIENT_DataQueue(DP_U16 u16CliID,
 		DP_U32 frameCnt) :
 		_u32FrameCnt(frameCnt), _u32FrameIndex(0), _u32IDRFrameIndex(0), _u32AudioFrameIndex(
@@ -68,7 +71,7 @@ DP_S32 DP_RTSP_CLIENT_DataQueue::DP_RTSP_CLIENT_RecvData(DP_U32 timestamp,
 	if (_vDataRecvSet[frameSeqMod].enFrameType
 			<= DP_RTSP_CLINET_CODEC_H265_IFRAME) {
 		//find IDR frame.
-		printf("dataBuff[4]:: %02x\n", dataBuff[4]);
+		Logger::GetInstance().Debug("dataBuff[4]:: %02x\n", dataBuff[4]);
 		if (DP_RTSP_CLIENT_Client::DP_RTSP_CLIENT_H264NaluFlag(dataBuff[4])
 				== DP_RTSP_CLIENT_H264_SPS_FRAMETYPE
 				|| DP_RTSP_CLIENT_Client::DP_RTSP_CLIENT_H265NaluFlag(
@@ -91,16 +94,17 @@ DP_S32 DP_RTSP_CLIENT_DataQueue::DP_RTSP_CLIENT_RecvData(DP_U32 timestamp,
 			> DP_RTSP_CLINET_CODEC_H265_IFRAME) {
 		_u32AudioFrameIndex = _u32FrameIndex;
 		if (_u32FrameIndex - _u32AudioFrameIndex > _u32FrameCnt) {
-			cout << "_u32AudioFrameIndex::::::::::::: " << _u32AudioFrameIndex
-					<< endl;
+			Logger::GetInstance().Info("_u32AudioFrameIndex::::::::::::: %d",
+					_u32AudioFrameIndex);
 			if (_u32AudioFrameIndex != 0)
 				_u32AudioFrameIndex = 0;
 			else
 				return -2;
 		}
 	}
-	cout << "DP_RTSP_CLIENT_RecvData() _u32IDRFrameIndex!!!!!!!!!!!!!!!!!! "
-			<< _u32IDRFrameIndex << "frameSequence:: " << frameSequence << endl;
+	Logger::GetInstance().Info(
+			"DP_RTSP_CLIENT_RecvData() _u32IDRFrameIndex!!!!!!!!!!!!!!!!!!%d frameSequence :  ",
+			_u32IDRFrameIndex, frameSequence);
 	frameSequence++;
 
 	return frameSize;
@@ -110,8 +114,9 @@ DP_U32 DP_RTSP_CLIENT_DataQueue::DP_RTSP_CLIENT_PutoutData(
 		DP_RTSP_CLIENT_FRAME_DATA_S *stData,
 		DP_RTSP_CLIENT_STREAM_TYPE_E streamType, DP_U32 timeout,
 		DP_Bool &firstPutout) {
-	cout << "DP_RTSP_CLIENT_PutoutData() ::stData.freamseq :: "
-			<< stData->u32FrameSequence << endl;
+	Logger::GetInstance().Info(
+			"DP_RTSP_CLIENT_PutoutData() :stData->u32FrameSequence :: %d",
+			stData->u32FrameSequence);
 	//first putout
 //	if (stData->u32FrameSequence == 0) {
 	if (firstPutout == true) {
@@ -120,10 +125,9 @@ DP_U32 DP_RTSP_CLIENT_DataQueue::DP_RTSP_CLIENT_PutoutData(
 		DP_U32 nextFrameIndexMod = 0;
 		DP_U32 timeoutCnt = 0;
 		DP_U32 IDRMod = _u32IDRFrameIndex % _u32FrameCnt;
-
-		cout
-				<< "1DP_RTSP_CLIENT_PutoutData()111111111111111111111111putoutdata _u32IDRFrameIndex :: "
-				<< _u32IDRFrameIndex << endl;
+		Logger::GetInstance().Info(
+				"1DP_RTSP_CLIENT_PutoutData()111111111111111111111111putoutdata _u32IDRFrameIndex ::%d ",
+				_u32IDRFrameIndex);
 		//There is a IDR frame in _u32FrameCnt range .//seldom 0
 		if (streamType == DP_RTSP_CLIENT_STREAM_VIDEO
 				|| streamType == DP_RTSP_CLIENT_STREAM_VIDEO_AND_AUDIO) {
@@ -211,8 +215,9 @@ DP_U32 DP_RTSP_CLIENT_DataQueue::DP_RTSP_CLIENT_PutoutData(
 		DP_U32 nextFrmOffsetSeqMod = 0;
 		DP_U32 timeoutCnt = 0;
 		DP_U32 nextFrmSeq = stData->u32FrameSequence + 1;
-		cout << "nextFrmSeq:::::::::::::::::::::::::::::::::::::::: "
-				<< nextFrmSeq <<" _u32FrameIndex;:: "<<_u32FrameIndex<< endl;
+		Logger::GetInstance().Info(
+				"nextFrmSeq:::::::::::::::::::::::::::::::::::::::: %d _u32FrameIndex : %d",
+				nextFrmSeq, _u32FrameIndex);
 		while (1) {
 			if (nextFrmSeq < _u32FrameIndex) {
 				nextFrmOffsetSeqMod = (nextFrmSeq + offset) % _u32FrameCnt;
@@ -249,8 +254,8 @@ void DP_RTSP_CLIENT_DataQueue::copyData(DP_U32 indexMod,
 	_vDataRecvSet[indexMod].RDLock();
 	memcpy(stData, &_vDataRecvSet[indexMod],
 			sizeof(DP_RTSP_CLIENT_FRAME_DATA_S));
-	cout << "copyData()_vDataRecvSet[indexMod].fraseq : "
-			<< _vDataRecvSet[indexMod].u32FrameSequence << endl;
+	Logger::GetInstance().Info("copyData()_vDataRecvSet[indexMod].fraseq : %d",
+			_vDataRecvSet[indexMod].u32FrameSequence);
 	_vDataRecvSet[indexMod].UNLock();
 }
 

@@ -16,6 +16,8 @@
 #include "strDup.h"
 #include <iostream>
 #include <arpa/inet.h>
+#include "Logger.h"
+using namespace FrameWork;
 using namespace std;
 ////////// RTSPClient implementation //////////
 
@@ -28,8 +30,8 @@ RTSPClient* RTSPClient::createNew(UsageEnvironment& env, char const* rtspURL,
 
 unsigned RTSPClient::sendDescribeCommand(responseHandler* responseHandler,
 		Authenticator* authenticator) {
-	cout << "send request describe ---------------------------------------"
-			<< endl;
+	Logger::GetInstance().Debug(
+			"send request describe ---------------------------------------");
 	if (fCurrentAuthenticator < authenticator)
 		fCurrentAuthenticator = *authenticator;
 	return sendRequest(
@@ -841,8 +843,7 @@ Boolean RTSPClient::setRequestFields(RequestRecord* request, char*& cmdURL,
 			} seedData;
 			gettimeofday(&seedData.timestamp, NULL);
 			seedData.counter = ++fSessionCookieCounter;
-			our_MD5Data((DP_U8*) (&seedData), sizeof seedData,
-					fSessionCookie);
+			our_MD5Data((DP_U8*) (&seedData), sizeof seedData, fSessionCookie);
 			// DSS seems to require that the 'session cookie' string be 22 bytes long:
 			fSessionCookie[23] = '\0';
 
@@ -1342,9 +1343,6 @@ Boolean RTSPClient::handleSETUPResponse(MediaSubsession& subsession,
 		if (streamUsingTCP) {
 			// Tell the subsession to receive RTP (and send/receive RTCP) over the RTSP stream:
 			if (subsession.rtpSource() != NULL) {
-				cout
-						<< "setStreamSocket ttttttttttttttttttttttttttttttttttttttt1"
-						<< endl;
 				subsession.rtpSource()->setStreamSocket(fInputSocketNum,
 						subsession.rtpChannelId);
 				// So that we continue to receive & handle RTSP commands and responses from the server
@@ -1353,9 +1351,6 @@ Boolean RTSPClient::handleSETUPResponse(MediaSubsession& subsession,
 				increaseReceiveBufferTo(envir(), fInputSocketNum, 50 * 1024);
 			}
 			if (subsession.rtcpInstance() != NULL) {
-				cout
-						<< "setStreamSocket ttttttttttttttttttttttttttttttttttttttt2"
-						<< endl;
 				subsession.rtcpInstance()->setStreamSocket(fInputSocketNum,
 						subsession.rtcpChannelId);
 
@@ -1784,7 +1779,8 @@ void RTSPClient::connectionHandler1() {
 
 void RTSPClient::incomingDataHandler(void* instance, int /*mask*/
 ) {   /////
-	cout << "do incoming Data ||||||||||||||||||||||||||||||||||||||" << endl;
+	Logger::GetInstance().Debug(
+			"do incoming Data ||||||||||||||||||||||||||||||||||||||");
 	RTSPClient* client = (RTSPClient*) instance;
 	client->incomingDataHandler1();
 }
@@ -2097,9 +2093,8 @@ void RTSPClient::handleResponseBytes(int newBytesRead) {
 				if (responseCode == 200) {
 					// Do special-case response handling for some commands:
 					if (strcmp(foundRequest->commandName(), "SETUP") == 0) {
-						cout
-								<< "strcmp SETUP..................................."
-								<< endl;
+						Logger::GetInstance().Debug(
+								"strcmp SETUP...................................");
 						if (!handleSETUPResponse(
 								*foundRequest->subsession(), /////
 								sessionParamsStr, transportParamsStr,

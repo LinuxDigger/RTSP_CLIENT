@@ -9,7 +9,8 @@ src/main.o: ../src/main.cpp \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/DP_RTSP_CLIENT_DataQueue.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/DP_RTSP_CLIENT_DataStructureDef.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/Mutex.h \
- /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/X86/include/Rtsp_server.h
+ /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/X86/include/Rtsp_server.h \
+ /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/Logger.h
 
 /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/X86/include/Rtsp_server.h:
 
@@ -32,3 +33,5 @@ src/main.o: ../src/main.cpp \
 /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/Mutex.h:
 
 /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/X86/include/Rtsp_server.h:
+
+/home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/Logger.h:

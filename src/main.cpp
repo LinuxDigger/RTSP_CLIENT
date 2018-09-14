@@ -12,6 +12,8 @@
 #include <stdlib.h>
 //server
 #include "Rtsp_server.h"
+#include "Logger.h"
+using namespace FrameWork;
 using namespace std;
 
 typedef struct _DEMO_HANDLE_S {
@@ -22,6 +24,8 @@ typedef struct _DEMO_HANDLE_S {
 } DEMO_HANDLE_S;
 
 DP_S32 main(DP_S32 argc, char**argv) {
+
+	InitLogging(argv[0], WARN, ".");
 	//Debug 调试等级设置
 	DP_RTSP_SERVER_SetDebugLevel(DP_RTSP_SERVER_DEBUG_LEVEL_ALL);
 
@@ -56,7 +60,9 @@ DP_S32 main(DP_S32 argc, char**argv) {
 
 	//添加编码参数
 	DP_RTSP_SERVER_CODE_PARAM_S CodeParam;
+//	DP_RTSP_SERVER_MEDIA_H265
 	CodeParam.enMediaType = DP_RTSP_SERVER_MEDIA_H264;
+	//30 h264
 	CodeParam.unMedia.stMediaVideo.s8VideoFarmeRate = 30;
 	handle_h265.V_StreamId = DP_RTSP_SERVER_CodeParamBindMediaName(
 			handle_h265.HandleId, CodeParam);
@@ -83,37 +89,20 @@ DP_S32 main(DP_S32 argc, char**argv) {
 	DP_RTSP_SERVER_Start();
 	DP_RTSP_CLIENT_Client client;
 #if 1
-//	ourAuthenticator = new Authenticator(argv[2], argv[3]);
 	DP_S32 retCli = client.DP_RTSP_CLIENT_Init(argv[1],
 			DP_RTSP_CLIENT_STREAM_VIDEO, DP_RTSP_CLIENT_NET_PROTOCOL_TCP, 30,
 			argv[2], argv[3]);
-	cout << "MAIN!!!!!!!!!!!!!!!!!!!!retCli :::::::: " << retCli << endl;
+	Logger::GetInstance().Info("MAIN!!!!!!!!!!!!!!!!!!!!retCli :::::::: ",
+			retCli);
 	DP_RTSP_CLIENT_FRAME_DATA_S stGetData(retCli);
 	DP_RTSP_SERVER_MEDIA_STREAM_INFO_S MediaStream;
 	memset(&MediaStream, 0, sizeof(DP_RTSP_SERVER_MEDIA_STREAM_INFO_S));
 	MediaStream.enFrameType = DP_RTSP_SERVER_H264_FRAME_I;
 	MediaStream.u32TimeStamp = 0;
 	FrameDataMemManage manage;
-//	stGetData.u32FrameSequence = 0xffffffff;
 	DP_Bool firstPutout = true;
-	cout << "firstPutout init : " << firstPutout << endl;
+	Logger::GetInstance().Debug("firstPutout init : ", firstPutout);
 
-//	while (1) {
-////		sleep(100);
-//		cout << "main() stgetdata frameseq :: " << stGetData.u32FrameSequence
-//				<< endl;
-//		DP_S32 ret = client.DP_RTSP_CLIENT_GetStreamData(&stGetData, 200,
-//				manage, firstPutout);
-//		MediaStream.s32FrameSize = stGetData.u32FrameSize;
-//		MediaStream.pu8FrameStream = stGetData.pu8Data;
-//		cout
-//				<< "<main <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< "
-//				<< stGetData.u32FrameSize << "ret:: " << ret
-//				<< " firstPutout:: " << firstPutout
-//				<< " stGetData.frame seq :: " << stGetData.u32FrameSequence
-//				<< endl;
-//		DP_RTSP_SERVER_MediaStreamInput(0, 0, MediaStream);
-//	}
 #endif
 #if 0
 //	rtsp://172.16.10.124:554/h264_2
@@ -121,12 +110,34 @@ DP_S32 main(DP_S32 argc, char**argv) {
 //			H265_1080P.265
 //			test.264
 //			Something_Just_Like_This.mp3
-			"rtsp://172.16.10.124:554/h264_2", DP_RTSP_CLIENT_STREAM_VIDEO,
-			DP_RTSP_CLIENT_NET_PROTOCOL_TCP, 30, NULL,
-			NULL);
+
+			argv[1], DP_RTSP_CLIENT_STREAM_VIDEO,
+			DP_RTSP_CLIENT_NET_PROTOCOL_TCP, 30, argv[2], argv[3]);
 
 	cout << "retCli2 :::::::: " << retCli2 << endl;
 	DP_RTSP_CLIENT_FRAME_DATA_S stGetData_2(retCli2);
+	DP_S32 retCli3 = client.DP_RTSP_CLIENT_Init(
+//			H265_1080P.265
+//			test.264
+//			Something_Just_Like_This.mp3
+//			"rtsp://172.16.10.124:554/h264_2"
+			argv[1], DP_RTSP_CLIENT_STREAM_VIDEO,
+			DP_RTSP_CLIENT_NET_PROTOCOL_TCP, 30, argv[2], argv[3]);
+	cout << "retCli3 :::::::: " << retCli3 << endl;
+	DP_S32 retCli4 = client.DP_RTSP_CLIENT_Init(
+//			H265_1080P.265
+//			test.264
+//			Something_Just_Like_This.mp3
+			argv[1], DP_RTSP_CLIENT_STREAM_VIDEO,
+			DP_RTSP_CLIENT_NET_PROTOCOL_TCP, 30, argv[2], argv[3]);
+	cout << "retCli4 :::::::: " << retCli4 << endl;
+	DP_S32 retCli5 = client.DP_RTSP_CLIENT_Init(
+//			H265_1080P.265
+//			test.264
+//			Something_Just_Like_This.mp3
+			argv[1], DP_RTSP_CLIENT_STREAM_VIDEO,
+			DP_RTSP_CLIENT_NET_PROTOCOL_TCP, 30, argv[2], argv[3]);
+	cout << "retCli5 :::::::: " << retCli5 << endl;
 #endif
 	DP_RTSP_SERVER_MEDIA_STREAM_INFO_S MediaStream_2;
 	memset(&MediaStream_2, 0, sizeof(DP_RTSP_SERVER_MEDIA_STREAM_INFO_S));
@@ -142,11 +153,9 @@ DP_S32 main(DP_S32 argc, char**argv) {
 				manage, firstPutout);
 		MediaStream.s32FrameSize = stGetData.u32FrameSize;
 		MediaStream.pu8FrameStream = stGetData.pu8Data;
-		cout
-				<< "<main() <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< "
-				<< stGetData.u32FrameSize << "ret:: " << ret
-				<< " stGetData.frame seq :: " << stGetData.u32FrameSequence
-				<< endl;
+		Logger::GetInstance().Info(
+				"<main() <<<<<<<<<<<<<<<<<<<<<<<<<<<< %d ret:: %d stGetData.frame seq :: %d ",
+				stGetData.u32FrameSize, ret, stGetData.u32FrameSequence);
 		DP_RTSP_SERVER_MediaStreamInput(0, 0, MediaStream);
 #if 0
 		////1111111
@@ -165,24 +174,7 @@ DP_S32 main(DP_S32 argc, char**argv) {
 		DP_RTSP_SERVER_MediaStreamInput(1, 0, MediaStream_2);
 #endif
 	}
-#if 0
-	DP_S32 retCli3 = client.DP_RTSP_CLIENT_Init(
-//			H265_1080P.265
-//			test.264
-//			Something_Just_Like_This.mp3
-			"rtsp://172.16.10.107:8554/test.264", DP_RTSP_CLIENT_STREAM_VIDEO,
-			DP_RTSP_CLIENT_NET_PROTOCOL_TCP, 30, NULL,
-			NULL);
-	cout << "retCli3 :::::::: " << retCli3 << endl;
-	DP_S32 retCli4 = client.DP_RTSP_CLIENT_Init(
-//			H265_1080P.265
-//			test.264
-//			Something_Just_Like_This.mp3
-			"rtsp://172.16.10.107:8554/test.264", DP_RTSP_CLIENT_STREAM_VIDEO,
-			DP_RTSP_CLIENT_NET_PROTOCOL_TCP, 30, NULL,
-			NULL);
-	cout << "retCli3 :::::::: " << retCli4 << endl;
-#endif
+
 	while (1)
 		sleep(999);
 	return 0;

@@ -18,7 +18,7 @@
 namespace FrameWork
 {
 Mutex LogMessage::mutex;
-static char _defaltFolder[] = "/var/tmp/";
+static char _defaltFolder[] = ".";
 static char _appName[MaxFilePathLen];
 static char _appFolder[MaxFilePathLen];
 static char _destFolder[MaxFilePathLen];

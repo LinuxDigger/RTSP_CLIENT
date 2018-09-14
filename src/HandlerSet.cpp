@@ -7,16 +7,20 @@
 
 #include "HandlerSet.h"
 #include <iostream>
+#include "Logger.h"
+using namespace FrameWork;
 using namespace std;
 
 HandlerDescriptor::HandlerDescriptor(HandlerDescriptor* nextHandler) :
 		socketNum(0), conditionSet(0), handlerProc(NULL), clientData(NULL) {
 	// Link this descriptor into a doubly-linked list:
 	if (nextHandler == this) { // initialization
-		cout << "handlerDescriptor ################################1"<<endl;
+		Logger::GetInstance().Debug(
+				"handlerDescriptor ################################1");
 		fNextHandler = fPrevHandler = this;
 	} else {
-		cout << "handlerDescriptor ################################2"<<endl;
+		Logger::GetInstance().Debug(
+				"handlerDescriptor ################################2");
 		fNextHandler = nextHandler;
 		fPrevHandler = nextHandler->fPrevHandler;
 		nextHandler->fPrevHandler = this;

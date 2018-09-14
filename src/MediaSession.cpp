@@ -16,6 +16,8 @@
 #include "H264ParserSPS.h"
 #include "H265ParserSPS.h"
 #include <iostream>
+#include "Logger.h"
+using namespace FrameWork;
 using namespace std;
 ////////// MediaSession //////////
 
@@ -94,7 +96,6 @@ MediaSubsession* MediaSession::createNewMediaSubsession() {
 }
 
 Boolean MediaSession::initializeWithSDP(char const* sdpDescription) {
-	cout << "initializeWithSDP ppppppppppppppppppppppppppppppp" << endl;
 	if (sdpDescription == NULL)
 		return False;
 
@@ -269,7 +270,6 @@ Boolean MediaSession::initializeWithSDP(char const* sdpDescription) {
 					subsession->fMediumName, subsession->fCodecName);
 		}
 	}
-	cout << "fVideoFPSSSSSSSSSSSSSSSSSSSSSSSS1S: " << endl;
 	return True;
 }
 
@@ -325,7 +325,8 @@ Boolean MediaSession::parseSDPLine_s(char const* sdpLine) {
 		fSessionName = strDup(buffer);
 		parseSuccess = True;
 		//////h265
-		cout << "fSessionName :::::::::::::::::" << fSessionName << endl;
+		Logger::GetInstance().Debug("fSessionName ::::::::::::::::: %s",
+				fSessionName);
 	}
 	delete[] buffer;
 
@@ -1025,9 +1026,8 @@ Boolean MediaSubsession::initiate(int useSpecialRTPoffset) {
 			// Otherwise make a guess at 500 kbps.
 			unsigned totSessionBandwidth =
 					fBandwidth ? fBandwidth + fBandwidth / 20 : 500;
-			cout
-					<< "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^create rtcp "
-					<< endl;
+			Logger::GetInstance().Debug(
+					"^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^create rtcp ");
 			fRTCPInstance = RTCPInstance::createNew(env(), fRTCPSocket,
 					totSessionBandwidth, (DP_U8 const*) fParent.CNAME(),
 					NULL /* we're a client */, fRTPSource, False, fcpObj);

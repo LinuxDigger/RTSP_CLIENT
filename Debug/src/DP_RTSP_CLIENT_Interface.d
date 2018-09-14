@@ -60,7 +60,8 @@ src/DP_RTSP_CLIENT_Interface.o: ../src/DP_RTSP_CLIENT_Interface.cpp \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/H264or5VideoFileSink.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/H265VideoFileSink.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/OggFileSink.h \
- /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/DP_RTSP_CLIENT_Interface.h
+ /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/DP_RTSP_CLIENT_Interface.h \
+ /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/Logger.h
 
 /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/X86/include/Rtsp_server.h:
 
@@ -185,3 +186,5 @@ src/DP_RTSP_CLIENT_Interface.o: ../src/DP_RTSP_CLIENT_Interface.cpp \
 /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/OggFileSink.h:
 
 /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/DP_RTSP_CLIENT_Interface.h:
+
+/home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/Logger.h:
