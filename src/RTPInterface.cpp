@@ -166,8 +166,7 @@ static void deregisterSocket(UsageEnvironment& env, int sockNum,
 	}
 }
 
-void RTPInterface::removeStreamSocket(int sockNum,
-		DP_U8 streamChannelId) {
+void RTPInterface::removeStreamSocket(int sockNum, DP_U8 streamChannelId) {
 	// Remove - from our list of 'TCP streams' - the record of the (sockNum,streamChannelId) pair.
 	// (However "streamChannelId" == 0xFF is a special case, meaning remove all
 	//  (sockNum,*) pairs.)
@@ -181,8 +180,7 @@ void RTPInterface::removeStreamSocket(int sockNum,
 							|| streamChannelId
 									== (*streamsPtr)->fStreamChannelId)) {
 				// Delete the record pointed to by *streamsPtr :
-				DP_U8 streamChannelIdToRemove =
-						(*streamsPtr)->fStreamChannelId;
+				DP_U8 streamChannelIdToRemove = (*streamsPtr)->fStreamChannelId;
 				tcpStreamRecord* next = (*streamsPtr)->fNext;
 				(*streamsPtr)->fNext = NULL;
 				delete (*streamsPtr);
@@ -469,13 +467,12 @@ void SocketDescriptor::registerRTPInterface(DP_U8 streamChannelId,
 		// Arrange to handle reads on this TCP socket:
 		TaskScheduler::BackgroundHandlerProc* handler =
 				(TaskScheduler::BackgroundHandlerProc*) &tcpReadHandler;
-		fEnv.taskScheduler().setBackgroundHandling(fOurSocketNum,
-		SOCKET_READABLE | SOCKET_EXCEPTION, handler, this);
+//		fEnv.taskScheduler().setBackgroundHandling(fOurSocketNum,
+//		SOCKET_READABLE | SOCKET_EXCEPTION, handler, this);
 	}
 }
 
-RTPInterface* SocketDescriptor::lookupRTPInterface(
-		DP_U8 streamChannelId) {
+RTPInterface* SocketDescriptor::lookupRTPInterface(DP_U8 streamChannelId) {
 	char const* lookupArg = (char const*) (long) streamChannelId;
 	return (RTPInterface*) (fSubChannelHashTable->Lookup(lookupArg));
 }
@@ -602,7 +599,8 @@ Boolean SocketDescriptor::tcpReadHandler1(int mask) {
 				fprintf(stderr, "SocketDescriptor(socket %d)::tcpReadHandler(): reading %d bytes on channel %d\n", fOurSocketNum, rtpInterface->fNextTCPReadSize, rtpInterface->fNextTCPReadStreamChannelId);
 #endif
 				fTCPReadingState = AWAITING_PACKET_DATA;
-				rtpInterface->fReadHandlerProc(rtpInterface->fOwner, mask);
+				rtpInterface->fReadHandlerProc(rtpInterface->fOwner, mask,
+						NULL);
 			} else {
 #ifdef DEBUG_RECEIVE
 				fprintf(stderr, "SocketDescriptor(socket %d)::tcpReadHandler(): No handler proc for \"rtpInterface\" for channel %d; need to skip %d remaining bytes\n", fOurSocketNum, fStreamChannelId, rtpInterface->fNextTCPReadSize);
@@ -636,8 +634,8 @@ Boolean SocketDescriptor::tcpReadHandler1(int mask) {
 
 ////////// tcpStreamRecord implementation //////////
 
-tcpStreamRecord::tcpStreamRecord(int streamSocketNum,
-		DP_U8 streamChannelId, tcpStreamRecord* next) :
+tcpStreamRecord::tcpStreamRecord(int streamSocketNum, DP_U8 streamChannelId,
+		tcpStreamRecord* next) :
 		fNext(next), fStreamSocketNum(streamSocketNum), fStreamChannelId(
 				streamChannelId) {
 }

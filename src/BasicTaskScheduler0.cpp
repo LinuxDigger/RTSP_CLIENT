@@ -8,6 +8,7 @@
 #include "BasicTaskScheduler0.h"
 #include <iostream>
 #include "RTSPClient.h"
+#include "CommonPlay.h"
 using namespace std;
 ////////// A subclass of DelayQueueEntry,
 //////////     used to implement BasicTaskScheduler0::scheduleDelayedTask()
@@ -60,8 +61,9 @@ TaskToken BasicTaskScheduler0::scheduleDelayedTask(int64_t microseconds,
 		microseconds = 0;
 	DelayInterval timeToDelay((long) (microseconds / 1000000),
 			(long) (microseconds % 1000000));
+	//fcp --> cpobj
 	AlarmHandler* alarmHandler = new AlarmHandler(proc, clientData, timeToDelay,
-			fcpObj);
+			cpObj);
 	fDelayQueue.addEntry(alarmHandler);
 
 	return (void*) (alarmHandler->token());
@@ -75,6 +77,7 @@ void BasicTaskScheduler0::unscheduleDelayedTask(TaskToken& prevTask) {
 }
 
 void BasicTaskScheduler0::doEventLoop(char volatile* watchVariable) {
+	cout << "askScheduler0::doEventLoop(c=================="<<_mSockfdCpSet.size()<<endl;
 	// Repeatedly loop, handling readble sockets and timed events:
 	while (!pausePlay) {
 		if (watchVariable != NULL && *watchVariable != 0)

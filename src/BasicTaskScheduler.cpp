@@ -9,7 +9,7 @@
 #include <stdio.h>
 #include <iostream>
 using namespace std;
-
+#include "CommonPlay.h"
 ////////// BasicTaskScheduler //////////
 
 BasicTaskScheduler* BasicTaskScheduler::createNew(
@@ -54,6 +54,7 @@ void BasicTaskScheduler::schedulerTickTask() {
 #endif
 
 void BasicTaskScheduler::SingleStep(unsigned maxDelayTime) {
+//	cout << "d BasicTaskScheduler::SingleStep(unsigned maxDelayTime)  "<<_mSockfdCpSet[5]->ourAuthenticator->password()<<endl;
 	fd_set readSet = fReadSet; // make a copy for this select() call
 	fd_set writeSet = fWriteSet; // ditto
 	fd_set exceptionSet = fExceptionSet; // ditto
@@ -155,7 +156,11 @@ void BasicTaskScheduler::SingleStep(unsigned maxDelayTime) {
 			fLastHandledSocketNum = sock;
 			// Note: we set "fLastHandledSocketNum" before calling the handler,
 			// in case the handler calls "doEventLoop()" reentrantly.
-			(*handler->handlerProc)(handler->clientData, resultConditionSet);///////sending  cseq 2处理和RTSP服务器的通信协议的商定
+			if (fcpObj == NULL)
+//				cout << "00000000000000" << endl;
+//			cout << "urllllllllllllllllllllllllfafter 0fLastHandledSocketNum0 "<<fLastHandledSocketNum<<endl;
+			(*handler->handlerProc)(handler->clientData, resultConditionSet,
+					_mSockfdCpSet[fLastHandledSocketNum]);			///////sending  cseq 2处理和RTSP服务器的通信协议的商定
 			break;
 		}
 	}
@@ -181,8 +186,8 @@ void BasicTaskScheduler::SingleStep(unsigned maxDelayTime) {
 				fLastHandledSocketNum = sock;
 				// Note: we set "fLastHandledSocketNum" before calling the handler,
 				// in case the handler calls "doEventLoop()" reentrantly.
-				(*handler->handlerProc)(handler->clientData,
-						resultConditionSet);  ///处理真正的视频和音频数据
+				(*handler->handlerProc)(handler->clientData, resultConditionSet,
+						_mSockfdCpSet[fLastHandledSocketNum]);  ///处理真正的视频和音频数据
 				break;
 			}
 		}
@@ -196,6 +201,7 @@ void BasicTaskScheduler::SingleStep(unsigned maxDelayTime) {
 		if (fTriggersAwaitingHandling == fLastUsedTriggerMask) {
 // Common-case optimization for a single event trigger:
 			fTriggersAwaitingHandling &= ~fLastUsedTriggerMask;
+//			cout << "fLastUsedTriggerNum:::::::::::::::::::::::1:"<<fLastUsedTriggerNum<<endl;
 			if (fTriggeredEventHandlers[fLastUsedTriggerNum] != NULL) {
 				(*fTriggeredEventHandlers[fLastUsedTriggerNum])(
 						fTriggeredEventClientDatas[fLastUsedTriggerNum],
@@ -204,6 +210,7 @@ void BasicTaskScheduler::SingleStep(unsigned maxDelayTime) {
 		} else {
 // Look for an event trigger that needs handling (making sure that we make forward progress through all possible triggers):
 			unsigned i = fLastUsedTriggerNum;
+//			cout << "fLastUsedTriggerNum:::::::::::::::::::::2:::"<<fLastUsedTriggerNum<<endl;
 			EventTriggerId mask = fLastUsedTriggerMask;
 
 			do {

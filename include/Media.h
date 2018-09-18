@@ -39,6 +39,7 @@ public:
 	}
 
 	char const* name() const {
+//		cout << "name eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"<<endl;
 		return fMediumName;
 	}
 

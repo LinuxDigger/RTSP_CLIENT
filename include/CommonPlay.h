@@ -33,6 +33,7 @@ class CommonPlay {
 public:
 
 	CommonPlay(unsigned short cliID);
+	CommonPlay();
 	~CommonPlay();
 
 	// Forward function definitions:
@@ -74,6 +75,13 @@ public:
 	void printQOSData(int exitCode);
 
 	void shutdown(int exitCode = 1);
+
+	void addCliID(DP_U16 cliID) {
+		//(MediaSubsessionIterator)
+		MediaSubsessionIterator *setupIter = NULL;
+		efficientAddOrUpdate(mSetupIter, cliID, setupIter);
+		_fClientID = cliID;
+	}
 
 	Medium* createClient(UsageEnvironment& env, char const* url,
 			CommonPlay *cpObj) {
@@ -221,6 +229,11 @@ public:
 	unsigned statusCode;
 
 	static map<unsigned short, MediaSubsessionIterator*> mSetupIter;
+	DP_U16 _fClientID;
+
+	//269LL
+	MediaSubsession *subsession;
+	Boolean madeProgress;
 
 };
 

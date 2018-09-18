@@ -42,7 +42,7 @@ DP_S32 DP_RTSP_CLIENT_Client::DP_RTSP_CLIENT_Init(const char *ps8URL,
 	pthread_cond_init(cond, NULL);
 	pthread_mutex_init(mutex, NULL);
 	_mutex.Lock();
-	_u16ClientNum++;
+//	_u16ClientNum++;
 	if ((_u16ClientNum <= (_u16ClientMaxNum - 1))
 			&& (DP_RTSP_CLIENT_ClientNum < DP_RTSP_CLIENT_ClientMaxNum)) {
 		efficientAddOrUpdate(mCliCondSet, ++_u16ClientNum, cond);
@@ -67,10 +67,15 @@ DP_S32 DP_RTSP_CLIENT_Client::DP_RTSP_CLIENT_Init(const char *ps8URL,
 				"Thread create successfully............................................!");
 		DP_RTSP_CLIENT_DataQueue *dataQueue = new DP_RTSP_CLIENT_DataQueue(
 				_u16ClientNum, u32FrmNums);
-//		DP_RTSP_CLIENT_CycleQueue *cycQ = new DP_RTSP_CLIENT_CycleQueue(
-//				u32FrmNums * sizeof(DP_RTSP_CLIENT_FRAME_DATA_S));
-//		cycQ->DSP_QueueInit();
 		efficientAddOrUpdate(_mDataQueueSet, _u16ClientNum, dataQueue);
+		cout << "_u16ClientNum : " << _u16ClientNum << endl;
+		for (unsigned short i = 2; i < 6; i++) {
+			DP_RTSP_CLIENT_DataQueue *dataQueue = new DP_RTSP_CLIENT_DataQueue(
+					i, u32FrmNums);
+			efficientAddOrUpdate(_mDataQueueSet, i, dataQueue);
+			cout << "i: 1: " << i << endl;
+		}
+#if 0
 		if (pthread_cond_timedwait(cond, mutex, &outtime) != 0) {
 			Logger::GetInstance().Debug(
 					"error cond ++++++++++++++++++++++++++++++++++++++++++++++++++++++!");
@@ -91,38 +96,64 @@ DP_S32 DP_RTSP_CLIENT_Client::DP_RTSP_CLIENT_Init(const char *ps8URL,
 		cond = NULL;
 		delete mutex;
 		mutex = NULL;
+#endif
 	} else {
 		return DP_RetError;
 	}
-
+	sleep(1);
 	return _u16ClientNum;
 }
 
 void* DP_RTSP_CLIENT_Client::sClientInit(void*args) {
 	ClientInitArgs_S *stCliArgs = (ClientInitArgs_S*) args;
-//	stCliArgs->client->_mutex.Lock();
+//	DP_U8 *url= stCliArgs->ps8URL;
+#if 1
+	UsageEnvironment* env;
+	TaskScheduler* scheduler = BasicTaskScheduler::createNew(10000, NULL);
+	env = BasicUsageEnvironment::createNew(*scheduler, 0);			//111id?
+	for (unsigned short i = 1; i < 6; i++) {
+		cout << "i: 2: " << i << endl;
+		CommonPlay *cp = new CommonPlay(i);
+		Logger::GetInstance().Warn("stcliarg::: %s ", stCliArgs->ps8URL);
+		cp->setUsrnamePassword(stCliArgs->pu8UsrName,
+				stCliArgs->pu8UsrPassword);
+		Logger::GetInstance().Warn(
+				"stCliArgs->pu8UsrName %s,  stCliArgs->pu8UsrPassword %s",
+				stCliArgs->pu8UsrName, stCliArgs->pu8UsrPassword);
+		Medium* ourClient = cp->createClient(*env, stCliArgs->ps8URL, cp);
+		cp->setEnvURL(*env, stCliArgs->ps8URL);
+		if (ourClient == NULL) {
+			cp->shutdown();
+		}
+		cp->continueAfterClientCreation1();
+	}
+	sleep(1);
+#endif
+
+#if 0
 	CommonPlay cp(stCliArgs->clientID);
 	cp.setUsrnamePassword(stCliArgs->pu8UsrName, stCliArgs->pu8UsrPassword);
 	UsageEnvironment* env;
+	cout << "stCliArgs->clientID--------------------------------------------:: "
+	<< stCliArgs->clientID << " stCliArgs->ps8URL:: "
+	<< stCliArgs->ps8URL << endl;
 	TaskScheduler* scheduler = BasicTaskScheduler::createNew(10000, &cp);
 	env = BasicUsageEnvironment::createNew(*scheduler, stCliArgs->clientID); //111id?
 //return fd
-	cp.setEnvURL(*env, stCliArgs->ps8URL);
-//	stCliArgs->client->_mutex.Unlock();
-//	char const* progName;
-//	openRTSP openRtsp;
 	Medium* ourClient = cp.createClient(*env, stCliArgs->ps8URL, &cp);
+	cp.setEnvURL(*env, stCliArgs->ps8URL);
 	if (ourClient == NULL) {
 		cp.shutdown();
 	}
+	cp.continueAfterClientCreation1();
+#endif
 //mutex
 //	if (DP_RTSP_CLIENT_ClientNum++ > DP_RTSP_CLIENT_ClientMaxNum - 1) {
 //		return NULL;
 //	}
-	cp.continueAfterClientCreation1();
-	Logger::GetInstance().Debug(
-			"stCliArgs...IDXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX:%d ",
-			env->_cliID);
+//	Logger::GetInstance().Debug(
+//			"stCliArgs...IDXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX:%d ",
+//			env->_cliID);
 	env->taskScheduler().doEventLoop(); // does not return
 	return NULL;
 }
@@ -130,22 +161,10 @@ void* DP_RTSP_CLIENT_Client::sClientInit(void*args) {
 DP_S32 DP_RTSP_CLIENT_Client::DP_RTSP_CLIENT_GetStreamData(
 		DP_RTSP_CLIENT_FRAME_DATA_S *stDataRecv, DP_U32 timeout,
 		FrameDataMemManage &memManage, DP_Bool &firstPutout) {
-//	GetFrameData getFrameData(stDataRecv->u16ClientID);
-//	getFrameData.afterGettingFrame(clientData, frameSize, numTruncatedBytes, presentationTime, durationInMicroseconds);
 	DP_U16 cliID = stDataRecv->u16ClientID;
-
-//free mem the ptr
-//	if (stDataRecv->pu8Data) {
-//		delete[] stDataRecv->pu8Data;
-//		stDataRecv->pu8Data = NULL;
-//	}
 
 	DP_S32 ret = _mDataQueueSet[cliID]->DP_RTSP_CLIENT_PutoutData(stDataRecv,
 			DP_RTSP_CLIENT_STREAM_VIDEO_AND_AUDIO, timeout, firstPutout);
-//	cout << "get stream data : "<<cliID<<endl;
-//	_mDataQueueSet[cliID]->DSP_GetData(stDataRecv,
-//			sizeof(DP_RTSP_CLIENT_FRAME_DATA_S));
-
 	return ret;
 }
 

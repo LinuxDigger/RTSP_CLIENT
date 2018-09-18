@@ -98,8 +98,8 @@ GenericMediaServer::GenericMediaServer(UsageEnvironment& env, int ourSocket,
 	ignoreSigPipeOnSocket(fServerSocket); // so that clients on the same host that are killed don't also kill us
 
 	// Arrange to handle connections from others:
-	env.taskScheduler().turnOnBackgroundReadHandling(fServerSocket,
-			incomingConnectionHandler, this);
+//	env.taskScheduler().turnOnBackgroundReadHandling(fServerSocket,
+//			incomingConnectionHandler, this);
 }
 
 GenericMediaServer::~GenericMediaServer() {
@@ -227,8 +227,8 @@ GenericMediaServer::ClientConnection::ClientConnection(
 
 	// Arrange to handle incoming requests:
 	resetRequestBuffer();
-	envir().taskScheduler().setBackgroundHandling(fOurSocket,
-	SOCKET_READABLE | SOCKET_EXCEPTION, incomingRequestHandler, this);
+//	envir().taskScheduler().setBackgroundHandling(fOurSocket,
+//	SOCKET_READABLE | SOCKET_EXCEPTION, incomingRequestHandler, this);
 }
 
 GenericMediaServer::ClientConnection::~ClientConnection() {

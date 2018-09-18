@@ -13,7 +13,7 @@
 using namespace FrameWork;
 using namespace std;
 
-map<unsigned short, MediaSubsessionIterator*> CommonPlay::mSetupIter;
+map<unsigned short, MediaSubsessionIterator *> CommonPlay::mSetupIter;
 
 CommonPlay::CommonPlay(unsigned short cliID) :
 		progName(NULL), env(NULL), ourClient(NULL), ourAuthenticator(NULL), streamURL(
@@ -42,10 +42,41 @@ CommonPlay::CommonPlay(unsigned short cliID) :
 		NULL), passwordForREGISTER(NULL), authDBForREGISTER(NULL), startTime(), ourRTSPClient(
 		NULL), allowProxyServers(False), controlConnectionUsesTCP(True), supportCodecSelection(
 				False), clientProtocolName("RTSP"), areAlreadyShuttingDown(
-				False), shutdownExitCode(), ourSIPClient(), statusCode() {
-	//(MediaSubsessionIterator)
+				False), shutdownExitCode(), ourSIPClient(), statusCode(), _fClientID(
+				cliID), subsession(NULL), madeProgress(False) {
 	MediaSubsessionIterator *setupIter = NULL;
 	efficientAddOrUpdate(mSetupIter, cliID, setupIter);
+}
+
+CommonPlay::CommonPlay() :
+		progName(NULL), env(NULL), ourClient(NULL), ourAuthenticator(NULL), streamURL(
+		NULL), session(NULL), sessionTimerTask(NULL), sessionTimeoutBrokenServerTask(
+		NULL), arrivalCheckTimerTask(NULL), interPacketGapCheckTimerTask(
+		NULL), qosMeasurementTimerTask(NULL), periodicFileOutputTask(
+		NULL), createReceivers(True), outputQuickTimeFile(False), generateMP4Format(
+				False), qtOut(NULL), outputAVIFile(False), aviOut(NULL), audioOnly(
+				False), videoOnly(False), singleMedium(NULL), verbosityLevel(1), duration(
+				0), durationSlop(-1.0), initialSeekTime(0.0f), initialAbsoluteSeekTime(
+		NULL), initialAbsoluteSeekEndTime(NULL), scale(1.0f), endTime(), interPacketGapMaxTime(
+				0), totNumPacketsReceived(~0), playContinuously(False), simpleRTPoffsetArg(
+				-1), sendOptionsRequest(True), sendOptionsRequestOnly(False), oneFilePerFrame(
+				False), notifyOnPacketArrival(False), sendKeepAlivesToBrokenServers(
+				False), sessionTimeoutParameter(0), streamUsingTCP(False), forceMulticastOnUnspecified(
+				False), desiredPortNum(0), tunnelOverHTTPPortNum(0), username(
+		NULL), password(NULL), proxyServerName(NULL), proxyServerPortNum(0), desiredAudioRTPPayloadFormat(
+				0), mimeSubtype(NULL), movieWidth(240), movieWidthOptionSet(
+				False), movieHeight(180), movieHeightOptionSet(False), movieFPS(
+				15), movieFPSOptionSet(False), fileNamePrefix(""), fileSinkBufferSize(
+				1000000), socketInputBufferSize(0), packetLossCompensate(False), syncStreams(
+				False), generateHintTracks(False), waitForResponseToTEARDOWN(
+				True), qosMeasurementIntervalMS(0), userAgent(NULL), fileOutputInterval(
+				0), fileOutputSecondsSoFar(0), createHandlerServerForREGISTERCommand(
+				False), handlerServerForREGISTERCommandPortNum(0), handlerServerForREGISTERCommand(), usernameForREGISTER(
+		NULL), passwordForREGISTER(NULL), authDBForREGISTER(NULL), startTime(), ourRTSPClient(
+		NULL), allowProxyServers(False), controlConnectionUsesTCP(True), supportCodecSelection(
+				False), clientProtocolName("RTSP"), areAlreadyShuttingDown(
+				False), shutdownExitCode(), ourSIPClient(), statusCode(), _fClientID(
+				0), subsession(NULL), madeProgress(False) {
 }
 
 CommonPlay::~CommonPlay() {
@@ -60,15 +91,17 @@ void CommonPlay::continueAfterClientCreation1() {
 
 	if (sendOptionsRequest) {
 		// Begin by sending an "OPTIONS" command:
+		//this way
 		getOptions(continueAfterOPTIONS);
 	} else {
 		continueAfterOPTIONS(NULL, 0, NULL, this);
 	}
 }
 
-void CommonPlay::continueAfterOPTIONS(RTSPClient*, int resultCode,
-		char* resultString, CommonPlay *cpObj) {
-	Logger::GetInstance().Debug("after options -----------------------------------");
+void CommonPlay::continueAfterOPTIONS(RTSPClient *, int resultCode,
+		char *resultString, CommonPlay *cpObj) {
+	Logger::GetInstance().Debug(
+			"after options -----------------------------------");
 	if (cpObj->sendOptionsRequestOnly) {
 		if (resultCode != 0) {
 			*cpObj->env << cpObj->clientProtocolName
@@ -81,34 +114,37 @@ void CommonPlay::continueAfterOPTIONS(RTSPClient*, int resultCode,
 		cpObj->shutdown();
 	}
 	delete[] resultString;
-
+	cout << "cpObj->ourAuthenticator->password(). "
+			<< cpObj->ourAuthenticator->password() << endl;
 	// Next, get a SDP description for the stream:
 	cpObj->getSDPDescription(continueAfterDESCRIBE);
 }
 
-void CommonPlay::setEnvURL(UsageEnvironment& envv, const char*URL) {
+void CommonPlay::setEnvURL(UsageEnvironment &envv, const char *URL) {
 	env = &envv;
 	streamURL = URL;
 }
 
-void CommonPlay::continueAfterDESCRIBE(RTSPClient*, int resultCode,
-		char* resultString, CommonPlay *cpObj) {
+void CommonPlay::continueAfterDESCRIBE(RTSPClient *, int resultCode,
+		char *resultString, CommonPlay *cpObj) {
 	Logger::GetInstance().Debug(
 			"after describe =======================================================================");
 	if (resultCode != 0) {
 		*cpObj->env << "Failed to get a SDP description for the URL \""
 				<< cpObj->streamURL << "\": " << resultString << "\n";
+		cout << "cp ..........." << cpObj->_fClientID
+				<< cpObj->ourAuthenticator->password() << endl;
 		delete[] resultString;
 		cpObj->shutdown();
 	}
 
-	char* sdpDescription = resultString;
+	char *sdpDescription = resultString;
 	Logger::GetInstance().Info(
 			"Opened URL \" %s \", returning a SDP description:  %s",
 			cpObj->streamURL, sdpDescription);
 
 	// Create a media session object from this SDP description:
-//	sleep(10);
+	//	sleep(10);
 	cpObj->session = MediaSession::createNew(*cpObj->env, sdpDescription,
 			cpObj);
 	delete[] sdpDescription;
@@ -127,7 +163,7 @@ void CommonPlay::continueAfterDESCRIBE(RTSPClient*, int resultCode,
 	MediaSubsessionIterator iter(*cpObj->session);
 	MediaSubsession *subsession;
 	Boolean madeProgress = False;
-	char const* singleMediumToTest = cpObj->singleMedium;
+	char const *singleMediumToTest = cpObj->singleMedium;
 	while ((subsession = iter.next()) != NULL) {
 		// If we've asked to receive only a single medium, then check this now:
 		if (singleMediumToTest != NULL) {
@@ -157,7 +193,7 @@ void CommonPlay::continueAfterDESCRIBE(RTSPClient*, int resultCode,
 						<< cpObj->env->getResultMsg() << "\n";
 			} else {
 				*cpObj->env << "Created receiver for \""
-						<< subsession->mediumName() // audio
+						<< subsession->mediumName()						// audio
 						<< "/" << subsession->codecName() << "\" subsession ("; // MPA
 				if (subsession->rtcpIsMuxed()) {
 					*cpObj->env << "client port "
@@ -169,13 +205,13 @@ void CommonPlay::continueAfterDESCRIBE(RTSPClient*, int resultCode,
 				}
 				*cpObj->env << ")\n";
 
-//				cout << "videoFPSaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-//						<< subsession->videoFPS();  //0
-//				cout << "videoWidthaaaaaaaaaaaaaaaaaaaaaaa"
-//						<< subsession->videoWidth() << " height "
-//						//0
-//						<< subsession->videoHeight() << " codecName "
-//						<< subsession->codecName();
+				//				cout << "videoFPSaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+				//						<< subsession->videoFPS();  //0
+				//				cout << "videoWidthaaaaaaaaaaaaaaaaaaaaaaa"
+				//						<< subsession->videoWidth() << " height "
+				//						//0
+				//						<< subsession->videoHeight() << " codecName "
+				//						<< subsession->codecName();
 
 				madeProgress = True;
 
@@ -232,27 +268,30 @@ void CommonPlay::continueAfterDESCRIBE(RTSPClient*, int resultCode,
 	cpObj->setupStreams();
 }
 
-MediaSubsession *subsession;
-Boolean madeProgress = False;
-void CommonPlay::continueAfterSETUP(RTSPClient* client, int resultCode,
-		char* resultString, CommonPlay *cpObj) {
+//MediaSubsession *subsession;
+//Boolean madeProgress = False;
+void CommonPlay::continueAfterSETUP(RTSPClient *client, int resultCode,
+		char *resultString, CommonPlay *cpObj) {
 	Logger::GetInstance().Debug(
 			"aftersetup =======================================================================");
 	if (resultCode == 0) {
-		*cpObj->env << "Setup \"" << subsession->mediumName() << "/"
-				<< subsession->codecName() << "\" subsession (";
-		if (subsession->rtcpIsMuxed()) {
+		cout
+				<< "seg fault monPlay::continueAfterSETUP(RTSPClient *client, int resul ,,,,,,,,,,,,,,,,"
+				<< endl;
+		*cpObj->env << "Setup \"" << cpObj->subsession->mediumName() << "/"
+				<< cpObj->subsession->codecName() << "\" subsession (";
+		if (cpObj->subsession->rtcpIsMuxed()) {
 			Logger::GetInstance().Debug("client port %d",
-					subsession->clientPortNum());
+					cpObj->subsession->clientPortNum());
 		} else {
-			*cpObj->env << "client ports " << subsession->clientPortNum() << "-"
-					<< subsession->clientPortNum() + 1;
+			*cpObj->env << "client ports " << cpObj->subsession->clientPortNum() << "-"
+					<< cpObj->subsession->clientPortNum() + 1;
 		}
 		*cpObj->env << ")\n";
-		madeProgress = True;
+		cpObj->madeProgress = True;
 	} else {
-		*cpObj->env << "Failed to setup \"" << subsession->mediumName() << "/"
-				<< subsession->codecName() << "\" subsession: " << resultString
+		*cpObj->env << "Failed to setup \"" << cpObj->subsession->mediumName() << "/"
+				<< cpObj->subsession->codecName() << "\" subsession: " << resultString
 				<< "\n";
 	}
 	delete[] resultString;
@@ -264,7 +303,7 @@ void CommonPlay::continueAfterSETUP(RTSPClient* client, int resultCode,
 	cpObj->setupStreams();
 }
 
-void CommonPlay::createOutputFiles(char const* periodicFilenameSuffix) {
+void CommonPlay::createOutputFiles(char const *periodicFilenameSuffix) {
 	char outFileName[1000];
 
 	if (outputQuickTimeFile || outputAVIFile) {
@@ -273,7 +312,7 @@ void CommonPlay::createOutputFiles(char const* periodicFilenameSuffix) {
 			sprintf(outFileName, "stdout");
 		} else {
 			// Otherwise output to a type-specific file name, containing "periodicFilenameSuffix":
-			char const* prefix =
+			char const *prefix =
 					fileNamePrefix[0] == '\0' ? "output" : fileNamePrefix;
 			snprintf(outFileName, sizeof outFileName, "%s%s.%s", prefix,
 					periodicFilenameSuffix,
@@ -333,23 +372,23 @@ void CommonPlay::createOutputFiles(char const* periodicFilenameSuffix) {
 				sprintf(outFileName, "stdout");
 			}
 
-			FileSink* fileSink = NULL;
+			FileSink *fileSink = NULL;
 			Boolean createOggFileSink = False; // by default
 			if (strcmp(subsession->mediumName(), "video") == 0) {
 				if (strcmp(subsession->codecName(), "H264") == 0) {
 					// For H.264 video stream, we use a special sink that adds 'start codes',
 					// and (at the start) the SPS and PPS NAL units:
-//					cout
-//							<< "env->_cliIDVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV: "
-//							<< env->_cliID << endl;
-					fileSink = H264VideoFileSink::createNew(*env, env->_cliID,
+					//					cout
+					//							<< "_fClientIDVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV: "
+					//							<< _fClientID << endl;
+					fileSink = H264VideoFileSink::createNew(*env, _fClientID,
 							outFileName, subsession->fmtp_spropparametersets(),
 							fileSinkBufferSize, oneFilePerFrame);
 				} else if (strcmp(subsession->codecName(), "H265") == 0) {
 					// For H.265 video stream, we use a special sink that adds 'start codes',
 					// and (at the start) the VPS, SPS, and PPS NAL units:
 					/// use this
-					fileSink = H265VideoFileSink::createNew(*env, env->_cliID,
+					fileSink = H265VideoFileSink::createNew(*env, _fClientID,
 							outFileName, subsession->fmtp_spropvps(),
 							subsession->fmtp_spropsps(),
 							subsession->fmtp_sproppps(), fileSinkBufferSize,
@@ -376,7 +415,7 @@ void CommonPlay::createOutputFiles(char const* periodicFilenameSuffix) {
 				// Normal case:
 
 				fileSink = FileSink::createNew(*env, outFileName,
-						fileSinkBufferSize, env->_cliID, oneFilePerFrame, this);
+						fileSinkBufferSize, _fClientID, oneFilePerFrame, this);
 			}
 			subsession->sink = fileSink;
 
@@ -400,7 +439,7 @@ void CommonPlay::createOutputFiles(char const* periodicFilenameSuffix) {
 					// from the SDP description contains useful VOL etc. headers.
 					// Insert this data at the front of the output file:
 					unsigned configLen;
-					DP_U8* configData = parseGeneralConfigStr(
+					DP_U8 *configData = parseGeneralConfigStr(
 							subsession->fmtp_config(), configLen);
 					struct timeval timeNow;
 					gettimeofday(&timeNow, NULL);
@@ -435,22 +474,22 @@ void CommonPlay::createPeriodicOutputFiles() {
 			fileOutputSecondsSoFar + fileOutputInterval);
 	createOutputFiles(periodicFileNameSuffix);
 
-// Schedule an event for writing the next output file:
+	// Schedule an event for writing the next output file:
 	periodicFileOutputTask = env->taskScheduler().scheduleDelayedTask(
 			fileOutputInterval * 1000000,
-			(TaskFunc*) periodicFileOutputTimerHandler, (void*) NULL, this);
+			(TaskFunc *) periodicFileOutputTimerHandler, (void *) NULL, this);
 }
 
 void CommonPlay::setupStreams() {
 	Logger::GetInstance().Debug(
 			"setup stream ======================================================================= / create file env cliID: %d",
-			env->_cliID);
-//	static MediaSubsessionIterator* setupIter = NULL;
+			_fClientID);
+	//	static MediaSubsessionIterator* setupIter = NULL;
 
-//	MediaSubsessionIterator* setupIter = NULL; // enter a inf loop
-	if (mSetupIter[env->_cliID] == NULL)
-		mSetupIter[env->_cliID] = new MediaSubsessionIterator(*session);
-	while ((subsession = mSetupIter[env->_cliID]->next()) != NULL) {
+	//	MediaSubsessionIterator* setupIter = NULL; // enter a inf loop
+	if (mSetupIter[_fClientID] == NULL)
+		mSetupIter[_fClientID] = new MediaSubsessionIterator(*session);
+	while ((subsession = mSetupIter[_fClientID]->next()) != NULL) {
 		// We have another subsession left to set up:
 		if (subsession->clientPortNum() == 0)
 			continue; // port # was not set
@@ -461,25 +500,25 @@ void CommonPlay::setupStreams() {
 		return;
 	}
 
-//second this
-// We're done setting up subsessions.
-	delete mSetupIter[env->_cliID];
-	mSetupIter.erase(env->_cliID);
+	//second this
+	// We're done setting up subsessions.
+	delete mSetupIter[_fClientID];
+	mSetupIter.erase(_fClientID);
 	if (!madeProgress)
 		shutdown();
 
-// Create output files:
+	// Create output files:
 	if (createReceivers) {
 		if (fileOutputInterval > 0) {
 			//go this
 			createPeriodicOutputFiles();
 		} else {
 
-			createOutputFiles("");   ///Create a output file ///
+			createOutputFiles(""); ///Create a output file ///
 		}
 	}
 
-// Finally, start playing each subsession, to start the data flow:
+	// Finally, start playing each subsession, to start the data flow:
 	if (duration == 0) {
 		if (scale > 0)
 			duration = session->playEndTime() - initialSeekTime; // use SDP end time
@@ -501,10 +540,10 @@ void CommonPlay::setupStreams() {
 			endTime = 0.0f;
 	}
 
-	char const* absStartTime =
+	char const *absStartTime =
 			initialAbsoluteSeekTime != NULL ?
 					initialAbsoluteSeekTime : session->absStartTime();
-	char const* absEndTime =
+	char const *absEndTime =
 			initialAbsoluteSeekEndTime != NULL ?
 					initialAbsoluteSeekEndTime : session->absEndTime();
 	if (absStartTime != NULL) {
@@ -520,11 +559,12 @@ void CommonPlay::setupStreams() {
 }
 
 ////
-void CommonPlay::continueAfterPLAY(RTSPClient*rtspClient, int resultCode,
-		char* resultString, CommonPlay *cpObj) {
+void CommonPlay::continueAfterPLAY(RTSPClient *rtspClient, int resultCode,
+		char *resultString, CommonPlay *cpObj) {
+//	cout << "]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]"<<endl;
 	Logger::GetInstance().Debug(
 			"continueAfterPLAY ]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]cliID::: %d ",
-			cpObj->env->_cliID);
+			cpObj->_fClientID);
 	if (resultCode != 0) {
 		*cpObj->env << "Failed to start playing session: " << resultString
 				<< "\n";
@@ -534,13 +574,14 @@ void CommonPlay::continueAfterPLAY(RTSPClient*rtspClient, int resultCode,
 	} else {
 		*cpObj->env << "Started playing session\n";
 
+#if 0
 		pthread_mutex_lock(
-				DP_RTSP_CLIENT_Client::mCliMuxSet[cpObj->env->_cliID]);
+				DP_RTSP_CLIENT_Client::mCliMuxSet[cpObj->_fClientID]);
 		pthread_cond_signal(
-				DP_RTSP_CLIENT_Client::mCliCondSet[cpObj->env->_cliID]);
+				DP_RTSP_CLIENT_Client::mCliCondSet[cpObj->_fClientID]);
 		pthread_mutex_unlock(
-				DP_RTSP_CLIENT_Client::mCliMuxSet[cpObj->env->_cliID]);
-
+				DP_RTSP_CLIENT_Client::mCliMuxSet[cpObj->_fClientID]);
+#endif
 	}
 	delete[] resultString;
 
@@ -549,12 +590,12 @@ void CommonPlay::continueAfterPLAY(RTSPClient*rtspClient, int resultCode,
 		cpObj->beginQOSMeasurement();
 	}
 
-// Figure out how long to delay (if at all) before shutting down, or
-// repeating the playing
+	// Figure out how long to delay (if at all) before shutting down, or
+	// repeating the playing
 	Boolean timerIsBeingUsed = False;
 	double secondsToDelay = cpObj->duration;
 	//........>0 origin
-//	if (cpObj->duration == 0) {
+	//	if (cpObj->duration == 0) {
 	if (cpObj->duration > 0) {
 		// First, adjust "duration" based on any change to the play range (that was specified in the "PLAY" response):
 		double rangeAdjustment = (cpObj->session->playEndTime()
@@ -570,16 +611,16 @@ void CommonPlay::continueAfterPLAY(RTSPClient*rtspClient, int resultCode,
 		int64_t uSecsToDelay = (int64_t) (secondsToDelay * 1000000.0);
 		cpObj->sessionTimerTask =
 				cpObj->env->taskScheduler().scheduleDelayedTask(uSecsToDelay,
-						(TaskFunc*) sessionTimerHandler, (void*) NULL, cpObj);
+						(TaskFunc *) sessionTimerHandler, (void *) NULL, cpObj);
 	}
 
-//	int64_t uSecsToDelay = (int64_t) (secondsToDelay * 1000000.0 * 60);
+	//	int64_t uSecsToDelay = (int64_t) (secondsToDelay * 1000000.0 * 60);
 	int64_t uSecsToDelay = (int64_t) (1000000.0 * 60);
 
 	cpObj->sessionTimerTask = cpObj->env->taskScheduler().scheduleDelayedTask(
-			uSecsToDelay, (TaskFunc*) sessionTimerHandler, rtspClient, cpObj);
+			uSecsToDelay, (TaskFunc *) sessionTimerHandler, rtspClient, cpObj);
 
-	char const* actionString =
+	char const *actionString =
 			cpObj->createReceivers ?
 					"Receiving streamed data" : "Data is being streamed";
 	if (timerIsBeingUsed) {
@@ -588,8 +629,8 @@ void CommonPlay::continueAfterPLAY(RTSPClient*rtspClient, int resultCode,
 	} else {
 #ifdef USE_SIGNALS
 		pid_t ourPid = getpid();
-		*env << actionString << " (signal with \"kill -HUP " << (int) ourPid
-		<< "\" or \"kill -USR1 " << (int) ourPid
+		*env << actionString << " (signal with \"kill -HUP " << (int)ourPid
+		<< "\" or \"kill -USR1 " << (int)ourPid
 		<< "\" to terminate)...\n";
 #else
 		*cpObj->env << actionString << "...\n";
@@ -598,8 +639,8 @@ void CommonPlay::continueAfterPLAY(RTSPClient*rtspClient, int resultCode,
 
 	cpObj->sessionTimeoutBrokenServerTask = NULL;
 
-///
-// Watch for incoming packets (if desired):
+	///
+	// Watch for incoming packets (if desired):
 	CommonPlay::checkForPacketArrival(NULL, cpObj);
 	CommonPlay::checkInterPacketGaps(NULL, cpObj);
 	CommonPlay::checkSessionTimeoutBrokenServer(NULL, cpObj);
@@ -614,46 +655,46 @@ void CommonPlay::closeMediaSinks() {
 	if (session == NULL)
 		return;
 	MediaSubsessionIterator iter(*session);
-	MediaSubsession* subsession;
+	MediaSubsession *subsession;
 	while ((subsession = iter.next()) != NULL) {
 		Medium::close(subsession->sink);
 		subsession->sink = NULL;
 	}
 }
 
-void CommonPlay::subsessionAfterPlaying(void* clientData, CommonPlay *cpObj) {
-// Begin by closing this media subsession's stream:
-	MediaSubsession* subsession = (MediaSubsession*) clientData;
+void CommonPlay::subsessionAfterPlaying(void *clientData, CommonPlay *cpObj) {
+	// Begin by closing this media subsession's stream:
+	MediaSubsession *subsession = (MediaSubsession *) clientData;
 	Medium::close(subsession->sink);
 	subsession->sink = NULL;
 
-// Next, check whether *all* subsessions' streams have now been closed:
-	MediaSession& session = subsession->parentSession();
+	// Next, check whether *all* subsessions' streams have now been closed:
+	MediaSession &session = subsession->parentSession();
 	MediaSubsessionIterator iter(session);
 	while ((subsession = iter.next()) != NULL) {
 		if (subsession->sink != NULL)
 			return; // this subsession is still active
 	}
 
-// All subsessions' streams have now been closed
+	// All subsessions' streams have now been closed
 	sessionAfterPlaying(NULL, cpObj);
 }
 
-void CommonPlay::subsessionByeHandler(void* clientData, CommonPlay *cpObj) {
+void CommonPlay::subsessionByeHandler(void *clientData, CommonPlay *cpObj) {
 	struct timeval timeNow;
 	gettimeofday(&timeNow, NULL);
 	unsigned secsDiff = timeNow.tv_sec - cpObj->startTime.tv_sec;
 
-	MediaSubsession* subsession = (MediaSubsession*) clientData;
+	MediaSubsession *subsession = (MediaSubsession *) clientData;
 	*cpObj->env << "Received RTCP \"BYE\" on \"" << subsession->mediumName()
 			<< "/" << subsession->codecName() << "\" subsession (after "
 			<< secsDiff << " seconds)\n";
 
-// Act now as if the subsession had closed:
+	// Act now as if the subsession had closed:
 	subsessionAfterPlaying(subsession, cpObj);
 }
 
-void CommonPlay::sessionAfterPlaying(void* /*clientData*/, CommonPlay *cpObj) {
+void CommonPlay::sessionAfterPlaying(void * /*clientData*/, CommonPlay *cpObj) {
 	if (!cpObj->playContinuously) {
 		cpObj->shutdown(0);
 	} else {
@@ -680,32 +721,33 @@ void CommonPlay::sessionAfterPlaying(void* /*clientData*/, CommonPlay *cpObj) {
 	}
 }
 
-void CommonPlay::sessionTimerHandler(void* clientData, CommonPlay *cpObj) {
-	cpObj->sessionTimerTask = NULL;
+void CommonPlay::sessionTimerHandler(void *clientData, CommonPlay *cpObj) {
+	//////////run seg fault !!!!!!!!!!!!!!!!!!!!!!1
 	Logger::GetInstance().Debug("333333333333333333333333333333333333333");
 	int64_t uSecsToDelay = (int64_t) (1000000.0 * 60);
 
-	RTSPClient* rtspClient = (RTSPClient*) clientData;
+	RTSPClient *rtspClient = (RTSPClient *) clientData;
 	cout << rtspClient->url() << endl;
+	cout << "cpObj........................."<<cpObj->ourAuthenticator->password()<<endl;
+//	cpObj->sessionTimerTask = NULL;
 	rtspClient->sendGetParameterCommand(*cpObj->session, continueAfterGetParam,
 	NULL);
-
 }
 
-void CommonPlay::periodicFileOutputTimerHandler(void* /*clientData*/,
+void CommonPlay::periodicFileOutputTimerHandler(void * /*clientData*/,
 		CommonPlay *cpObj) {
 	cpObj->fileOutputSecondsSoFar += cpObj->fileOutputInterval;
 
-// First, close the existing output files:
+	// First, close the existing output files:
 	cpObj->closeMediaSinks();
 
-// Then, create new output files:
+	// Then, create new output files:
 	cpObj->createPeriodicOutputFiles();
 }
 
 class qosMeasurementRecord {
 public:
-	qosMeasurementRecord(struct timeval const& startTime, RTPSource* src) :
+	qosMeasurementRecord(struct timeval const &startTime, RTPSource *src) :
 			fSource(src), fNext(NULL), kbits_per_second_min(1e20), kbits_per_second_max(
 					0), kBytesTotal(0.0), packet_loss_fraction_min(1.0), packet_loss_fraction_max(
 					0.0), totNumPacketsReceived(0), totNumPacketsExpected(0) {
@@ -713,7 +755,7 @@ public:
 
 		RTPReceptionStatsDB::Iterator statsIter(src->receptionStatsDB());
 		// Assume that there's only one SSRC source (usually the case):
-		RTPReceptionStats* stats = statsIter.next(True);
+		RTPReceptionStats *stats = statsIter.next(True);
 		if (stats != NULL) {
 			kBytesTotal = stats->totNumKBytesReceived();
 			totNumPacketsReceived = stats->totNumPacketsReceived();
@@ -724,11 +766,11 @@ public:
 		delete fNext;
 	}
 
-	void periodicQOSMeasurement(struct timeval const& timeNow);
+	void periodicQOSMeasurement(struct timeval const &timeNow);
 
 public:
-	RTPSource* fSource;
-	qosMeasurementRecord* fNext;
+	RTPSource *fSource;
+	qosMeasurementRecord *fNext;
 
 public:
 	struct timeval measurementStartTime, measurementEndTime;
@@ -738,9 +780,9 @@ public:
 	unsigned totNumPacketsReceived, totNumPacketsExpected;
 };
 
-static qosMeasurementRecord* qosRecordHead = NULL;
+static qosMeasurementRecord *qosRecordHead = NULL;
 
-static void periodicQOSMeasurement(void* clientData, CommonPlay *cpObj); // forward
+static void periodicQOSMeasurement(void *clientData, CommonPlay *cpObj); // forward
 
 static unsigned nextQOSMeasurementUSecs;
 
@@ -753,7 +795,7 @@ void CommonPlay::scheduleNextQOSMeasurement(CommonPlay *cpObj) {
 
 	cpObj->qosMeasurementTimerTask =
 			cpObj->env->taskScheduler().scheduleDelayedTask(usecsToDelay,
-					(TaskFunc*) periodicQOSMeasurement, (void*) NULL, cpObj);
+					(TaskFunc *) periodicQOSMeasurement, (void *) NULL, cpObj);
 }
 
 void CommonPlay::setUsrnamePassword(const DP_C_S8 *usrname,
@@ -761,29 +803,29 @@ void CommonPlay::setUsrnamePassword(const DP_C_S8 *usrname,
 	ourAuthenticator = new Authenticator(usrname, password);
 }
 
-static void periodicQOSMeasurement(void* /*clientData*/, CommonPlay *cpObj) {
+static void periodicQOSMeasurement(void * /*clientData*/, CommonPlay *cpObj) {
 	struct timeval timeNow;
 	gettimeofday(&timeNow, NULL);
 
-	for (qosMeasurementRecord* qosRecord = qosRecordHead; qosRecord != NULL;
+	for (qosMeasurementRecord *qosRecord = qosRecordHead; qosRecord != NULL;
 			qosRecord = qosRecord->fNext) {
 		qosRecord->periodicQOSMeasurement(timeNow);
 	}
 
-// Do this again later:
+	// Do this again later:
 	CommonPlay::scheduleNextQOSMeasurement(cpObj);
 }
 
 void qosMeasurementRecord::periodicQOSMeasurement(
-		struct timeval const& timeNow) {
+		struct timeval const &timeNow) {
 	unsigned secsDiff = timeNow.tv_sec - measurementEndTime.tv_sec;
 	int usecsDiff = timeNow.tv_usec - measurementEndTime.tv_usec;
 	double timeDiff = secsDiff + usecsDiff / 1000000.0;
 	measurementEndTime = timeNow;
 
 	RTPReceptionStatsDB::Iterator statsIter(fSource->receptionStatsDB());
-// Assume that there's only one SSRC source (usually the case):
-	RTPReceptionStats* stats = statsIter.next(True);
+	// Assume that there's only one SSRC source (usually the case):
+	RTPReceptionStats *stats = statsIter.next(True);
 	if (stats != NULL) {
 		double kBytesTotalNow = stats->totNumKBytesReceived();
 		double kBytesDeltaNow = kBytesTotalNow - kBytesTotal;
@@ -819,19 +861,19 @@ void qosMeasurementRecord::periodicQOSMeasurement(
 }
 
 void CommonPlay::beginQOSMeasurement() {
-// Set up a measurement record for each active subsession:
+	// Set up a measurement record for each active subsession:
 	struct timeval startTime;
 	gettimeofday(&startTime, NULL);
 	nextQOSMeasurementUSecs = startTime.tv_sec * 1000000 + startTime.tv_usec;
-	qosMeasurementRecord* qosRecordTail = NULL;
+	qosMeasurementRecord *qosRecordTail = NULL;
 	MediaSubsessionIterator iter(*session);
-	MediaSubsession* subsession;
+	MediaSubsession *subsession;
 	while ((subsession = iter.next()) != NULL) {
-		RTPSource* src = subsession->rtpSource();
+		RTPSource *src = subsession->rtpSource();
 		if (src == NULL)
 			continue;
 
-		qosMeasurementRecord* qosRecord = new qosMeasurementRecord(startTime,
+		qosMeasurementRecord *qosRecord = new qosMeasurementRecord(startTime,
 				src);
 		if (qosRecordHead == NULL)
 			qosRecordHead = qosRecord;
@@ -840,20 +882,20 @@ void CommonPlay::beginQOSMeasurement() {
 		qosRecordTail = qosRecord;
 	}
 
-// Then schedule the first of the periodic measurements:
+	// Then schedule the first of the periodic measurements:
 	scheduleNextQOSMeasurement(this);
 }
 
 void CommonPlay::printQOSData(int exitCode) {
 	*env << "begin_QOS_statistics\n";
 
-// Print out stats for each active subsession:
-	qosMeasurementRecord* curQOSRecord = qosRecordHead;
+	// Print out stats for each active subsession:
+	qosMeasurementRecord *curQOSRecord = qosRecordHead;
 	if (session != NULL) {
 		MediaSubsessionIterator iter(*session);
-		MediaSubsession* subsession;
+		MediaSubsession *subsession;
 		while ((subsession = iter.next()) != NULL) {
-			RTPSource* src = subsession->rtpSource();
+			RTPSource *src = subsession->rtpSource();
 			if (src == NULL)
 				continue;
 
@@ -922,7 +964,7 @@ void CommonPlay::printQOSData(int exitCode) {
 				RTPReceptionStatsDB::Iterator statsIter(
 						src->receptionStatsDB());
 				// Assume that there's only one SSRC source (usually the case):
-				RTPReceptionStats* stats = statsIter.next(True);
+				RTPReceptionStats *stats = statsIter.next(True);
 				if (stats != NULL) {
 					*env << "inter_packet_gap_ms_min\t"
 							<< stats->minInterPacketGapUS() / 1000.0 << "\n";
@@ -971,10 +1013,10 @@ void CommonPlay::shutdown(int exitCode) {
 		printQOSData(exitCode);
 	}
 
-// Teardown, then shutdown, any outstanding RTP/RTCP subsessions
+	// Teardown, then shutdown, any outstanding RTP/RTCP subsessions
 	Boolean shutdownImmediately = True; // by default
 	if (session != NULL) {
-		RTSPClient::responseHandler* responseHandlerForTEARDOWN = NULL; // unless:
+		RTSPClient::responseHandler *responseHandlerForTEARDOWN = NULL; // unless:
 		if (waitForResponseToTEARDOWN) {
 			shutdownImmediately = False;
 			responseHandlerForTEARDOWN = continueAfterTEARDOWN;
@@ -986,38 +1028,38 @@ void CommonPlay::shutdown(int exitCode) {
 		continueAfterTEARDOWN(NULL, 0, NULL, this);
 }
 
-void CommonPlay::continueAfterTEARDOWN(RTSPClient*, int /*resultCode*/,
-		char* resultString, CommonPlay *cpObj) {
+void CommonPlay::continueAfterTEARDOWN(RTSPClient *, int /*resultCode*/,
+		char *resultString, CommonPlay *cpObj) {
 	Logger::GetInstance().Debug(
 			"continueAfterTEARDOWNTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTmSetupIter : %d",
 			CommonPlay::mSetupIter.size());
 	delete[] resultString;
 
-// Now that we've stopped any more incoming data from arriving, close our output files:
+	// Now that we've stopped any more incoming data from arriving, close our output files:
 	cpObj->closeMediaSinks();
 	Medium::close(cpObj->session);
 
-// Finally, shut down our client:
+	// Finally, shut down our client:
 	delete cpObj->ourAuthenticator;
 	delete cpObj->authDBForREGISTER;
 	Medium::close(cpObj->ourClient);
 
-// Adios...
+	// Adios...
 	exit(cpObj->shutdownExitCode);
 }
 
-void CommonPlay::continueAfterGetParam(RTSPClient* client, int resultCode,
-		char* resultString, CommonPlay *cpObj) {
+void CommonPlay::continueAfterGetParam(RTSPClient *client, int resultCode,
+		char *resultString, CommonPlay *cpObj) {
 
 	int64_t uSecsToDelay = (int64_t) (1000000.0 * 60);
 	cpObj->sessionTimerTask = cpObj->env->taskScheduler().scheduleDelayedTask(
-			uSecsToDelay, (TaskFunc*) sessionTimerHandler, client, cpObj);
+			uSecsToDelay, (TaskFunc *) sessionTimerHandler, client, cpObj);
 
-//	UsageEnvironment& env = rtspClient->envir(); // alias
+	//	UsageEnvironment& env = rtspClient->envir(); // alias
 
-//	StreamClientState& scs = ((ourRTSPClient*) rtspClient)->scs; // alias
-//
-//do {
+	//	StreamClientState& scs = ((ourRTSPClient*) rtspClient)->scs; // alias
+	//
+	//do {
 
 	// Set a timer to be handled at the end of the stream's expected duration (if the stream does not already signal its end
 
@@ -1026,16 +1068,16 @@ void CommonPlay::continueAfterGetParam(RTSPClient* client, int resultCode,
 	// 'seek' back within it and do another RTSP "PLAY" - then you can omit this code.
 
 	// (Alternatively, if you don't want to receive the entire stream, you could set this timer for some shorter value.)
-//
-//	if (scs.duration > 0)
-//
-//	{
-//
-//		unsigned uSecsToDelay = (unsigned)(scs.duration*1000000);
-//
-//		scs.streamTimerTask = env.taskScheduler().scheduleDelayedTask(uSecsToDelay, (TaskFunc*)streamTimerHandler, rtspClient);
-//
-//	}
+	//
+	//	if (scs.duration > 0)
+	//
+	//	{
+	//
+	//		unsigned uSecsToDelay = (unsigned)(scs.duration*1000000);
+	//
+	//		scs.streamTimerTask = env.taskScheduler().scheduleDelayedTask(uSecsToDelay, (TaskFunc*)streamTimerHandler, rtspClient);
+	//
+	//	}
 }
 void CommonPlay::signalHandlerShutdown(int /*sig*/) {
 	*env << "Got shutdown signal\n";
@@ -1043,20 +1085,20 @@ void CommonPlay::signalHandlerShutdown(int /*sig*/) {
 	shutdown(0);
 }
 
-void CommonPlay::checkForPacketArrival(void* /*clientData*/,
+void CommonPlay::checkForPacketArrival(void * /*clientData*/,
 		CommonPlay *cpObj) {
 	if (!cpObj->notifyOnPacketArrival)
 		return; // we're not checking
 
-// Check each subsession, to see whether it has received data packets:
+	// Check each subsession, to see whether it has received data packets:
 	unsigned numSubsessionsChecked = 0;
 	unsigned numSubsessionsWithReceivedData = 0;
 	unsigned numSubsessionsThatHaveBeenSynced = 0;
 
 	MediaSubsessionIterator iter(*cpObj->session);
-	MediaSubsession* subsession;
+	MediaSubsession *subsession;
 	while ((subsession = iter.next()) != NULL) {
-		RTPSource* src = subsession->rtpSource();
+		RTPSource *src = subsession->rtpSource();
 		if (src == NULL)
 			continue;
 		++numSubsessionsChecked;
@@ -1071,8 +1113,8 @@ void CommonPlay::checkForPacketArrival(void* /*clientData*/,
 	}
 
 	unsigned numSubsessionsToCheck = numSubsessionsChecked;
-// Special case for "QuickTimeFileSink"s and "AVIFileSink"s:
-// They might not use all of the input sources:
+	// Special case for "QuickTimeFileSink"s and "AVIFileSink"s:
+	// They might not use all of the input sources:
 	if (cpObj->qtOut != NULL) {
 		numSubsessionsToCheck = cpObj->qtOut->numActiveSubsessions();
 	} else if (cpObj->aviOut != NULL) {
@@ -1085,7 +1127,7 @@ void CommonPlay::checkForPacketArrival(void* /*clientData*/,
 	} else {
 		notifyTheUser = numSubsessionsWithReceivedData >= numSubsessionsToCheck
 				&& numSubsessionsThatHaveBeenSynced == numSubsessionsChecked;
-// Note: A subsession with no active sources is considered to be synced
+		// Note: A subsession with no active sources is considered to be synced
 	}
 	if (notifyTheUser) {
 		struct timeval timeNow;
@@ -1099,24 +1141,25 @@ void CommonPlay::checkForPacketArrival(void* /*clientData*/,
 		return;
 	}
 
-// No luck, so reschedule this check again, after a delay:
+	// No luck, so reschedule this check again, after a delay:
 	int uSecsToDelay = 100000; // 100 ms
 	cpObj->arrivalCheckTimerTask =
 			cpObj->env->taskScheduler().scheduleDelayedTask(uSecsToDelay,
-					(TaskFunc*) checkForPacketArrival, NULL, cpObj);
+					(TaskFunc *) checkForPacketArrival, NULL, cpObj);
 }
 
-void CommonPlay::checkInterPacketGaps(void* /*clientData*/, CommonPlay *cpObj) {
+void CommonPlay::checkInterPacketGaps(void * /*clientData*/,
+		CommonPlay *cpObj) {
 	if (cpObj->interPacketGapMaxTime == 0)
 		return; // we're not checking
 
-// Check each subsession, counting up how many packets have been received:
+	// Check each subsession, counting up how many packets have been received:
 	unsigned newTotNumPacketsReceived = 0;
 
 	MediaSubsessionIterator iter(*cpObj->session);
-	MediaSubsession* subsession;
+	MediaSubsession *subsession;
 	while ((subsession = iter.next()) != NULL) {
-		RTPSource* src = subsession->rtpSource();
+		RTPSource *src = subsession->rtpSource();
 		if (src == NULL)
 			continue;
 		newTotNumPacketsReceived +=
@@ -1124,43 +1167,42 @@ void CommonPlay::checkInterPacketGaps(void* /*clientData*/, CommonPlay *cpObj) {
 	}
 
 	if (newTotNumPacketsReceived == cpObj->totNumPacketsReceived) {
-// No additional packets have been received since the last time we
-// checked, so end this stream:
+		// No additional packets have been received since the last time we
+		// checked, so end this stream:
 		*cpObj->env
 				<< "Closing session, because we stopped receiving packets.\n";
 		cpObj->interPacketGapCheckTimerTask = NULL;
 		sessionAfterPlaying();
 	} else {
 		cpObj->totNumPacketsReceived = newTotNumPacketsReceived;
-// Check again, after the specified delay:
+		// Check again, after the specified delay:
 		cpObj->interPacketGapCheckTimerTask =
 				cpObj->env->taskScheduler().scheduleDelayedTask(
 						cpObj->interPacketGapMaxTime * 1000000,
-						(TaskFunc*) checkInterPacketGaps,
+						(TaskFunc *) checkInterPacketGaps,
 						NULL, cpObj);
 	}
 }
 
-void CommonPlay::checkSessionTimeoutBrokenServer(void* /*clientData*/,
+void CommonPlay::checkSessionTimeoutBrokenServer(void * /*clientData*/,
 		CommonPlay *cpObj) {
 	if (!cpObj->sendKeepAlivesToBrokenServers)
 		return; // we're not checking
 
-// Send an "OPTIONS" request, starting with the second call
+	// Send an "OPTIONS" request, starting with the second call
 	if (cpObj->sessionTimeoutBrokenServerTask != NULL) {
 		cpObj->getOptions(NULL);
 	}
 
 	unsigned sessionTimeout =
 			cpObj->sessionTimeoutParameter == 0 ?
-					60/*default*/: cpObj->sessionTimeoutParameter;
+					60 /*default*/: cpObj->sessionTimeoutParameter;
 	unsigned secondsUntilNextKeepAlive =
 			sessionTimeout <= 5 ? 1 : sessionTimeout - 5;
-// Reduce the interval a little, to be on the safe side
+	// Reduce the interval a little, to be on the safe side
 
 	cpObj->sessionTimeoutBrokenServerTask =
 			cpObj->env->taskScheduler().scheduleDelayedTask(
 					secondsUntilNextKeepAlive * 1000000,
-					(TaskFunc*) checkSessionTimeoutBrokenServer, NULL, cpObj);
-
+					(TaskFunc *) checkSessionTimeoutBrokenServer, NULL, cpObj);
 }

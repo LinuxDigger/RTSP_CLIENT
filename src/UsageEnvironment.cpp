@@ -19,7 +19,7 @@ Boolean UsageEnvironment::reclaim() {
 
 UsageEnvironment::UsageEnvironment(TaskScheduler& scheduler,
 		unsigned short clientID) :
-		liveMediaPriv(NULL), groupsockPriv(NULL), _cliID(clientID), fScheduler(
+		liveMediaPriv(NULL), groupsockPriv(NULL), _u16CliID(clientID), fScheduler(
 				scheduler) {
 }
 

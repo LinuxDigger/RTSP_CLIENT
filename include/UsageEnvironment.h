@@ -11,6 +11,9 @@
 #include "NetCommon.h"
 #include "Boolean.h"
 #include "TaskScheduler.h"
+//#include "CommonPlay.h"
+#include <iostream>
+using namespace std;
 
 class UsageEnvironment {
 public:
@@ -19,6 +22,8 @@ public:
 
 	// task scheduler:
 	TaskScheduler& taskScheduler() const {
+//		fScheduler.doEventLoop(watchVariable);
+//		cout <<"TaskScheduler& taskScheduler() const:: "<< fScheduler._mSockfdCpSet[5]->ourAuthenticator->password()<<endl;
 		return fScheduler;
 	}
 	void setFScheduler(const TaskScheduler &scheduler) {
@@ -60,14 +65,15 @@ public:
 	void* liveMediaPriv;
 	void* groupsockPriv;
 
-	unsigned short _cliID;
+	unsigned short _u16CliID;
+
+	TaskScheduler& fScheduler;
 
 protected:
 	UsageEnvironment(TaskScheduler& scheduler,unsigned short clientID); // abstract base class
 	virtual ~UsageEnvironment(); // we are deleted only by reclaim()
 
 private:
-	TaskScheduler& fScheduler;
 
 };
 

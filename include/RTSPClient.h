@@ -12,11 +12,13 @@
 #include "Media.h"
 #include "DigestAuthentication.h"
 #include "RTSPServer.h"
+#include <iostream>
+using namespace std;
 //#include "CommonPlay.h"
 class CommonPlay;
 class RTSPClient: public Medium {
 public:
-	static RTSPClient* createNew(UsageEnvironment& env,  char const* rtspURL,
+	static RTSPClient* createNew(UsageEnvironment& env, char const* rtspURL,
 			CommonPlay *cpObj = NULL, int verbosityLevel = 1,
 			char const* applicationName = NULL,
 			portNumBits tunnelOverHTTPPortNum = 0, int socketNumToServer = -1);
@@ -358,13 +360,13 @@ private:
 	Boolean setupHTTPTunneling2(); // send the HTTP "POST"
 
 	// Support for asynchronous connections to the server:
-	static void connectionHandler(void*, int /*mask*/);
+	static void connectionHandler(void*, int /*mask*/, CommonPlay *cpObj);
 	void connectionHandler1();
 
 	// Support for handling data sent back by a server:
-	static void incomingDataHandler(void*, int /*mask*/);
-	void incomingDataHandler1();
-	void handleResponseBytes(int newBytesRead);
+	static void incomingDataHandler(void*, int /*mask*/, CommonPlay *cpObj);
+	void incomingDataHandler1(CommonPlay *cpObj);
+	void handleResponseBytes(int newBytesRead, CommonPlay *cpObj);
 
 public:
 	u_int16_t desiredMaxIncomingPacketSize;

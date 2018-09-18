@@ -12,7 +12,8 @@
 #include "NetCommon.h"
 //#include "CommonPlay.h"
 //typedef unsigned u_int32_t;
-
+#include <map>
+using namespace std;
 class CommonPlay;
 typedef void TaskFunc(void* clientData, CommonPlay *cpObj);
 typedef void* TaskToken;
@@ -21,8 +22,8 @@ typedef u_int32_t EventTriggerId;
 class TaskScheduler {
 public:
 	virtual ~TaskScheduler();
-
 	bool pausePlay;
+	map<int, CommonPlay *> _mSockfdCpSet;
 
 	virtual TaskToken scheduleDelayedTask(int64_t microseconds, TaskFunc* proc,
 			void* clientData, CommonPlay *cpObj) = 0;
@@ -45,7 +46,8 @@ public:
 	// Note: This MUST NOT be called if the scheduled task has already occurred.
 
 	// For handling socket operations in the background (from the event loop):
-	typedef void BackgroundHandlerProc(void* clientData, int mask);
+	typedef void BackgroundHandlerProc(void* clientData, int mask,
+			CommonPlay *cpObj);
 	// Possible bits to set in "mask".  (These are deliberately defined
 	// the same as those in Tcl, to make a Tcl-based subclass easy.)
 #define SOCKET_READABLE    (1<<1)

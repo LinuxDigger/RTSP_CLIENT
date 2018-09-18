@@ -14,7 +14,6 @@
 #include <string.h>
 #include "Logger.h"
 using namespace FrameWork;
-//
 #include "Rtsp_server.h"
 
 using namespace std;
@@ -404,6 +403,9 @@ void FileSink::afterGettingFrameGetData(unsigned frameSize,
 				Logger::GetInstance().Info(
 						"stFrameData.u32FrameSize :%d ret %d cliID: %d",
 						stFrameData.u32FrameSize, ret, _cliID);
+//				cout << "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! "<<_cliID<<endl;
+				delete[] stFrameData.pu8Data;
+				stFrameData.pu8Data = NULL;
 				break;
 			}
 #if 0
@@ -414,11 +416,13 @@ void FileSink::afterGettingFrameGetData(unsigned frameSize,
 			memset(stFrameData.pu8Data, 0, _mCombinFrameSize[_cliID]);
 			memcpy(stFrameData.pu8Data, _mCombinFrame[_cliID],
 					_mCombinFrameSize[_cliID]);
-			DP_U32 rett =
-					DP_RTSP_CLIENT_Client::_mDataQueueSet[_cliID]->DP_RTSP_CLIENT_RecvData(
-							0, _mCombinFrameSize[_cliID],
-							_mCliRecvFrameSequence[_cliID],
-							DP_RTSP_CLINET_CODEC_H264, stFrameData.pu8Data);
+//			DP_U32 rett =
+			DP_RTSP_CLIENT_Client::_mDataQueueSet[_cliID]->DP_RTSP_CLIENT_RecvData(
+					0, _mCombinFrameSize[_cliID],
+					_mCliRecvFrameSequence[_cliID], DP_RTSP_CLINET_CODEC_H264,
+					stFrameData.pu8Data);
+			delete[] stFrameData.pu8Data;
+			stFrameData.pu8Data = NULL;
 			//when to free u8CombinFrame?????????????????///delete 7 8
 			if ((fBuffer[0] & 0x1F) == 7 || ((fBuffer[0] & 0x1F) == 8)
 					|| (fBuffer[0] & 0x1F) == 5) {

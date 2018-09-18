@@ -16,6 +16,7 @@
 #include "strDup.h"
 #include <iostream>
 #include <arpa/inet.h>
+#include "CommonPlay.h"
 #include "Logger.h"
 using namespace FrameWork;
 using namespace std;
@@ -42,6 +43,8 @@ unsigned RTSPClient::sendOptionsCommand(responseHandler* responseHandler,
 		Authenticator* authenticator) {
 	if (authenticator != NULL)
 		fCurrentAuthenticator = *authenticator;
+	cout << "fcpObjsend opthino  command :: "
+			<< fcpObj->ourAuthenticator->password() << endl;
 	return sendRequest(
 			new RequestRecord(++fCSeq, "OPTIONS", fcpObj, responseHandler));
 }
@@ -80,6 +83,7 @@ unsigned RTSPClient::sendSetupCommand(MediaSubsession& subsession,
 unsigned RTSPClient::sendPlayCommand(MediaSession& session,
 		responseHandler* responseHandler, double start, double end, float scale,
 		Authenticator* authenticator) {
+	cout << "TSPClient::sendPlayCommand(MediaSession& sessio ********************"<<endl;
 	if (fCurrentAuthenticator < authenticator)
 		fCurrentAuthenticator = *authenticator;
 	sendDummyUDPPackets(session); // hack to improve NAT traversal
@@ -515,6 +519,8 @@ int RTSPClient::grabSocket() {
 }
 
 unsigned RTSPClient::sendRequest(RequestRecord* request) {
+//	cout <<request->commandName()<<endl;
+//	cout << "fcpObj->ourAuthenticator->password()sendRequest  "<<fcpObj->ourAuthenticator->password()<<endl;
 	char* cmd = NULL;
 	do {
 		Boolean connectionIsPending = False;
@@ -523,12 +529,19 @@ unsigned RTSPClient::sendRequest(RequestRecord* request) {
 			connectionIsPending = True;
 		} else if (fInputSocketNum < 0) { // we need to open a connection
 			int connectResult = openConnection();
+
 			if (connectResult < 0)
 				break; // an error occurred
 			else if (connectResult == 0) {
 				// A connection is pending
 				connectionIsPending = True;
 			} // else the connection succeeded.  Continue sending the command.
+			  ///0
+			cout << "unsigned RTSPClient::sendRequest(RequestRecord* request) "
+					<< fcpObj->_fClientID << " connectResult "
+					<< fInputSocketNum << " pass "
+					<< fcpObj->ourAuthenticator->password() << endl;
+			envir().fScheduler._mSockfdCpSet[fInputSocketNum] = fcpObj;
 		}
 		if (connectionIsPending) {
 			fRequestsAwaitingConnection.enqueue(request);
@@ -1592,7 +1605,7 @@ void RTSPClient::handleAlternativeRequestByte1(u_int8_t requestByte) {
 			<< endl;
 	if (requestByte == 0xFF) {
 		// Hack: The new handler of the input TCP socket encountered an error reading it.  Indicate this:
-		handleResponseBytes(-1);
+		handleResponseBytes(-1, NULL);
 	} else if (requestByte == 0xFE) {
 		// Another hack: The new handler of the input TCP socket no longer needs it, so take back control:
 		envir().taskScheduler().setBackgroundHandling(fInputSocketNum,
@@ -1602,7 +1615,7 @@ void RTSPClient::handleAlternativeRequestByte1(u_int8_t requestByte) {
 	} else {
 		// Normal case:
 		fResponseBuffer[fResponseBytesAlreadySeen] = requestByte;
-		handleResponseBytes(1);
+		handleResponseBytes(1, NULL);
 	}
 }
 
@@ -1727,7 +1740,8 @@ Boolean RTSPClient::setupHTTPTunneling2() {
 	return sendRequest(new RequestRecord(1, "POST", fcpObj, NULL)) != 0;
 }
 
-void RTSPClient::connectionHandler(void* instance, int /*mask*/) {
+void RTSPClient::connectionHandler(void* instance, int /*mask*/,
+		CommonPlay *cpObj) {
 	RTSPClient* client = (RTSPClient*) instance;
 	client->connectionHandler1();
 }
@@ -1778,20 +1792,23 @@ void RTSPClient::connectionHandler1() {
 }
 
 void RTSPClient::incomingDataHandler(void* instance, int /*mask*/
-) {   /////
+, CommonPlay *cpObj) {   /////
 	Logger::GetInstance().Debug(
 			"do incoming Data ||||||||||||||||||||||||||||||||||||||");
 	RTSPClient* client = (RTSPClient*) instance;
-	client->incomingDataHandler1();
+	client->incomingDataHandler1(cpObj);
 }
 
-void RTSPClient::incomingDataHandler1() {
+void RTSPClient::incomingDataHandler1(CommonPlay *cpObj) {
 	struct sockaddr_in dummy; // 'from' address - not used
 
 	int bytesRead = readSocket(envir(), fInputSocketNum,
 			(DP_U8*) &fResponseBuffer[fResponseBytesAlreadySeen],
 			fResponseBufferBytesLeft, dummy);
-	handleResponseBytes(bytesRead);  //1800lines
+	cout << "1111111111111111111111" << endl;
+	cout << "cpObj:: " << cpObj->_fClientID << endl;
+	cout << "222222222222222222222" << endl;
+	handleResponseBytes(bytesRead, cpObj);  //1800lines
 }
 
 static char* getLine(char* startOfLine) {
@@ -1814,7 +1831,8 @@ static char* getLine(char* startOfLine) {
 	return NULL;
 }
 
-void RTSPClient::handleResponseBytes(int newBytesRead) {
+void RTSPClient::handleResponseBytes(int newBytesRead, CommonPlay *cpObj) {
+	cout << "cpObj::handleResponseBytes() \\\\\\\\\\\\  " << cpObj->_fClientID << endl;
 	do {
 		if (newBytesRead >= 0
 				&& (unsigned) newBytesRead < fResponseBufferBytesLeft)
@@ -2186,8 +2204,13 @@ void RTSPClient::handleResponseBytes(int newBytesRead) {
 					resultString = strDup(responseStr);
 					envir().setResultMsg(responseStr);
 				}
+				cout << "fcpObjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjj "
+						<< resultCode << " " << endl;
+				cout << cpObj->_fClientID << endl;
 				(*foundRequest->handler())(this, resultCode, resultString,
-						fcpObj); /////after option send request ------
+						cpObj); /////after option send request ------
+				cout << "oooooooooooooooooooooooooooooooooooooooooooo<<"
+						<< endl;
 			} else {
 				// An error occurred parsing the response, so call the handler, indicating an error:
 				handleRequestError(foundRequest);
@@ -2201,7 +2224,6 @@ void RTSPClient::handleResponseBytes(int newBytesRead) {
 }
 
 ////////// RTSPClient::RequestRecord implementation //////////
-
 RTSPClient::RequestRecord::RequestRecord(unsigned cseq, char const* commandName,
 		CommonPlay *cpObj, responseHandler* handler, MediaSession* session,
 		MediaSubsession* subsession, u_int32_t booleanFlags, double start,
@@ -2295,65 +2317,64 @@ void RTSPClient::RequestQueue::reset() {
 
 #ifndef OMIT_REGISTER_HANDLING
 ////////// HandlerServerForREGISTERCommand implementation /////////
-
-HandlerServerForREGISTERCommand* HandlerServerForREGISTERCommand::createNew(
-		UsageEnvironment& env, onRTSPClientCreationFunc* creationFunc,
-		Port ourPort, UserAuthenticationDatabase* authDatabase,
-		int verbosityLevel, char const* applicationName) {
-	int ourSocket = setUpOurSocket(env, ourPort);
-	if (ourSocket == -1)
-		return NULL;
-
-	return new HandlerServerForREGISTERCommand(env, creationFunc, ourSocket,
-			ourPort, authDatabase, verbosityLevel, applicationName);
-}
-
-HandlerServerForREGISTERCommand::HandlerServerForREGISTERCommand(
-		UsageEnvironment& env, onRTSPClientCreationFunc* creationFunc,
-		int ourSocket, Port ourPort, UserAuthenticationDatabase* authDatabase,
-		int verbosityLevel, char const* applicationName) :
-		RTSPServer(env, ourSocket, ourPort, authDatabase,
-				30/*small reclamationTestSeconds*/), fCreationFunc(
-				creationFunc), fVerbosityLevel(verbosityLevel), fApplicationName(
-				strDup(applicationName)) {
-}
-
-HandlerServerForREGISTERCommand::~HandlerServerForREGISTERCommand() {
-	delete[] fApplicationName;
-}
-
-RTSPClient* HandlerServerForREGISTERCommand::createNewRTSPClient(
-		char const* rtspURL, int verbosityLevel, char const* applicationName,
-		int socketNumToServer) {
-	// Default implementation: create a basic "RTSPClient":
-	return RTSPClient::createNew(envir(), rtspURL, NULL, verbosityLevel,
-			applicationName, 0, socketNumToServer);
-}
-
-char const* HandlerServerForREGISTERCommand::allowedCommandNames() {
-	return "OPTIONS, REGISTER";
-}
-
-Boolean HandlerServerForREGISTERCommand::weImplementREGISTER(
-		char const* cmd/*"REGISTER" or "DEREGISTER"*/,
-		char const* /*proxyURLSuffix*/, char*& responseStr) {
-	responseStr = NULL;
-	// By default, we implement only "REGISTER"; not "DEREGISTER".  Subclass to implement "DEREGISTER"
-	return strcmp(cmd, "REGISTER") == 0;
-}
-
-void HandlerServerForREGISTERCommand::implementCmd_REGISTER(
-		char const* cmd/*"REGISTER" or "DEREGISTER"*/, char const* url,
-		char const* urlSuffix, int socketToRemoteServer, Boolean deliverViaTCP,
-		char const* /*proxyURLSuffix*/) {
-	if (strcmp(cmd, "REGISTER") == 0) { // By default, we don't implement "DEREGISTER"
-		// Create a new "RTSPClient" object, and call our 'creation function' with it:
-		RTSPClient* newRTSPClient = createNewRTSPClient(url, fVerbosityLevel,
-				fApplicationName, socketToRemoteServer);
-
-		if (fCreationFunc != NULL)
-			(*fCreationFunc)(newRTSPClient, deliverViaTCP);
-	}
-}
+//HandlerServerForREGISTERCommand* HandlerServerForREGISTERCommand::createNew(
+//		UsageEnvironment& env, onRTSPClientCreationFunc* creationFunc,
+//		Port ourPort, UserAuthenticationDatabase* authDatabase,
+//		int verbosityLevel, char const* applicationName) {
+//	int ourSocket = setUpOurSocket(env, ourPort);
+//	if (ourSocket == -1)
+//		return NULL;
+//
+//	return new HandlerServerForREGISTERCommand(env, creationFunc, ourSocket,
+//			ourPort, authDatabase, verbosityLevel, applicationName);
+//}
+//
+//HandlerServerForREGISTERCommand::HandlerServerForREGISTERCommand(
+//		UsageEnvironment& env, onRTSPClientCreationFunc* creationFunc,
+//		int ourSocket, Port ourPort, UserAuthenticationDatabase* authDatabase,
+//		int verbosityLevel, char const* applicationName) :
+//		RTSPServer(env, ourSocket, ourPort, authDatabase,
+//				30/*small reclamationTestSeconds*/), fCreationFunc(
+//				creationFunc), fVerbosityLevel(verbosityLevel), fApplicationName(
+//				strDup(applicationName)) {
+//}
+//
+//HandlerServerForREGISTERCommand::~HandlerServerForREGISTERCommand() {
+//	delete[] fApplicationName;
+//}
+//
+//RTSPClient* HandlerServerForREGISTERCommand::createNewRTSPClient(
+//		char const* rtspURL, int verbosityLevel, char const* applicationName,
+//		int socketNumToServer) {
+//	// Default implementation: create a basic "RTSPClient":
+//	return RTSPClient::createNew(envir(), rtspURL, NULL, verbosityLevel,
+//			applicationName, 0, socketNumToServer);
+//}
+//
+//char const* HandlerServerForREGISTERCommand::allowedCommandNames() {
+//	return "OPTIONS, REGISTER";
+//}
+//
+//Boolean HandlerServerForREGISTERCommand::weImplementREGISTER(
+//		char const* cmd/*"REGISTER" or "DEREGISTER"*/,
+//		char const* /*proxyURLSuffix*/, char*& responseStr) {
+//	responseStr = NULL;
+//	// By default, we implement only "REGISTER"; not "DEREGISTER".  Subclass to implement "DEREGISTER"
+//	return strcmp(cmd, "REGISTER") == 0;
+//}
+//
+//void HandlerServerForREGISTERCommand::implementCmd_REGISTER(
+//		char const* cmd/*"REGISTER" or "DEREGISTER"*/, char const* url,
+//		char const* urlSuffix, int socketToRemoteServer, Boolean deliverViaTCP,
+//		char const* /*proxyURLSuffix*/) {
+//	if (strcmp(cmd, "REGISTER") == 0) { // By default, we don't implement "DEREGISTER"
+//		// Create a new "RTSPClient" object, and call our 'creation function' with it:
+//		RTSPClient* newRTSPClient = createNewRTSPClient(url, fVerbosityLevel,
+//				fApplicationName, socketToRemoteServer);
+//
+//		if (fCreationFunc != NULL)
+//			(*fCreationFunc)(newRTSPClient, deliverViaTCP);
+//	}
+//}
 #endif
 
