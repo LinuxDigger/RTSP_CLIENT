@@ -12,14 +12,33 @@ using namespace std;
 #include "CommonPlay.h"
 ////////// BasicTaskScheduler //////////
 
-BasicTaskScheduler* BasicTaskScheduler::createNew(
-		unsigned maxSchedulerGranularity, CommonPlay *cpObj) {
-	return new BasicTaskScheduler(maxSchedulerGranularity, cpObj);
+//BasicTaskScheduler* BasicTaskScheduler::createNew(
+//		unsigned maxSchedulerGranularity, CommonPlay *cpObj) {
+//	return new BasicTaskScheduler(maxSchedulerGranularity, cpObj);
+//}
+
+vector<TaskScheduler*> *BasicTaskScheduler::createNew(DP_U32 maxConnectionCnt,
+		DP_U32 urlNumsEachSche,
+		unsigned maxSchedulerGranularity/*microseconds*/, CommonPlay *cpObj) {
+	static vector<TaskScheduler*> taskSche;
+	DP_U32 i = 0;
+	for (i = 0; i < maxConnectionCnt / urlNumsEachSche; i++) {
+		taskSche.push_back(
+				new BasicTaskScheduler(urlNumsEachSche, maxSchedulerGranularity,
+						cpObj));
+	}
+	if ((maxConnectionCnt - i * urlNumsEachSche)) {
+		taskSche.push_back(
+				new BasicTaskScheduler(urlNumsEachSche, maxSchedulerGranularity,
+						cpObj));
+	}
+	return &taskSche;
+
 }
 
-BasicTaskScheduler::BasicTaskScheduler(unsigned maxSchedulerGranularity,
-		CommonPlay *cpObj) :
-		BasicTaskScheduler0(cpObj), fMaxSchedulerGranularity(
+BasicTaskScheduler::BasicTaskScheduler(DP_U32 urlNumsEachSche,
+		unsigned maxSchedulerGranularity, CommonPlay *cpObj) :
+		BasicTaskScheduler0(urlNumsEachSche, cpObj), fMaxSchedulerGranularity(
 				maxSchedulerGranularity), fMaxNumSockets(0)
 #if defined(__WIN32__) || defined(_WIN32)
 , fDummySocketNum(-1)
@@ -159,8 +178,8 @@ void BasicTaskScheduler::SingleStep(unsigned maxDelayTime) {
 			if (fcpObj == NULL)
 //				cout << "00000000000000" << endl;
 //			cout << "urllllllllllllllllllllllllfafter 0fLastHandledSocketNum0 "<<fLastHandledSocketNum<<endl;
-			(*handler->handlerProc)(handler->clientData, resultConditionSet,
-					_mSockfdCpSet[fLastHandledSocketNum]);			///////sending  cseq 2处理和RTSP服务器的通信协议的商定
+				(*handler->handlerProc)(handler->clientData, resultConditionSet,
+						_mSockfdCpSet[fLastHandledSocketNum]);///////sending  cseq 2处理和RTSP服务器的通信协议的商定
 			break;
 		}
 	}

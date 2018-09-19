@@ -8,6 +8,7 @@
 #include "MediaSink.h"
 #include "GroupsockHelper.h"
 #include <string.h>
+#include "CommonPlay.h"
 
 ////////// MediaSink //////////
 
@@ -74,7 +75,7 @@ void MediaSink::stopPlaying() {
 		fSource->stopGettingFrames();
 
 	// Cancel any pending tasks:
-	envir().taskScheduler().unscheduleDelayedTask(nextTask());
+	envir().taskScheduler(fcpObj->_fClientID / 10)->unscheduleDelayedTask(nextTask());
 
 	fSource = NULL; // indicates that we can be played again
 	fAfterFunc = NULL;
@@ -87,7 +88,7 @@ void MediaSink::onSourceClosure(void* clientData) {
 
 void MediaSink::onSourceClosure() {
 	// Cancel any pending tasks:
-	envir().taskScheduler().unscheduleDelayedTask(nextTask());
+	envir().taskScheduler(fcpObj->_fClientID / 10)->unscheduleDelayedTask(nextTask());
 
 	fSource = NULL; // indicates that we can be played again
 	if (fAfterFunc != NULL) {

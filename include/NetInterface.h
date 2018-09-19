@@ -83,7 +83,7 @@ public:
   static int DebugLevel;
 
 protected:
-  Socket(UsageEnvironment& env, Port port); // virtual base class
+  Socket(DP_U16 scheID,UsageEnvironment& env, Port port); // virtual base class
 
   Boolean changePort(Port newPort); // will also cause socketNum() to change
 
@@ -91,6 +91,8 @@ private:
   int fSocketNum;
   UsageEnvironment& fEnv;
   Port fPort;
+
+  DP_U16 _u16ScheID;
 };
 
 UsageEnvironment& operator<<(UsageEnvironment& s, const Socket& sock);

@@ -7,6 +7,7 @@
 
 #include "RTPInterface.h"
 #include "GroupsockHelper.h"
+#include "CommonPlay.h"
 #include <stdio.h>
 
 ////////// Helper Functions - Definition //////////
@@ -34,7 +35,7 @@ static HashTable* socketHashTable(UsageEnvironment& env,
 
 class SocketDescriptor {
 public:
-	SocketDescriptor(UsageEnvironment& env, int socketNum);
+	SocketDescriptor(DP_U16 _u16ScheID, UsageEnvironment& env, int socketNum);
 	virtual ~SocketDescriptor();
 
 	void registerRTPInterface(DP_U8 streamChannelId,
@@ -60,6 +61,7 @@ private:
 	void* fServerRequestAlternativeByteHandlerClientData;
 	u_int8_t fStreamChannelId, fSizeByte1;
 	Boolean fReadErrorOccurred, fDeleteMyselfNext, fAreInReadHandlerLoop;
+	DP_U16 _u16ScheID;
 	enum {
 		AWAITING_DOLLAR,
 		AWAITING_STREAM_CHANNEL_ID,
@@ -69,8 +71,8 @@ private:
 	} fTCPReadingState;
 };
 
-static SocketDescriptor* lookupSocketDescriptor(UsageEnvironment& env,
-		int sockNum, Boolean createIfNotFound = True) {
+static SocketDescriptor* lookupSocketDescriptor(DP_U16 scheID,
+		UsageEnvironment& env, int sockNum, Boolean createIfNotFound = True) {
 	HashTable* table = socketHashTable(env, createIfNotFound);
 	if (table == NULL)
 		return NULL;
@@ -80,7 +82,7 @@ static SocketDescriptor* lookupSocketDescriptor(UsageEnvironment& env,
 			(SocketDescriptor*) (table->Lookup(key));
 	if (socketDescriptor == NULL) {
 		if (createIfNotFound) {
-			socketDescriptor = new SocketDescriptor(env, sockNum);
+			socketDescriptor = new SocketDescriptor(scheID, env, sockNum);
 			table->Add((char const*) (long) (sockNum), socketDescriptor);
 		} else if (table->IsEmpty()) {
 			// We can also delete the table (to reclaim space):
@@ -129,7 +131,8 @@ RTPInterface::~RTPInterface() {
 
 void RTPInterface::setStreamSocket(int sockNum, DP_U8 streamChannelId) {
 	fGS->removeAllDestinations();
-	envir().taskScheduler().disableBackgroundHandling(fGS->socketNum()); // turn off any reading on our datagram socket
+	envir().taskScheduler(getOwnerMedium()->getCpObj()->_fClientID / 10)->disableBackgroundHandling(
+			fGS->socketNum()); // turn off any reading on our datagram socket
 	fGS->reset(); // and close our datagram socket, because we won't be using it anymore
 
 	addStreamSocket(sockNum, streamChannelId);
@@ -150,15 +153,15 @@ void RTPInterface::addStreamSocket(int sockNum, DP_U8 streamChannelId) {
 	fTCPStreams = new tcpStreamRecord(sockNum, streamChannelId, fTCPStreams);
 
 	// Also, make sure this new socket is set up for receiving RTP/RTCP-over-TCP:
-	SocketDescriptor* socketDescriptor = lookupSocketDescriptor(envir(),
-			sockNum);
+	SocketDescriptor* socketDescriptor = lookupSocketDescriptor(
+			getOwnerMedium()->getCpObj()->_fClientID / 10, envir(), sockNum);
 	socketDescriptor->registerRTPInterface(streamChannelId, this);
 }
 
-static void deregisterSocket(UsageEnvironment& env, int sockNum,
+static void deregisterSocket(DP_U16 scheID, UsageEnvironment& env, int sockNum,
 		DP_U8 streamChannelId) {
-	SocketDescriptor* socketDescriptor = lookupSocketDescriptor(env, sockNum,
-			False);
+	SocketDescriptor* socketDescriptor = lookupSocketDescriptor(scheID, env,
+			sockNum, False);
 	if (socketDescriptor != NULL) {
 		socketDescriptor->deregisterRTPInterface(streamChannelId);
 		// Note: This may delete "socketDescriptor",
@@ -187,7 +190,8 @@ void RTPInterface::removeStreamSocket(int sockNum, DP_U8 streamChannelId) {
 				*streamsPtr = next;
 
 				// And 'deregister' this socket,channelId pair:
-				deregisterSocket(envir(), sockNum, streamChannelIdToRemove);
+				deregisterSocket(getOwnerMedium()->getCpObj()->_fClientID / 10,
+						envir(), sockNum, streamChannelIdToRemove);
 
 				if (streamChannelId != 0xFF)
 					return; // we're done
@@ -201,20 +205,20 @@ void RTPInterface::removeStreamSocket(int sockNum, DP_U8 streamChannelId) {
 	}
 }
 
-void RTPInterface::setServerRequestAlternativeByteHandler(UsageEnvironment& env,
-		int socketNum, ServerRequestAlternativeByteHandler* handler,
-		void* clientData) {
-	SocketDescriptor* socketDescriptor = lookupSocketDescriptor(env, socketNum,
-			False);
+void RTPInterface::setServerRequestAlternativeByteHandler(DP_U16 scheID,
+		UsageEnvironment& env, int socketNum,
+		ServerRequestAlternativeByteHandler* handler, void* clientData) {
+	SocketDescriptor* socketDescriptor = lookupSocketDescriptor(scheID, env,
+			socketNum, False);
 
 	if (socketDescriptor != NULL)
 		socketDescriptor->setServerRequestAlternativeByteHandler(handler,
 				clientData);
 }
 
-void RTPInterface::clearServerRequestAlternativeByteHandler(
+void RTPInterface::clearServerRequestAlternativeByteHandler(DP_U16 scheID,
 		UsageEnvironment& env, int socketNum) {
-	setServerRequestAlternativeByteHandler(env, socketNum, NULL, NULL);
+	setServerRequestAlternativeByteHandler(scheID, env, socketNum, NULL, NULL);
 }
 
 Boolean RTPInterface::sendPacket(DP_U8* packet, unsigned packetSize) {
@@ -241,15 +245,18 @@ Boolean RTPInterface::sendPacket(DP_U8* packet, unsigned packetSize) {
 void RTPInterface::startNetworkReading(
 		TaskScheduler::BackgroundHandlerProc* handlerProc) {
 	// Normal case: Arrange to read UDP packets:
-	envir().taskScheduler().turnOnBackgroundReadHandling(fGS->socketNum(),
-			handlerProc, fOwner);
+	cout << "tartNetworkReading(erMedium()->getCpObj()->_fClientID / 10  "
+			<< getOwnerMedium()->getCpObj()->_fClientID << endl;
+	envir().taskScheduler(getOwnerMedium()->getCpObj()->_fClientID / 10)->turnOnBackgroundReadHandling(
+			fGS->socketNum(), handlerProc, fOwner);
 
 	// Also, receive RTP over TCP, on each of our TCP connections:
 	fReadHandlerProc = handlerProc;
 	for (tcpStreamRecord* streams = fTCPStreams; streams != NULL; streams =
 			streams->fNext) {
 		// Get a socket descriptor for "streams->fStreamSocketNum":
-		SocketDescriptor* socketDescriptor = lookupSocketDescriptor(envir(),
+		SocketDescriptor* socketDescriptor = lookupSocketDescriptor(
+				getOwnerMedium()->getCpObj()->_fClientID / 10, envir(),
 				streams->fStreamSocketNum);
 
 		// Tell it about our subChannel:
@@ -311,13 +318,14 @@ Boolean RTPInterface::handleRead(DP_U8* buffer, unsigned bufferMaxSize,
 void RTPInterface::stopNetworkReading() {
 	// Normal case
 	if (fGS != NULL)
-		envir().taskScheduler().turnOffBackgroundReadHandling(fGS->socketNum());
+		envir().taskScheduler(getOwnerMedium()->getCpObj()->_fClientID / 10)->turnOffBackgroundReadHandling(
+				fGS->socketNum());
 
 	// Also turn off read handling on each of our TCP connections:
 	for (tcpStreamRecord* streams = fTCPStreams; streams != NULL; streams =
 			streams->fNext) {
-		deregisterSocket(envir(), streams->fStreamSocketNum,
-				streams->fStreamChannelId);
+		deregisterSocket(getOwnerMedium()->getCpObj()->_fClientID / 10, envir(),
+				streams->fStreamSocketNum, streams->fStreamChannelId);
 	}
 }
 
@@ -367,7 +375,6 @@ Boolean RTPInterface::sendDataOverTCP(int socketNum, u_int8_t const* data,
 	int sendResult = send(socketNum, (char const*) data, dataSize, 0/*flags*/);
 	if (sendResult < (int) dataSize) {
 		// The TCP send() failed - at least partially.
-
 		unsigned numBytesSentSoFar = sendResult < 0 ? 0 : (unsigned) sendResult;
 		if (numBytesSentSoFar > 0
 				|| (forceSendToSucceed && envir().getErrno() == EAGAIN)) {
@@ -409,17 +416,19 @@ Boolean RTPInterface::sendDataOverTCP(int socketNum, u_int8_t const* data,
 
 	return True;
 }
-
-SocketDescriptor::SocketDescriptor(UsageEnvironment& env, int socketNum) :
+SocketDescriptor::SocketDescriptor(DP_U16 _u16ScheID, UsageEnvironment& env,
+		int socketNum) :
 		fEnv(env), fOurSocketNum(socketNum), fSubChannelHashTable(
 				HashTable::create(ONE_WORD_HASH_KEYS)), fServerRequestAlternativeByteHandler(
-		NULL), fServerRequestAlternativeByteHandlerClientData(NULL), fReadErrorOccurred(
-				False), fDeleteMyselfNext(False), fAreInReadHandlerLoop(False), fTCPReadingState(
-				AWAITING_DOLLAR) {
+		NULL), fServerRequestAlternativeByteHandlerClientData(NULL), fStreamChannelId(
+				0), fSizeByte1(0), fReadErrorOccurred(False), fDeleteMyselfNext(
+				False), fAreInReadHandlerLoop(False), fTCPReadingState(
+				AWAITING_DOLLAR), _u16ScheID(_u16ScheID) {
 }
 
 SocketDescriptor::~SocketDescriptor() {
-	fEnv.taskScheduler().turnOffBackgroundReadHandling(fOurSocketNum);
+	fEnv.taskScheduler(_u16ScheID)->turnOffBackgroundReadHandling(
+			fOurSocketNum);
 	removeSocketDescription(fEnv, fOurSocketNum);
 
 	if (fSubChannelHashTable != NULL) {
@@ -600,7 +609,7 @@ Boolean SocketDescriptor::tcpReadHandler1(int mask) {
 #endif
 				fTCPReadingState = AWAITING_PACKET_DATA;
 				rtpInterface->fReadHandlerProc(rtpInterface->fOwner, mask,
-						NULL);
+				NULL);
 			} else {
 #ifdef DEBUG_RECEIVE
 				fprintf(stderr, "SocketDescriptor(socket %d)::tcpReadHandler(): No handler proc for \"rtpInterface\" for channel %d; need to skip %d remaining bytes\n", fOurSocketNum, fStreamChannelId, rtpInterface->fNextTCPReadSize);

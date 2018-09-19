@@ -11,6 +11,7 @@ src/AVIFileSink.o: ../src/AVIFileSink.cpp \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/UsageEnvironment.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/NetCommon.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/TaskScheduler.h \
+ /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/DP_RTSP_CLIENT_GlobDefine.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/FramedFilter.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/FramedSource.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/MediaSource.h \
@@ -44,7 +45,6 @@ src/AVIFileSink.o: ../src/AVIFileSink.cpp \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/FileSink.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/DP_RTSP_CLIENT_CycleQueue.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/CycleQueue.h \
- /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/DP_RTSP_CLIENT_GlobDefine.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/H264VideoFileSink.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/H264or5VideoFileSink.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/H265VideoFileSink.h \
@@ -79,6 +79,8 @@ src/AVIFileSink.o: ../src/AVIFileSink.cpp \
 /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/NetCommon.h:
 
 /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/TaskScheduler.h:
+
+/home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/DP_RTSP_CLIENT_GlobDefine.h:
 
 /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/FramedFilter.h:
 
@@ -145,8 +147,6 @@ src/AVIFileSink.o: ../src/AVIFileSink.cpp \
 /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/DP_RTSP_CLIENT_CycleQueue.h:
 
 /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/CycleQueue.h:
-
-/home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/DP_RTSP_CLIENT_GlobDefine.h:
 
 /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/H264VideoFileSink.h:
 

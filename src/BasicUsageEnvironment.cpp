@@ -15,7 +15,7 @@
 extern "C" int initializeWinsockIfNecessary();
 #endif
 
-BasicUsageEnvironment::BasicUsageEnvironment(TaskScheduler& taskScheduler,
+BasicUsageEnvironment::BasicUsageEnvironment(vector<TaskScheduler*> * taskScheduler,
 		unsigned short clientID) :
 		BasicUsageEnvironment0(taskScheduler, clientID) {
 #if defined(__WIN32__) || defined(_WIN32)
@@ -30,8 +30,15 @@ BasicUsageEnvironment::BasicUsageEnvironment(TaskScheduler& taskScheduler,
 BasicUsageEnvironment::~BasicUsageEnvironment() {
 }
 
+//old
+//BasicUsageEnvironment*
+//BasicUsageEnvironment::createNew(TaskScheduler& taskScheduler,
+//		unsigned short clientID) {
+//	return new BasicUsageEnvironment(taskScheduler, clientID);
+//}
+
 BasicUsageEnvironment*
-BasicUsageEnvironment::createNew(TaskScheduler& taskScheduler,
+BasicUsageEnvironment::createNew(vector<TaskScheduler*> *taskScheduler,
 		unsigned short clientID) {
 	return new BasicUsageEnvironment(taskScheduler, clientID);
 }

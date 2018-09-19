@@ -17,6 +17,7 @@
 #include "Mutex.h"
 #include "DP_RTSP_CLIENT_DataStructureDef.h"
 using namespace std;
+class UsageEnvironment;
 class DP_RTSP_CLIENT_FrameDataMemManage;
 typedef DP_RTSP_CLIENT_FrameDataMemManage FrameDataMemManage;
 
@@ -29,10 +30,15 @@ public:
 	DP_RTSP_CLIENT_Client();
 	~DP_RTSP_CLIENT_Client();
 
-	DP_Bool DP_RTSP_CLIENT_GlobalSetting(DP_U16 u16MaxURLNum =
-			DP_RTSP_CLIENT_ClientMaxNum);
+	DP_Bool DP_RTSP_CLIENT_GlobalSetting(DP_U16 u16MaxURLNum,
+			DP_U16 URLNumsEachSche);
 
 	//u32FrmNums:min :1 or 0 max :256
+//	DP_S32 DP_RTSP_CLIENT_Init(const char *ps8URL,
+//			DP_RTSP_CLIENT_STREAM_TYPE_E enStreamType,
+//			DP_RTSP_CLIENT_NET_PROTOCOL_E enNetProtocol, DP_U16 u32FrmNums,
+//			const DP_C_S8 *pu8UsrName, const DP_C_S8 *pu8UsrPassword);
+
 	DP_S32 DP_RTSP_CLIENT_Init(const char *ps8URL,
 			DP_RTSP_CLIENT_STREAM_TYPE_E enStreamType,
 			DP_RTSP_CLIENT_NET_PROTOCOL_E enNetProtocol, DP_U16 u32FrmNums,
@@ -65,6 +71,8 @@ private:
 	vector<DP_U16> _vClientIDSet;
 	Mutex _mutex;
 
+	UsageEnvironment* _env;
+
 	typedef struct _ClientInitArgs_S {
 		_ClientInitArgs_S(DP_U16 cliID, const char *URL,
 				DP_RTSP_CLIENT_STREAM_TYPE_E streamType,
@@ -84,6 +92,14 @@ private:
 		const DP_C_S8 *pu8UsrPassword;
 		DP_RTSP_CLIENT_Client *client;
 	} ClientInitArgs_S;
+
+	typedef struct _EnvScheID_S {
+		_EnvScheID_S(UsageEnvironment* env, DP_U16 cliID) :
+				_env(env), clientID(cliID) {
+		}
+		UsageEnvironment* _env;
+		DP_U16 clientID;
+	} EnvScheID_S;
 
 	static void* sClientInit(void*args);
 };

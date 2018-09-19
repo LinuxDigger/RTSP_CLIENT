@@ -7,6 +7,7 @@
 
 #include "BasicUDPSink.h"
 #include <GroupsockHelper.h>
+#include "CommonPlay.h"
 
 BasicUDPSink* BasicUDPSink::createNew(UsageEnvironment& env, Groupsock* gs,
 		unsigned maxPayloadSize) {
@@ -77,7 +78,7 @@ void BasicUDPSink::afterGettingFrame1(unsigned frameSize,
 	}
 
 	// Delay this amount of time:
-	nextTask() = envir().taskScheduler().scheduleDelayedTask(uSecondsToGo,
+	nextTask() = envir().taskScheduler(fcpObj->_fClientID / 10)->scheduleDelayedTask(uSecondsToGo,
 			(TaskFunc*) sendNext, this, fcpObj);
 }
 

@@ -7,6 +7,7 @@
 
 #include "DVVideoStreamFramer.h"
 #include "GroupsockHelper.h"
+#include "CommonPlay.h"
 
 ////////// DVVideoStreamFramer implementation //////////
 
@@ -78,11 +79,12 @@ Boolean DVVideoStreamFramer::getFrameParameters(unsigned& frameSize,
 void DVVideoStreamFramer::getProfile() {
 	// To determine the stream's profile, we need to first read a chunk of data that we can parse:
 	fInputSource->getNextFrame(fSavedInitialBlocks,
-			DV_SAVED_INITIAL_BLOCKS_SIZE, afterGettingFrame, this,
+	DV_SAVED_INITIAL_BLOCKS_SIZE, afterGettingFrame, this,
 			FramedSource::handleClosure, this);
 
 	// Handle events until the requested data arrives:
-	envir().taskScheduler().doEventLoop(&fInitialBlocksPresent);
+	envir().taskScheduler(fcpObj->_fClientID / 10)->doEventLoop(
+			&fInitialBlocksPresent);
 }
 
 Boolean DVVideoStreamFramer::isDVVideoStreamFramer() const {
@@ -158,7 +160,7 @@ void DVVideoStreamFramer::afterGettingFrame(unsigned frameSize,
 		for (u_int8_t const* ptr = data;
 				ptr + 6 * DV_DIF_BLOCK_SIZE
 						<= &data[DV_SAVED_INITIAL_BLOCKS_SIZE]; ptr +=
-						DV_DIF_BLOCK_SIZE) {
+				DV_DIF_BLOCK_SIZE) {
 			// Check whether "ptr" points to an appropriate header:
 			u_int8_t const sectionHeader = DVSectionId(0);
 			u_int8_t const sectionVAUX = DVSectionId(5);

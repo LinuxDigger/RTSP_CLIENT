@@ -73,8 +73,8 @@ public:
 	// The state of a TCP connection used by a client:
 	class ClientConnection {
 	protected:
-		ClientConnection(GenericMediaServer& ourServer, int clientSocket,
-				struct sockaddr_in clientAddr);
+		ClientConnection(DP_U16 scheID, GenericMediaServer& ourServer,
+				int clientSocket, struct sockaddr_in clientAddr);
 		virtual ~ClientConnection();
 
 		UsageEnvironment& envir() {
@@ -97,6 +97,7 @@ public:
 		DP_U8 fRequestBuffer[REQUEST_BUFFER_SIZE];
 		DP_U8 fResponseBuffer[RESPONSE_BUFFER_SIZE];
 		unsigned fRequestBytesAlreadySeen, fRequestBufferBytesLeft;
+		DP_U16 _u16ScheID;
 	};
 
 	// The state of an individual client session (using one or more sequentia
@@ -104,7 +105,8 @@ protected:
 	//l TCP connections) handled by a server:
 	class ClientSession {
 	public:
-		ClientSession(GenericMediaServer& ourServer, u_int32_t sessionId);
+		ClientSession(DP_U16 scheID, GenericMediaServer& ourServer,
+				u_int32_t sessionId);
 		virtual ~ClientSession();
 
 		UsageEnvironment& envir() {
@@ -121,6 +123,7 @@ protected:
 		u_int32_t fOurSessionId;
 		ServerMediaSession* fOurServerMediaSession;
 		TaskToken fLivenessCheckTask;
+		DP_U16 _u16ScheID;
 	};
 
 protected:

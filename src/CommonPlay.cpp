@@ -284,15 +284,15 @@ void CommonPlay::continueAfterSETUP(RTSPClient *client, int resultCode,
 			Logger::GetInstance().Debug("client port %d",
 					cpObj->subsession->clientPortNum());
 		} else {
-			*cpObj->env << "client ports " << cpObj->subsession->clientPortNum() << "-"
-					<< cpObj->subsession->clientPortNum() + 1;
+			*cpObj->env << "client ports " << cpObj->subsession->clientPortNum()
+					<< "-" << cpObj->subsession->clientPortNum() + 1;
 		}
 		*cpObj->env << ")\n";
 		cpObj->madeProgress = True;
 	} else {
-		*cpObj->env << "Failed to setup \"" << cpObj->subsession->mediumName() << "/"
-				<< cpObj->subsession->codecName() << "\" subsession: " << resultString
-				<< "\n";
+		*cpObj->env << "Failed to setup \"" << cpObj->subsession->mediumName()
+				<< "/" << cpObj->subsession->codecName() << "\" subsession: "
+				<< resultString << "\n";
 	}
 	delete[] resultString;
 
@@ -475,9 +475,11 @@ void CommonPlay::createPeriodicOutputFiles() {
 	createOutputFiles(periodicFileNameSuffix);
 
 	// Schedule an event for writing the next output file:
-	periodicFileOutputTask = env->taskScheduler().scheduleDelayedTask(
-			fileOutputInterval * 1000000,
-			(TaskFunc *) periodicFileOutputTimerHandler, (void *) NULL, this);
+	periodicFileOutputTask =
+			env->taskScheduler(_fClientID / 10)->scheduleDelayedTask(
+					fileOutputInterval * 1000000,
+					(TaskFunc *) periodicFileOutputTimerHandler, (void *) NULL,
+					this);
 }
 
 void CommonPlay::setupStreams() {
@@ -609,16 +611,18 @@ void CommonPlay::continueAfterPLAY(RTSPClient *rtspClient, int resultCode,
 		secondsToDelay = cpObj->duration / absScale + cpObj->durationSlop;
 
 		int64_t uSecsToDelay = (int64_t) (secondsToDelay * 1000000.0);
-		cpObj->sessionTimerTask =
-				cpObj->env->taskScheduler().scheduleDelayedTask(uSecsToDelay,
-						(TaskFunc *) sessionTimerHandler, (void *) NULL, cpObj);
+		cpObj->sessionTimerTask = cpObj->env->taskScheduler(
+				cpObj->_fClientID / 10)->scheduleDelayedTask(uSecsToDelay,
+				(TaskFunc *) sessionTimerHandler, (void *) NULL, cpObj);
 	}
 
 	//	int64_t uSecsToDelay = (int64_t) (secondsToDelay * 1000000.0 * 60);
 	int64_t uSecsToDelay = (int64_t) (1000000.0 * 60);
 
-	cpObj->sessionTimerTask = cpObj->env->taskScheduler().scheduleDelayedTask(
-			uSecsToDelay, (TaskFunc *) sessionTimerHandler, rtspClient, cpObj);
+	cpObj->sessionTimerTask =
+			cpObj->env->taskScheduler(cpObj->_fClientID / 10)->scheduleDelayedTask(
+					uSecsToDelay, (TaskFunc *) sessionTimerHandler, rtspClient,
+					cpObj);
 
 	char const *actionString =
 			cpObj->createReceivers ?
@@ -701,17 +705,17 @@ void CommonPlay::sessionAfterPlaying(void * /*clientData*/, CommonPlay *cpObj) {
 		// We've been asked to play the stream(s) over again.
 		// First, reset state from the current session:
 		if (cpObj->env != NULL) {
-			cpObj->env->taskScheduler().unscheduleDelayedTask(
+			cpObj->env->taskScheduler(cpObj->_fClientID / 10)->unscheduleDelayedTask(
 					cpObj->periodicFileOutputTask);
-			cpObj->env->taskScheduler().unscheduleDelayedTask(
+			cpObj->env->taskScheduler(cpObj->_fClientID / 10)->unscheduleDelayedTask(
 					cpObj->sessionTimerTask);
-			cpObj->env->taskScheduler().unscheduleDelayedTask(
+			cpObj->env->taskScheduler(cpObj->_fClientID / 10)->unscheduleDelayedTask(
 					cpObj->sessionTimeoutBrokenServerTask);
-			cpObj->env->taskScheduler().unscheduleDelayedTask(
+			cpObj->env->taskScheduler(cpObj->_fClientID / 10)->unscheduleDelayedTask(
 					cpObj->arrivalCheckTimerTask);
-			cpObj->env->taskScheduler().unscheduleDelayedTask(
+			cpObj->env->taskScheduler(cpObj->_fClientID / 10)->unscheduleDelayedTask(
 					cpObj->interPacketGapCheckTimerTask);
-			cpObj->env->taskScheduler().unscheduleDelayedTask(
+			cpObj->env->taskScheduler(cpObj->_fClientID / 10)->unscheduleDelayedTask(
 					cpObj->qosMeasurementTimerTask);
 		}
 		cpObj->totNumPacketsReceived = ~0;
@@ -728,7 +732,8 @@ void CommonPlay::sessionTimerHandler(void *clientData, CommonPlay *cpObj) {
 
 	RTSPClient *rtspClient = (RTSPClient *) clientData;
 	cout << rtspClient->url() << endl;
-	cout << "cpObj........................."<<cpObj->ourAuthenticator->password()<<endl;
+	cout << "cpObj........................."
+			<< cpObj->ourAuthenticator->password() << endl;
 //	cpObj->sessionTimerTask = NULL;
 	rtspClient->sendGetParameterCommand(*cpObj->session, continueAfterGetParam,
 	NULL);
@@ -793,9 +798,9 @@ void CommonPlay::scheduleNextQOSMeasurement(CommonPlay *cpObj) {
 	unsigned timeNowUSecs = timeNow.tv_sec * 1000000 + timeNow.tv_usec;
 	int usecsToDelay = nextQOSMeasurementUSecs - timeNowUSecs;
 
-	cpObj->qosMeasurementTimerTask =
-			cpObj->env->taskScheduler().scheduleDelayedTask(usecsToDelay,
-					(TaskFunc *) periodicQOSMeasurement, (void *) NULL, cpObj);
+	cpObj->qosMeasurementTimerTask = cpObj->env->taskScheduler(
+			cpObj->_fClientID / 10)->scheduleDelayedTask(usecsToDelay,
+			(TaskFunc *) periodicQOSMeasurement, (void *) NULL, cpObj);
 }
 
 void CommonPlay::setUsrnamePassword(const DP_C_S8 *usrname,
@@ -999,14 +1004,18 @@ void CommonPlay::shutdown(int exitCode) {
 
 	shutdownExitCode = exitCode;
 	if (env != NULL) {
-		env->taskScheduler().unscheduleDelayedTask(periodicFileOutputTask);
-		env->taskScheduler().unscheduleDelayedTask(sessionTimerTask);
-		env->taskScheduler().unscheduleDelayedTask(
+		env->taskScheduler(_fClientID / 10)->unscheduleDelayedTask(
+				periodicFileOutputTask);
+		env->taskScheduler(_fClientID / 10)->unscheduleDelayedTask(
+				sessionTimerTask);
+		env->taskScheduler(_fClientID / 10)->unscheduleDelayedTask(
 				sessionTimeoutBrokenServerTask);
-		env->taskScheduler().unscheduleDelayedTask(arrivalCheckTimerTask);
-		env->taskScheduler().unscheduleDelayedTask(
+		env->taskScheduler(_fClientID / 10)->unscheduleDelayedTask(
+				arrivalCheckTimerTask);
+		env->taskScheduler(_fClientID / 10)->unscheduleDelayedTask(
 				interPacketGapCheckTimerTask);
-		env->taskScheduler().unscheduleDelayedTask(qosMeasurementTimerTask);
+		env->taskScheduler(_fClientID / 10)->unscheduleDelayedTask(
+				qosMeasurementTimerTask);
 	}
 
 	if (qosMeasurementIntervalMS > 0) {
@@ -1051,9 +1060,15 @@ void CommonPlay::continueAfterTEARDOWN(RTSPClient *, int /*resultCode*/,
 void CommonPlay::continueAfterGetParam(RTSPClient *client, int resultCode,
 		char *resultString, CommonPlay *cpObj) {
 
+	struct timeval timeNow;
+	gettimeofday(&timeNow, NULL);
+	Logger::GetInstance().Warn("Time now : %d : %d", timeNow.tv_sec,
+			timeNow.tv_usec);
 	int64_t uSecsToDelay = (int64_t) (1000000.0 * 60);
-	cpObj->sessionTimerTask = cpObj->env->taskScheduler().scheduleDelayedTask(
-			uSecsToDelay, (TaskFunc *) sessionTimerHandler, client, cpObj);
+	cpObj->sessionTimerTask =
+			cpObj->env->taskScheduler(cpObj->_fClientID / 10)->scheduleDelayedTask(
+					uSecsToDelay, (TaskFunc *) sessionTimerHandler, client,
+					cpObj);
 
 	//	UsageEnvironment& env = rtspClient->envir(); // alias
 
@@ -1143,9 +1158,9 @@ void CommonPlay::checkForPacketArrival(void * /*clientData*/,
 
 	// No luck, so reschedule this check again, after a delay:
 	int uSecsToDelay = 100000; // 100 ms
-	cpObj->arrivalCheckTimerTask =
-			cpObj->env->taskScheduler().scheduleDelayedTask(uSecsToDelay,
-					(TaskFunc *) checkForPacketArrival, NULL, cpObj);
+	cpObj->arrivalCheckTimerTask = cpObj->env->taskScheduler(
+			cpObj->_fClientID / 10)->scheduleDelayedTask(uSecsToDelay,
+			(TaskFunc *) checkForPacketArrival, NULL, cpObj);
 }
 
 void CommonPlay::checkInterPacketGaps(void * /*clientData*/,
@@ -1176,11 +1191,11 @@ void CommonPlay::checkInterPacketGaps(void * /*clientData*/,
 	} else {
 		cpObj->totNumPacketsReceived = newTotNumPacketsReceived;
 		// Check again, after the specified delay:
-		cpObj->interPacketGapCheckTimerTask =
-				cpObj->env->taskScheduler().scheduleDelayedTask(
-						cpObj->interPacketGapMaxTime * 1000000,
-						(TaskFunc *) checkInterPacketGaps,
-						NULL, cpObj);
+		cpObj->interPacketGapCheckTimerTask = cpObj->env->taskScheduler(
+				cpObj->_fClientID / 10)->scheduleDelayedTask(
+				cpObj->interPacketGapMaxTime * 1000000,
+				(TaskFunc *) checkInterPacketGaps,
+				NULL, cpObj);
 	}
 }
 
@@ -1201,8 +1216,8 @@ void CommonPlay::checkSessionTimeoutBrokenServer(void * /*clientData*/,
 			sessionTimeout <= 5 ? 1 : sessionTimeout - 5;
 	// Reduce the interval a little, to be on the safe side
 
-	cpObj->sessionTimeoutBrokenServerTask =
-			cpObj->env->taskScheduler().scheduleDelayedTask(
-					secondsUntilNextKeepAlive * 1000000,
-					(TaskFunc *) checkSessionTimeoutBrokenServer, NULL, cpObj);
+	cpObj->sessionTimeoutBrokenServerTask = cpObj->env->taskScheduler(
+			cpObj->_fClientID / 10)->scheduleDelayedTask(
+			secondsUntilNextKeepAlive * 1000000,
+			(TaskFunc *) checkSessionTimeoutBrokenServer, NULL, cpObj);
 }

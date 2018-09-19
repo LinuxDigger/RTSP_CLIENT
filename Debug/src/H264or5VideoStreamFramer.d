@@ -14,6 +14,7 @@ src/H264or5VideoStreamFramer.o: ../src/H264or5VideoStreamFramer.cpp \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/UsageEnvironment.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/NetCommon.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/TaskScheduler.h \
+ /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/DP_RTSP_CLIENT_GlobDefine.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/MPEGVideoStreamParser.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/StreamParser.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/BitVector.h
@@ -47,6 +48,8 @@ src/H264or5VideoStreamFramer.o: ../src/H264or5VideoStreamFramer.cpp \
 /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/NetCommon.h:
 
 /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/TaskScheduler.h:
+
+/home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/DP_RTSP_CLIENT_GlobDefine.h:
 
 /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/MPEGVideoStreamParser.h:
 

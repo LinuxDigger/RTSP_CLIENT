@@ -40,10 +40,11 @@ private:
 ////////// BasicTaskScheduler0 //////////
 
 //when BasicTaskScheduler construction
-BasicTaskScheduler0::BasicTaskScheduler0(CommonPlay *cpObj) :
-		fLastHandledSocketNum(-1), fTriggersAwaitingHandling(0), fLastUsedTriggerMask(
-				1), fLastUsedTriggerNum(MAX_NUM_EVENT_TRIGGERS - 1), fcpObj(
-				cpObj) {
+BasicTaskScheduler0::BasicTaskScheduler0(DP_U32 urlNumsEachSche,
+		CommonPlay *cpObj) :
+		TaskScheduler(urlNumsEachSche), fLastHandledSocketNum(-1), fTriggersAwaitingHandling(
+				0), fLastUsedTriggerMask(1), fLastUsedTriggerNum(
+				MAX_NUM_EVENT_TRIGGERS - 1), fcpObj(cpObj) {
 	fHandlers = new HandlerSet;  ///first new 111
 	for (unsigned i = 0; i < MAX_NUM_EVENT_TRIGGERS; ++i) {
 		fTriggeredEventHandlers[i] = NULL;
@@ -56,7 +57,7 @@ BasicTaskScheduler0::~BasicTaskScheduler0() {
 }
 
 TaskToken BasicTaskScheduler0::scheduleDelayedTask(int64_t microseconds,
-		TaskFunc* proc, void* clientData,CommonPlay *cpObj) {
+		TaskFunc* proc, void* clientData, CommonPlay *cpObj) {
 	if (microseconds < 0)
 		microseconds = 0;
 	DelayInterval timeToDelay((long) (microseconds / 1000000),
@@ -77,7 +78,8 @@ void BasicTaskScheduler0::unscheduleDelayedTask(TaskToken& prevTask) {
 }
 
 void BasicTaskScheduler0::doEventLoop(char volatile* watchVariable) {
-	cout << "askScheduler0::doEventLoop(c=================="<<_mSockfdCpSet.size()<<endl;
+	cout << "askScheduler0::doEventLoop(c=================="
+			<< _mSockfdCpSet.size() << endl;
 	// Repeatedly loop, handling readble sockets and timed events:
 	while (!pausePlay) {
 		if (watchVariable != NULL && *watchVariable != 0)

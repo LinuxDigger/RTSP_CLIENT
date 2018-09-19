@@ -7,6 +7,7 @@ src/BasicTaskScheduler0.o: ../src/BasicTaskScheduler0.cpp \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/NetCommon.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/HandlerSet.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/TaskScheduler.h \
+ /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/DP_RTSP_CLIENT_GlobDefine.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/RTSPClient.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/MediaSession.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/Media.h \
@@ -43,7 +44,6 @@ src/BasicTaskScheduler0.o: ../src/BasicTaskScheduler0.cpp \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/FileSink.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/DP_RTSP_CLIENT_CycleQueue.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/CycleQueue.h \
- /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/DP_RTSP_CLIENT_GlobDefine.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/H264VideoFileSink.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/H264or5VideoFileSink.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/H265VideoFileSink.h \
@@ -70,6 +70,8 @@ src/BasicTaskScheduler0.o: ../src/BasicTaskScheduler0.cpp \
 /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/HandlerSet.h:
 
 /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/TaskScheduler.h:
+
+/home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/DP_RTSP_CLIENT_GlobDefine.h:
 
 /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/RTSPClient.h:
 
@@ -142,8 +144,6 @@ src/BasicTaskScheduler0.o: ../src/BasicTaskScheduler0.cpp \
 /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/DP_RTSP_CLIENT_CycleQueue.h:
 
 /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/CycleQueue.h:
-
-/home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/DP_RTSP_CLIENT_GlobDefine.h:
 
 /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/H264VideoFileSink.h:
 

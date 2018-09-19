@@ -7,6 +7,7 @@
 
 #include "MPEG2TransportStreamMultiplexor.h"
 #include "MPEG1or2Demux.h"
+#include "CommonPlay.h"
 
 #define TRANSPORT_PACKET_SIZE 188
 
@@ -70,7 +71,7 @@ void MPEG2TransportStreamMultiplexor::doGetNextFrame() {
 	if ((fOutgoingPacketCounter % 10) == 0) {
 		// To avoid excessive recursion (and stack overflow) caused by excessively large input frames,
 		// occasionally return to the event loop to do this:
-		nextTask() = envir().taskScheduler().scheduleDelayedTask(0,
+		nextTask() = envir().taskScheduler(fcpObj->_fClientID / 10)->scheduleDelayedTask(0,
 				(TaskFunc*) FramedSource::afterGetting, this, NULL);
 	} else {
 		afterGetting(this);

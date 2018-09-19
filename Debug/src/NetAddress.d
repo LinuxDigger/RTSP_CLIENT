@@ -8,6 +8,7 @@ src/NetAddress.o: ../src/NetAddress.cpp \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/Boolean.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/UsageEnvironment.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/TaskScheduler.h \
+ /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/DP_RTSP_CLIENT_GlobDefine.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/GroupsockHelper.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/NetAddress.h
 
@@ -28,6 +29,8 @@ src/NetAddress.o: ../src/NetAddress.cpp \
 /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/UsageEnvironment.h:
 
 /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/TaskScheduler.h:
+
+/home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/DP_RTSP_CLIENT_GlobDefine.h:
 
 /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/GroupsockHelper.h:
 

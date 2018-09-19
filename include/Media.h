@@ -43,6 +43,10 @@ public:
 		return fMediumName;
 	}
 
+	CommonPlay *getCpObj() const {
+		return fcpObj;
+	}
+
 	// Test for specific types of media:
 	virtual Boolean isSource() const;
 	virtual Boolean isSink() const;
@@ -54,7 +58,7 @@ public:
 
 protected:
 	friend class MediaLookupTable;
-	Medium(UsageEnvironment& env); // abstract base class
+	Medium(UsageEnvironment& env, CommonPlay *cpObj = NULL); // abstract base class
 	virtual ~Medium(); // instances are deleted using close() only
 
 	TaskToken& nextTask() {
@@ -65,6 +69,8 @@ private:
 	UsageEnvironment& fEnviron;
 	char fMediumName[mediumNameMaxLen];
 	TaskToken fNextTask;
+protected:
+	CommonPlay *fcpObj;
 };
 
 // A data structure for looking up a Medium by its string name.

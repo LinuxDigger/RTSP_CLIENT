@@ -8,6 +8,7 @@
 #include "GenericMediaServer.h"
 #include <GroupsockHelper.h>
 #include "strDup.h"
+#include "CommonPlay.h"
 #if defined(__WIN32__) || defined(_WIN32) || defined(_QNX4)
 #define snprintf _snprintf
 #endif
@@ -104,7 +105,8 @@ GenericMediaServer::GenericMediaServer(UsageEnvironment& env, int ourSocket,
 
 GenericMediaServer::~GenericMediaServer() {
 	// Turn off background read handling:
-	envir().taskScheduler().turnOffBackgroundReadHandling(fServerSocket);
+	envir().taskScheduler(fcpObj->_fClientID / 10)->turnOffBackgroundReadHandling(
+			fServerSocket);
 	::closeSocket(fServerSocket);
 }
 
@@ -218,10 +220,11 @@ void GenericMediaServer::incomingConnectionHandlerOnSocket(int serverSocket) {
 
 ////////// GenericMediaServer::ClientConnection implementation //////////
 
-GenericMediaServer::ClientConnection::ClientConnection(
+GenericMediaServer::ClientConnection::ClientConnection(DP_U16 scheID,
 		GenericMediaServer& ourServer, int clientSocket,
 		struct sockaddr_in clientAddr) :
-		fOurServer(ourServer), fOurSocket(clientSocket), fClientAddr(clientAddr) {
+		fOurServer(ourServer), fOurSocket(clientSocket), fClientAddr(
+				clientAddr), _u16ScheID(scheID) {
 	// Add ourself to our 'client connections' table:
 	fOurServer.fClientConnections->Add((char const*) this, this);
 
@@ -240,7 +243,7 @@ GenericMediaServer::ClientConnection::~ClientConnection() {
 
 void GenericMediaServer::ClientConnection::closeSockets() {
 	// Turn off background handling on our socket:
-	envir().taskScheduler().disableBackgroundHandling(fOurSocket);
+	envir().taskScheduler(_u16ScheID)->disableBackgroundHandling(fOurSocket);
 	if (fOurSocket >= 0)
 		::closeSocket(fOurSocket);
 
@@ -269,16 +272,17 @@ void GenericMediaServer::ClientConnection::resetRequestBuffer() {
 
 ////////// GenericMediaServer::ClientSession implementation //////////
 
-GenericMediaServer::ClientSession::ClientSession(GenericMediaServer& ourServer,
-		u_int32_t sessionId) :
+GenericMediaServer::ClientSession::ClientSession(DP_U16 scheID,
+		GenericMediaServer& ourServer, u_int32_t sessionId) :
 		fOurServer(ourServer), fOurSessionId(sessionId), fOurServerMediaSession(
-		NULL), fLivenessCheckTask(NULL) {
+		NULL), fLivenessCheckTask(NULL), _u16ScheID(scheID) {
 	noteLiveness();
 }
 
 GenericMediaServer::ClientSession::~ClientSession() {
 	// Turn off any liveness checking:
-	envir().taskScheduler().unscheduleDelayedTask(fLivenessCheckTask);
+	envir().taskScheduler(_u16ScheID)->unscheduleDelayedTask(
+			fLivenessCheckTask);
 
 	// Remove ourself from the server's 'client sessions' hash table before we go:
 	char sessionIdStr[8 + 1];
@@ -306,8 +310,8 @@ void GenericMediaServer::ClientSession::noteLiveness() {
 		fOurServerMediaSession->noteLiveness();
 
 	if (fOurServer.fReclamationSeconds > 0) {
-		envir().taskScheduler().rescheduleDelayedTask(fLivenessCheckTask,
-				fOurServer.fReclamationSeconds * 1000000,
+		envir().taskScheduler(_u16ScheID)->rescheduleDelayedTask(
+				fLivenessCheckTask, fOurServer.fReclamationSeconds * 1000000,
 				(TaskFunc*) livenessTimeoutTask, this);
 	}
 }

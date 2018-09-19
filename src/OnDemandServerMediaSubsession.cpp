@@ -8,6 +8,7 @@
 #include "OnDemandServerMediaSubsession.h"
 #include <GroupsockHelper.h>
 #include "strDup.h"
+#include "CommonPlay.h"
 #include <iostream>
 using namespace std;
 
@@ -183,9 +184,10 @@ void OnDemandServerMediaSubsession::getStreamParameters(
 		}
 
 		// Set up the state of the stream.  The stream will get started later:
-		streamToken = fLastStreamToken = new StreamState(*this, serverRTPPort,
-				serverRTCPPort, rtpSink, udpSink, streamBitrate, mediaSource,
-				rtpGroupsock, rtcpGroupsock);
+		streamToken = fLastStreamToken = new StreamState(
+				fcpObj->_fClientID / 10, *this, serverRTPPort, serverRTCPPort,
+				rtpSink, udpSink, streamBitrate, mediaSource, rtpGroupsock,
+				rtcpGroupsock);
 	}
 
 	// Record these destinations as being for this client session id:
@@ -415,7 +417,7 @@ void OnDemandServerMediaSubsession::closeStreamSource(
 Groupsock* OnDemandServerMediaSubsession::createGroupsock(
 		struct in_addr const& addr, Port port) {
 	// Default implementation; may be redefined by subclasses:
-	return new Groupsock(envir(), addr, port, 255);
+	return new Groupsock(fcpObj->_fClientID / 10, envir(), addr, port, 255);
 }
 
 RTCPInstance* OnDemandServerMediaSubsession::createRTCP(Groupsock* RTCPgs,
@@ -504,7 +506,7 @@ static void afterPlayingStreamState(void* clientData, CommonPlay *cpObj) {
 	// (This can be done only on streams that have a known duration.)
 }
 
-StreamState::StreamState(OnDemandServerMediaSubsession& master,
+StreamState::StreamState(DP_U16 scheID, OnDemandServerMediaSubsession& master,
 		Port const& serverRTPPort, Port const& serverRTCPPort, RTPSink* rtpSink,
 		BasicUDPSink* udpSink, unsigned totalBW, FramedSource* mediaSource,
 		Groupsock* rtpGS, Groupsock* rtcpGS) :
@@ -512,7 +514,8 @@ StreamState::StreamState(OnDemandServerMediaSubsession& master,
 				serverRTPPort), fServerRTCPPort(serverRTCPPort), fRTPSink(
 				rtpSink), fUDPSink(udpSink), fStreamDuration(master.duration()), fTotalBW(
 				totalBW), fRTCPInstance(NULL) /* created later */, fMediaSource(
-				mediaSource), fStartNPT(0.0), fRTPgs(rtpGS), fRTCPgs(rtcpGS) {
+				mediaSource), fStartNPT(0.0), fRTPgs(rtpGS), fRTCPgs(rtcpGS), _u16ScheID(
+				scheID) {
 }
 
 StreamState::~StreamState() {
@@ -539,7 +542,7 @@ void StreamState::startPlaying(Destinations* dests, unsigned clientSessionId,
 		// Change RTP and RTCP to use the TCP socket instead of UDP:
 		if (fRTPSink != NULL) {
 			fRTPSink->addStreamSocket(dests->tcpSocketNum, dests->rtpChannelId);
-			RTPInterface::setServerRequestAlternativeByteHandler(
+			RTPInterface::setServerRequestAlternativeByteHandler(_u16ScheID,
 					fRTPSink->envir(), dests->tcpSocketNum,
 					serverRequestAlternativeByteHandler,
 					serverRequestAlternativeByteHandlerClientData);

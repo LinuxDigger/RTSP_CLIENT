@@ -10,7 +10,7 @@
 
 ////////// BasicUsageEnvironment //////////
 
-BasicUsageEnvironment0::BasicUsageEnvironment0(TaskScheduler& taskScheduler,
+BasicUsageEnvironment0::BasicUsageEnvironment0(vector<TaskScheduler*> *taskScheduler,
 		unsigned short clientID) :
 		UsageEnvironment(taskScheduler, clientID), fBufferMaxSize(
 				RESULT_MSG_BUFFER_MAX) {

@@ -17,6 +17,7 @@
 #include "H265ParserSPS.h"
 #include <iostream>
 #include "Logger.h"
+#include "CommonPlay.h"
 using namespace FrameWork;
 using namespace std;
 ////////// MediaSession //////////
@@ -881,11 +882,11 @@ Boolean MediaSubsession::initiate(int useSpecialRTPoffset) {
 				// use an even-numbered port for RTP, and the next (odd-numbered) port for RTCP
 			}
 			if (isSSM()) {
-				fRTPSocket = new Groupsock(env(), tempAddr, fSourceFilterAddr,
-						fClientPortNum);
+				fRTPSocket = new Groupsock(fcpObj->_fClientID / 10, env(),
+						tempAddr, fSourceFilterAddr, fClientPortNum);
 			} else {
-				fRTPSocket = new Groupsock(env(), tempAddr, fClientPortNum,
-						255);
+				fRTPSocket = new Groupsock(fcpObj->_fClientID / 10, env(),
+						tempAddr, fClientPortNum, 255);
 			}
 			if (fRTPSocket == NULL) {
 				env().setResultMsg("Failed to create RTP socket");
@@ -900,11 +901,12 @@ Boolean MediaSubsession::initiate(int useSpecialRTPoffset) {
 					// Set our RTCP port to be the RTP port + 1:
 					portNumBits const rtcpPortNum = fClientPortNum | 1;
 					if (isSSM()) {
-						fRTCPSocket = new Groupsock(env(), tempAddr,
-								fSourceFilterAddr, rtcpPortNum);
+						fRTCPSocket = new Groupsock(fcpObj->_fClientID / 10,
+								env(), tempAddr, fSourceFilterAddr,
+								rtcpPortNum);
 					} else {
-						fRTCPSocket = new Groupsock(env(), tempAddr,
-								rtcpPortNum, 255);
+						fRTCPSocket = new Groupsock(fcpObj->_fClientID / 10,
+								env(), tempAddr, rtcpPortNum, 255);
 					}
 				}
 			}
@@ -925,10 +927,11 @@ Boolean MediaSubsession::initiate(int useSpecialRTPoffset) {
 			while (1) {
 				// Create a new socket:
 				if (isSSM()) {
-					fRTPSocket = new Groupsock(env(), tempAddr,
-							fSourceFilterAddr, 0);
+					fRTPSocket = new Groupsock(fcpObj->_fClientID / 10, env(),
+							tempAddr, fSourceFilterAddr, 0);
 				} else {
-					fRTPSocket = new Groupsock(env(), tempAddr, 0, 255);
+					fRTPSocket = new Groupsock(fcpObj->_fClientID / 10, env(),
+							tempAddr, 0, 255);
 				}
 				if (fRTPSocket == NULL) {
 					env().setResultMsg(
@@ -964,11 +967,11 @@ Boolean MediaSubsession::initiate(int useSpecialRTPoffset) {
 				// Make sure we can use the next (i.e., odd) port number, for RTCP:
 				portNumBits rtcpPortNum = fClientPortNum | 1;
 				if (isSSM()) {
-					fRTCPSocket = new Groupsock(env(), tempAddr,
-							fSourceFilterAddr, rtcpPortNum);
+					fRTCPSocket = new Groupsock(fcpObj->_fClientID / 10, env(),
+							tempAddr, fSourceFilterAddr, rtcpPortNum);
 				} else {
-					fRTCPSocket = new Groupsock(env(), tempAddr, rtcpPortNum,
-							255);
+					fRTCPSocket = new Groupsock(fcpObj->_fClientID / 10, env(),
+							tempAddr, rtcpPortNum, 255);
 				}
 				if (fRTCPSocket != NULL && fRTCPSocket->socketNum() >= 0) {
 					// Success! Use these two sockets.

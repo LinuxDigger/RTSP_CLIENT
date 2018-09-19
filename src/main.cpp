@@ -88,13 +88,14 @@ DP_S32 main(DP_S32 argc, char**argv) {
 	//开启运行Server
 	DP_RTSP_SERVER_Start();
 	DP_RTSP_CLIENT_Client client;
+	client.DP_RTSP_CLIENT_GlobalSetting(64, 5);
 #if 1
 	DP_S32 retCli = client.DP_RTSP_CLIENT_Init(argv[1],
 			DP_RTSP_CLIENT_STREAM_VIDEO, DP_RTSP_CLIENT_NET_PROTOCOL_TCP, 30,
 			argv[2], argv[3]);
 	Logger::GetInstance().Warn("MAIN!!!!!!!!!!!!!!!!!!!!retCli :::::::: %d ",
 			retCli);
-	DP_RTSP_CLIENT_FRAME_DATA_S stGetData(2);
+	DP_RTSP_CLIENT_FRAME_DATA_S stGetData(retCli);
 	DP_RTSP_SERVER_MEDIA_STREAM_INFO_S MediaStream;
 	memset(&MediaStream, 0, sizeof(DP_RTSP_SERVER_MEDIA_STREAM_INFO_S));
 	MediaStream.enFrameType = DP_RTSP_SERVER_H264_FRAME_I;
@@ -106,8 +107,8 @@ DP_S32 main(DP_S32 argc, char**argv) {
 #endif
 #if 0
 	for (int i = 0; i < 9; i++)
-		client.DP_RTSP_CLIENT_Init(argv[1], DP_RTSP_CLIENT_STREAM_VIDEO,
-				DP_RTSP_CLIENT_NET_PROTOCOL_TCP, 30, argv[2], argv[3]);
+	client.DP_RTSP_CLIENT_Init(argv[1], DP_RTSP_CLIENT_STREAM_VIDEO,
+			DP_RTSP_CLIENT_NET_PROTOCOL_TCP, 30, argv[2], argv[3]);
 
 #endif
 #if 0
@@ -154,7 +155,7 @@ DP_S32 main(DP_S32 argc, char**argv) {
 	DP_Bool firstPutout_2 = true;
 	usleep(500000);
 	while (1) {
-		//		sleep(100);
+//	//		sleep(100);
 		DP_S32 ret = client.DP_RTSP_CLIENT_GetStreamData(&stGetData, 200,
 				manage, firstPutout);
 		MediaStream.s32FrameSize = stGetData.u32FrameSize;

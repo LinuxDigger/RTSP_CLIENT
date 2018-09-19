@@ -20,7 +20,7 @@
 
 class OutputSocket: public Socket {
 public:
-  OutputSocket(UsageEnvironment& env);
+  OutputSocket(DP_U16 scheID,UsageEnvironment& env);
   virtual ~OutputSocket();
 
   virtual Boolean write(netAddressBits address, portNumBits portNum/*in network order*/, u_int8_t ttl,
@@ -31,7 +31,7 @@ public:
   }
 
 protected:
-  OutputSocket(UsageEnvironment& env, Port port);
+  OutputSocket(DP_U16 scheID,UsageEnvironment& env, Port port);
 
   portNumBits sourcePortNum() const {return fSourcePort.num();}
 
@@ -63,10 +63,10 @@ public:
 
 class Groupsock: public OutputSocket {
 public:
-  Groupsock(UsageEnvironment& env, struct in_addr const& groupAddr,
+  Groupsock(DP_U16 scheID,UsageEnvironment& env, struct in_addr const& groupAddr,
 	    Port port, u_int8_t ttl);
       // used for a 'source-independent multicast' group
-  Groupsock(UsageEnvironment& env, struct in_addr const& groupAddr,
+  Groupsock(DP_U16 scheID,UsageEnvironment& env, struct in_addr const& groupAddr,
 	    struct in_addr const& sourceFilterAddr,
 	    Port port);
       // used for a 'source-specific multicast' group
@@ -158,10 +158,10 @@ UsageEnvironment& operator<<(UsageEnvironment& s, const Groupsock& g);
 // by (multicast address, port), or by socket number
 class GroupsockLookupTable {
 public:
-  Groupsock* Fetch(UsageEnvironment& env, netAddressBits groupAddress,
+  Groupsock* Fetch(DP_U16 scheID,UsageEnvironment& env, netAddressBits groupAddress,
 		   Port port, u_int8_t ttl, Boolean& isNew);
       // Creates a new Groupsock if none already exists
-  Groupsock* Fetch(UsageEnvironment& env, netAddressBits groupAddress,
+  Groupsock* Fetch(DP_U16 scheID,UsageEnvironment& env, netAddressBits groupAddress,
 		   netAddressBits sourceFilterAddr,
 		   Port port, Boolean& isNew);
       // Creates a new Groupsock if none already exists
@@ -187,7 +187,7 @@ public:
   };
 
 private:
-  Groupsock* AddNew(UsageEnvironment& env,
+  Groupsock* AddNew(DP_U16 scheID,UsageEnvironment& env,
 		    netAddressBits groupAddress,
 		    netAddressBits sourceFilterAddress,
 		    Port port, u_int8_t ttl);

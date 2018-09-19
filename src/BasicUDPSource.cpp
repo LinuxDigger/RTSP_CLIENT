@@ -7,6 +7,7 @@
 
 #include "BasicUDPSource.h"
 #include "GroupsockHelper.h"
+#include "CommonPlay.h"
 
 BasicUDPSource* BasicUDPSource::createNew(UsageEnvironment& env,
 		CommonPlay *cpObj, Groupsock* inputGS) {
@@ -27,14 +28,14 @@ BasicUDPSource::BasicUDPSource(UsageEnvironment& env, CommonPlay *cpObj,
 }
 
 BasicUDPSource::~BasicUDPSource() {
-	envir().taskScheduler().turnOffBackgroundReadHandling(
+	envir().taskScheduler(fcpObj->_fClientID / 10)->turnOffBackgroundReadHandling(
 			fInputGS->socketNum());
 }
 
 void BasicUDPSource::doGetNextFrame() {
 	if (!fHaveStartedReading) {
 		// Await incoming packets:
-		envir().taskScheduler().turnOnBackgroundReadHandling(
+		envir().taskScheduler(fcpObj->_fClientID / 10)->turnOnBackgroundReadHandling(
 				fInputGS->socketNum(),
 				(TaskScheduler::BackgroundHandlerProc*) &incomingPacketHandler,
 				this);
@@ -43,7 +44,7 @@ void BasicUDPSource::doGetNextFrame() {
 }
 
 void BasicUDPSource::doStopGettingFrames() {
-	envir().taskScheduler().turnOffBackgroundReadHandling(
+	envir().taskScheduler(fcpObj->_fClientID / 10)->turnOffBackgroundReadHandling(
 			fInputGS->socketNum());
 	fHaveStartedReading = False;
 }

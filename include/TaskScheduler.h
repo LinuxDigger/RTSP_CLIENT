@@ -11,9 +11,14 @@
 #include <string.h>
 #include "NetCommon.h"
 //#include "CommonPlay.h"
+#include "DP_RTSP_CLIENT_GlobDefine.h"
 //typedef unsigned u_int32_t;
 #include <map>
+#include <pthread.h>
+//#include <Media.h>
+
 using namespace std;
+class Medium;
 class CommonPlay;
 typedef void TaskFunc(void* clientData, CommonPlay *cpObj);
 typedef void* TaskToken;
@@ -21,9 +26,45 @@ typedef u_int32_t EventTriggerId;
 
 class TaskScheduler {
 public:
+	static pthread_mutex_t mutex;
 	virtual ~TaskScheduler();
 	bool pausePlay;
 	map<int, CommonPlay *> _mSockfdCpSet;
+	//start from 1
+	map<DP_U16, Medium*> _mClientSet;
+
+	DP_U16 getIdleClientNum() {
+		pthread_mutex_lock(&mutex);
+		for (DP_U16 i = 1; i <= _mClientSet.size(); i++) {
+			if (_mClientSet[i] == NULL)
+				return i;
+			else if (i == _mClientSet.size())
+				_bClientSetIsFull = true;
+		}
+		pthread_mutex_unlock(&mutex);
+		return 0;
+	}
+
+	void setAClientMedium(Medium *client, DP_U16 cliID) {
+		pthread_mutex_lock(&mutex);
+		_mClientSet[cliID] = client;
+		pthread_mutex_unlock(&mutex);
+	}
+	DP_Bool isClientSetFull() {
+		return _bClientSetIsFull;
+	}
+
+	Medium* getAClient(DP_U16 clientHandle) {
+		return _mClientSet[clientHandle];
+	}
+
+	DP_Bool taskScheThreadEnable() const {
+		return _bScheThreadStatus;
+	}
+
+	void setScheThreadStatus(const DP_Bool status) {
+		_bScheThreadStatus = status;
+	}
 
 	virtual TaskToken scheduleDelayedTask(int64_t microseconds, TaskFunc* proc,
 			void* clientData, CommonPlay *cpObj) = 0;
@@ -92,7 +133,10 @@ public:
 	virtual void internalError(); // used to 'handle' a 'should not occur'-type error condition within the library.
 
 protected:
-	TaskScheduler(); // abstract base class
+	TaskScheduler(DP_U32 urlNumsEachSche); // abstract base class
+	DP_Bool _bClientSetIsFull;
+	DP_U32 _u32UrlNumsEachSche;
+	DP_Bool _bScheThreadStatus;
 
 };
 

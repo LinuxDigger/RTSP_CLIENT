@@ -7,6 +7,7 @@
 
 #include "T140TextRTPSink.h"
 #include <GroupsockHelper.h> // for "gettimeofday()"
+#include "CommonPlay.h"
 
 ////////// T140TextRTPSink implementation //////////
 
@@ -57,8 +58,7 @@ void T140TextRTPSink::doSpecialFrameHandling(unsigned /*fragmentationOffset*/,
 }
 
 Boolean T140TextRTPSink::frameCanAppearAfterPacketStart(
-		DP_U8 const* /*frameStart*/,
-		unsigned /*numBytesInFrame*/) const {
+		DP_U8 const* /*frameStart*/, unsigned /*numBytesInFrame*/) const {
 	return False; // We don't concatenate input data; instead, send it out immediately
 }
 
@@ -73,7 +73,8 @@ T140IdleFilter::T140IdleFilter(UsageEnvironment& env, CommonPlay *cpObj,
 }
 
 T140IdleFilter::~T140IdleFilter() {
-	envir().taskScheduler().unscheduleDelayedTask(fIdleTimerTask);
+	envir().taskScheduler(fcpObj->_fClientID / 10)->unscheduleDelayedTask(
+			fIdleTimerTask);
 
 	delete[] fBuffer;
 	detachInputSource(); // so that the subsequent ~FramedFilter() doesn't delete it
@@ -90,8 +91,9 @@ void T140IdleFilter::doGetNextFrame() {
 
 	// We don't have any buffered data, so ask our input source for data (unless we've already done so).
 	// But also set a timer to expire if this doesn't arrive promptly:
-	fIdleTimerTask = envir().taskScheduler().scheduleDelayedTask(
-	IDLE_TIMEOUT_MICROSECONDS, handleIdleTimeout, this, fcpObj);
+	fIdleTimerTask =
+			envir().taskScheduler(fcpObj->_fClientID / 10)->scheduleDelayedTask(
+			IDLE_TIMEOUT_MICROSECONDS, handleIdleTimeout, this, fcpObj);
 	if (fInputSource != NULL && !fInputSource->isCurrentlyAwaitingData()) {
 		fInputSource->getNextFrame((DP_U8*) fBuffer, fBufferSize,
 				afterGettingFrame, this, onSourceClosure, this);
@@ -109,7 +111,8 @@ void T140IdleFilter::afterGettingFrame(unsigned frameSize,
 		unsigned numTruncatedBytes, struct timeval presentationTime,
 		unsigned durationInMicroseconds) {
 	// First, cancel any pending idle timer:
-	envir().taskScheduler().unscheduleDelayedTask(fIdleTimerTask);
+	envir().taskScheduler(fcpObj->_fClientID / 10)->unscheduleDelayedTask(
+			fIdleTimerTask);
 
 	// Then note the new data that we have in our buffer:
 	fNumBufferedBytes = frameSize;
@@ -124,7 +127,8 @@ void T140IdleFilter::afterGettingFrame(unsigned frameSize,
 
 void T140IdleFilter::doStopGettingFrames() {
 	// Cancel any pending idle timer:
-	envir().taskScheduler().unscheduleDelayedTask(fIdleTimerTask);
+	envir().taskScheduler(fcpObj->_fClientID / 10)->unscheduleDelayedTask(
+			fIdleTimerTask);
 
 	// And call the parent's implementation of this virtual function:
 	FramedFilter::doStopGettingFrames();
@@ -170,7 +174,8 @@ void T140IdleFilter::onSourceClosure(void* clientData) {
 }
 
 void T140IdleFilter::onSourceClosure() {
-	envir().taskScheduler().unscheduleDelayedTask(fIdleTimerTask);
+	envir().taskScheduler(fcpObj->_fClientID / 10)->unscheduleDelayedTask(
+			fIdleTimerTask);
 	fIdleTimerTask = NULL;
 
 	handleClosure();

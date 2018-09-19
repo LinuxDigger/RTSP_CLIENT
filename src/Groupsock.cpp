@@ -18,13 +18,13 @@
 
 ///////// OutputSocket //////////
 
-OutputSocket::OutputSocket(UsageEnvironment& env) :
-		Socket(env, 0 /* let kernel choose port */), fSourcePort(0), fLastSentTTL(
+OutputSocket::OutputSocket(DP_U16 scheID, UsageEnvironment& env) :
+		Socket(scheID, env, 0 /* let kernel choose port */), fSourcePort(0), fLastSentTTL(
 				256/*hack: a deliberately invalid value*/) {
 }
 
-OutputSocket::OutputSocket(UsageEnvironment& env, Port port) :
-		Socket(env, port), fSourcePort(0), fLastSentTTL(
+OutputSocket::OutputSocket(DP_U16 scheID, UsageEnvironment& env, Port port) :
+		Socket(scheID, env, port), fSourcePort(0), fLastSentTTL(
 				256/*hack: a deliberately invalid value*/) {
 }
 
@@ -62,9 +62,8 @@ Boolean OutputSocket::write(netAddressBits address, portNumBits portNum,
 }
 
 // By default, we don't do reads:
-Boolean OutputSocket::handleRead(DP_U8* /*buffer*/,
-		unsigned /*bufferMaxSize*/, unsigned& /*bytesRead*/,
-		struct sockaddr_in& /*fromAddressAndPort*/) {
+Boolean OutputSocket::handleRead(DP_U8* /*buffer*/, unsigned /*bufferMaxSize*/,
+		unsigned& /*bytesRead*/, struct sockaddr_in& /*fromAddressAndPort*/) {
 	return True;
 }
 
@@ -87,10 +86,10 @@ NetInterfaceTrafficStats Groupsock::statsRelayedIncoming;
 NetInterfaceTrafficStats Groupsock::statsRelayedOutgoing;
 
 // Constructor for a source-independent multicast group
-Groupsock::Groupsock(UsageEnvironment& env, struct in_addr const& groupAddr,
-		Port port, u_int8_t ttl) :
-		OutputSocket(env, port), deleteIfNoMembers(False), isSlave(False), fDests(
-				new destRecord(groupAddr, port, ttl, 0, NULL)), fIncomingGroupEId(
+Groupsock::Groupsock(DP_U16 scheID, UsageEnvironment& env,
+		struct in_addr const& groupAddr, Port port, u_int8_t ttl) :
+		OutputSocket(scheID, env, port), deleteIfNoMembers(False), isSlave(
+				False), fDests(new destRecord(groupAddr, port, ttl, 0, NULL)), fIncomingGroupEId(
 				groupAddr, port.num(), ttl) {
 
 	if (!socketJoinGroup(env, socketNum(), groupAddr.s_addr)) {
@@ -113,10 +112,11 @@ Groupsock::Groupsock(UsageEnvironment& env, struct in_addr const& groupAddr,
 }
 
 // Constructor for a source-specific multicast group
-Groupsock::Groupsock(UsageEnvironment& env, struct in_addr const& groupAddr,
-		struct in_addr const& sourceFilterAddr, Port port) :
-		OutputSocket(env, port), deleteIfNoMembers(False), isSlave(False), fDests(
-				new destRecord(groupAddr, port, 255, 0, NULL)), fIncomingGroupEId(
+Groupsock::Groupsock(DP_U16 scheID, UsageEnvironment& env,
+		struct in_addr const& groupAddr, struct in_addr const& sourceFilterAddr,
+		Port port) :
+		OutputSocket(scheID, env, port), deleteIfNoMembers(False), isSlave(
+				False), fDests(new destRecord(groupAddr, port, 255, 0, NULL)), fIncomingGroupEId(
 				groupAddr, sourceFilterAddr, port.num()) {
 	// First try a SSM join.  If that fails, try a regular join:
 	if (!socketJoinGroupSSM(env, socketNum(), groupAddr.s_addr,
@@ -345,8 +345,8 @@ Boolean Groupsock::handleRead(DP_U8* buffer, unsigned bufferMaxSize,
 //	if (DebugLevel >= 3) {
 #if 0
 	env() << *this << ": read " << bytesRead << " bytes from "
-			<< AddressString(fromAddressAndPort).val() << ", port "
-			<< ntohs(fromAddressAndPort.sin_port) << "\n";
+	<< AddressString(fromAddressAndPort).val() << ", port "
+	<< ntohs(fromAddressAndPort.sin_port) << "\n";
 	if (numMembers > 0) {
 		env() << "; relayed to " << numMembers << " members";
 		env() << "\n";
@@ -579,14 +579,14 @@ static Groupsock* getGroupsockBySocket(UsageEnvironment& env, int sock) {
 }
 
 Groupsock*
-GroupsockLookupTable::Fetch(UsageEnvironment& env, netAddressBits groupAddress,
-		Port port, u_int8_t ttl, Boolean& isNew) {
+GroupsockLookupTable::Fetch(DP_U16 scheID, UsageEnvironment& env,
+		netAddressBits groupAddress, Port port, u_int8_t ttl, Boolean& isNew) {
 	isNew = False;
 	Groupsock* groupsock;
 	do {
 		groupsock = (Groupsock*) fTable.Lookup(groupAddress, (~0), port);
 		if (groupsock == NULL) { // we need to create one:
-			groupsock = AddNew(env, groupAddress, (~0), port, ttl);
+			groupsock = AddNew(scheID, env, groupAddress, (~0), port, ttl);
 			if (groupsock == NULL)
 				break;
 			isNew = True;
@@ -597,15 +597,17 @@ GroupsockLookupTable::Fetch(UsageEnvironment& env, netAddressBits groupAddress,
 }
 
 Groupsock*
-GroupsockLookupTable::Fetch(UsageEnvironment& env, netAddressBits groupAddress,
-		netAddressBits sourceFilterAddr, Port port, Boolean& isNew) {
+GroupsockLookupTable::Fetch(DP_U16 scheID, UsageEnvironment& env,
+		netAddressBits groupAddress, netAddressBits sourceFilterAddr, Port port,
+		Boolean& isNew) {
 	isNew = False;
 	Groupsock* groupsock;
 	do {
 		groupsock = (Groupsock*) fTable.Lookup(groupAddress, sourceFilterAddr,
 				port);
 		if (groupsock == NULL) { // we need to create one:
-			groupsock = AddNew(env, groupAddress, sourceFilterAddr, port, 0);
+			groupsock = AddNew(scheID, env, groupAddress, sourceFilterAddr,
+					port, 0);
 			if (groupsock == NULL)
 				break;
 			isNew = True;
@@ -636,7 +638,7 @@ Boolean GroupsockLookupTable::Remove(Groupsock const* groupsock) {
 			groupsock->sourceFilterAddress().s_addr, groupsock->port());
 }
 
-Groupsock* GroupsockLookupTable::AddNew(UsageEnvironment& env,
+Groupsock* GroupsockLookupTable::AddNew(DP_U16 scheID, UsageEnvironment& env,
 		netAddressBits groupAddress, netAddressBits sourceFilterAddress,
 		Port port, u_int8_t ttl) {
 	Groupsock* groupsock;
@@ -645,12 +647,13 @@ Groupsock* GroupsockLookupTable::AddNew(UsageEnvironment& env,
 		groupAddr.s_addr = groupAddress;
 		if (sourceFilterAddress == netAddressBits(~0)) {
 			// regular, ISM groupsock
-			groupsock = new Groupsock(env, groupAddr, port, ttl);
+			groupsock = new Groupsock(scheID, env, groupAddr, port, ttl);
 		} else {
 			// SSM groupsock
 			struct in_addr sourceFilterAddr;
 			sourceFilterAddr.s_addr = sourceFilterAddress;
-			groupsock = new Groupsock(env, groupAddr, sourceFilterAddr, port);
+			groupsock = new Groupsock(scheID, env, groupAddr, sourceFilterAddr,
+					port);
 		}
 
 		if (groupsock == NULL || groupsock->socketNum() < 0)

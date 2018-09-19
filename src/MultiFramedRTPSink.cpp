@@ -7,7 +7,7 @@
 
 #include "MultiFramedRTPSink.h"
 #include "GroupsockHelper.h"
-
+#include "CommonPlay.h"
 ////////// MultiFramedRTPSink //////////
 
 void MultiFramedRTPSink::setPacketSizes(unsigned preferredPacketSize,
@@ -407,7 +407,7 @@ void MultiFramedRTPSink::sendPacketIfNecessary() {
 		}
 
 		// Delay this amount of time:
-		nextTask() = envir().taskScheduler().scheduleDelayedTask(uSecondsToGo,
+		nextTask() = envir().taskScheduler(fcpObj->_fClientID / 10)->scheduleDelayedTask(uSecondsToGo,
 				(TaskFunc*) sendNext, this, NULL);
 	}
 }

@@ -9,6 +9,7 @@
 #include "RTCP.h"
 #include "GroupsockHelper.h"
 #include "rtcp_from_spec.h"
+#include "CommonPlay.h"
 #include <iostream>
 using namespace std;
 #if defined(__WIN32__) || defined(_WIN32) || defined(_QNX4)
@@ -178,7 +179,7 @@ RTCPInstance::~RTCPInstance() {
 	fTypeOfEvent = EVENT_BYE; // not used, but...
 	sendBYE();
 
-	cout << "BYEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE"<<endl;
+	cout << "BYEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE" << endl;
 	if (fSource != NULL && fSource->RTPgs() == fRTCPInterface.gs()) {
 		// We were receiving RTCP reports that were multiplexed with RTP, so tell the RTP source
 		// to stop giving them to us:
@@ -386,7 +387,7 @@ void RTCPInstance::setStreamSocket(int sockNum, DP_U8 streamChannelId) {
 void RTCPInstance::addStreamSocket(int sockNum, DP_U8 streamChannelId) {
 	cout << "RTCP add Stream socket `````````````````````````````````" << endl;
 	// First, turn off background read handling for the default (UDP) socket:
-	envir().taskScheduler().turnOffBackgroundReadHandling(
+	envir().taskScheduler(fcpObj->_fClientID / 10)->turnOffBackgroundReadHandling(
 			fRTCPInterface.gs()->socketNum());
 
 	// Add the RTCP-over-TCP interface:
@@ -1036,8 +1037,8 @@ void RTCPInstance::addRR() {
 	enqueueCommonReportSuffix();
 }
 
-void RTCPInstance::enqueueCommonReportPrefix(DP_U8 packetType,
-		u_int32_t SSRC, unsigned numExtraWords) {
+void RTCPInstance::enqueueCommonReportPrefix(DP_U8 packetType, u_int32_t SSRC,
+		unsigned numExtraWords) {
 	unsigned numReportingSources;
 	if (fSource == NULL) {
 		numReportingSources = 0; // we don't receive anything
@@ -1195,12 +1196,14 @@ void RTCPInstance::schedule(double nextTime) {
 	fprintf(stderr, "schedule(%f->%f)\n", secondsToDelay, nextTime);
 #endif
 	int64_t usToGo = (int64_t) (secondsToDelay * 1000000);
-	nextTask() = envir().taskScheduler().scheduleDelayedTask(usToGo,
-			(TaskFunc*) RTCPInstance::onExpire, this, fcpObj);
+	nextTask() =
+			envir().taskScheduler(fcpObj->_fClientID / 10)->scheduleDelayedTask(
+					usToGo, (TaskFunc*) RTCPInstance::onExpire, this, fcpObj);
 }
 
 void RTCPInstance::reschedule(double nextTime) {
-	envir().taskScheduler().unscheduleDelayedTask(nextTask());
+	envir().taskScheduler(fcpObj->_fClientID / 10)->unscheduleDelayedTask(
+			nextTask());
 	schedule(nextTime);
 }
 

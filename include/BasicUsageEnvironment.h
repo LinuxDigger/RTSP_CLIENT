@@ -12,8 +12,22 @@
 
 class BasicUsageEnvironment: public BasicUsageEnvironment0 {
 public:
-	static BasicUsageEnvironment* createNew(TaskScheduler& taskScheduler,
-			unsigned short clientID);
+	//old
+//	static BasicUsageEnvironment* createNew(TaskScheduler& taskScheduler,
+//			unsigned short clientID);
+
+	static BasicUsageEnvironment* createNew(
+			vector<TaskScheduler*> * taskScheduler, unsigned short clientID);
+
+//	DP_U16 getAIdleClientFromEnv() {
+//		for (DP_U16 i = 0; i < fScheduler.size(); i++) {
+//			if (!fScheduler[i].isClientSetFull()) {
+//				return fScheduler[i].getIdleClientNum();
+//			} else if (i == fScheduler.size() - 1)
+//				return 0;
+//		}
+//		return 0;
+//	}
 
 	// redefined virtual functions:
 	virtual int getErrno() const;
@@ -25,7 +39,7 @@ public:
 	virtual UsageEnvironment& operator<<(void* p);
 
 protected:
-	BasicUsageEnvironment(TaskScheduler& taskScheduler,
+	BasicUsageEnvironment(vector<TaskScheduler*> * taskScheduler,
 			unsigned short clientID);
 	// called only by "createNew()" (or subclass constructors)
 	virtual ~BasicUsageEnvironment();

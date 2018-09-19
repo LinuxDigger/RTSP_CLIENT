@@ -32,7 +32,7 @@ public:
   virtual void reportBackgroundError();
 
 protected:
-  BasicUsageEnvironment0(TaskScheduler& taskScheduler,unsigned short clientID);
+  BasicUsageEnvironment0(vector<TaskScheduler*> *taskScheduler,unsigned short clientID);
   virtual ~BasicUsageEnvironment0();
 
 private:

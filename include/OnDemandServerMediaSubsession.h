@@ -157,7 +157,7 @@ public:
 
 class StreamState {
 public:
-	StreamState(OnDemandServerMediaSubsession& master,
+	StreamState(DP_U16 scheID,OnDemandServerMediaSubsession& master,
 			Port const& serverRTPPort, Port const& serverRTCPPort,
 			RTPSink* rtpSink, BasicUDPSink* udpSink, unsigned totalBW,
 			FramedSource* mediaSource, Groupsock* rtpGS, Groupsock* rtcpGS);
@@ -221,6 +221,7 @@ private:
 
 	Groupsock* fRTPgs;
 	Groupsock* fRTCPgs;
+	DP_U16 _u16ScheID;
 };
 
 #endif /* INCLUDE_ONDEMANDSERVERMEDIASUBSESSION_H_ */

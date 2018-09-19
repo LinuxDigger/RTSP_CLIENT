@@ -13,6 +13,7 @@
 #include "TaskScheduler.h"
 //#include "CommonPlay.h"
 #include <iostream>
+#include <vector>
 using namespace std;
 
 class UsageEnvironment {
@@ -20,14 +21,29 @@ public:
 	Boolean reclaim();
 	// returns True iff we were actually able to delete our object
 
-	// task scheduler:
-	TaskScheduler& taskScheduler() const {
-//		fScheduler.doEventLoop(watchVariable);
-//		cout <<"TaskScheduler& taskScheduler() const:: "<< fScheduler._mSockfdCpSet[5]->ourAuthenticator->password()<<endl;
-		return fScheduler;
+	//old
+//	TaskScheduler& taskScheduler() const {
+//		return fScheduler;
+//	}
+	TaskScheduler* taskScheduler(DP_U32 schedulerNum) const {
+		if (schedulerNum < fScheduler.size())
+			return fScheduler[schedulerNum];
+		else
+			return (TaskScheduler*) NULL;
 	}
-	void setFScheduler(const TaskScheduler &scheduler) {
-		fScheduler = scheduler;
+
+	void setFScheduler(const vector<TaskScheduler*> *scheduler) {
+		fScheduler = *scheduler;
+	}
+
+	DP_U16 getAIdleClientFromEnv() {
+		for (DP_U16 i = 0; i < fScheduler.size(); i++) {
+			if (!fScheduler[i]->isClientSetFull()) {
+				return (fScheduler[i]->getIdleClientNum() + i * 10);
+			} else if (i == fScheduler.size() - 1)
+				return 0;
+		}
+		return 0;
 	}
 
 	// result message handling:
@@ -67,10 +83,14 @@ public:
 
 	unsigned short _u16CliID;
 
-	TaskScheduler& fScheduler;
+	//old
+//	TaskScheduler& fScheduler;
+
+	vector<TaskScheduler*> fScheduler;
 
 protected:
-	UsageEnvironment(TaskScheduler& scheduler,unsigned short clientID); // abstract base class
+	UsageEnvironment(vector<TaskScheduler*> * scheduler,
+			unsigned short clientID); // abstract base class
 	virtual ~UsageEnvironment(); // we are deleted only by reclaim()
 
 private:

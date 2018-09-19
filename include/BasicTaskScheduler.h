@@ -10,19 +10,25 @@
 
 #include "NetCommon.h"
 #include "BasicTaskScheduler0.h"
+#include <vector>
 
 class BasicTaskScheduler: public BasicTaskScheduler0 {
 public:
-	static BasicTaskScheduler* createNew(unsigned maxSchedulerGranularity =
-			10000/*microseconds*/,CommonPlay *cpObj=NULL);
+//	static BasicTaskScheduler* createNew(unsigned maxSchedulerGranularity =
+//			10000/*microseconds*/, CommonPlay *cpObj = NULL);
 	// "maxSchedulerGranularity" (default value: 10 ms) specifies the maximum time that we wait (in "select()") before
 	// returning to the event loop to handle non-socket or non-timer-based events, such as 'triggered events'.
 	// You can change this is you wish (but only if you know what you're doing!), or set it to 0, to specify no such maximum time.
 	// (You should set it to 0 only if you know that you will not be using 'event triggers'.)
+	static vector<TaskScheduler*> *createNew(DP_U32 maxConnectionCnt,
+			DP_U32 urlNumsEachSche,
+			unsigned maxSchedulerGranularity = 10000/*microseconds*/,
+			CommonPlay *cpObj = NULL);
 	virtual ~BasicTaskScheduler();
 
 protected:
-	BasicTaskScheduler(unsigned maxSchedulerGranularity,CommonPlay *cpObj);
+	BasicTaskScheduler(DP_U32 urlNumsEachSche, unsigned maxSchedulerGranularity,
+			CommonPlay *cpObj);
 	// called only by "createNew()"
 
 	static void schedulerTickTask(void* clientData, CommonPlay *cpObj);
@@ -44,7 +50,6 @@ protected:
 	fd_set fReadSet;
 	fd_set fWriteSet;
 	fd_set fExceptionSet;
-
 
 private:
 #if defined(__WIN32__) || defined(_WIN32)

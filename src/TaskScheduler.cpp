@@ -7,8 +7,15 @@
 
 #include "TaskScheduler.h"
 
-TaskScheduler::TaskScheduler() :
-		pausePlay(false) {
+pthread_mutex_t TaskScheduler::mutex;
+
+TaskScheduler::TaskScheduler(DP_U32 urlNumsEachSche) :
+		pausePlay(false), _bClientSetIsFull(false), _u32UrlNumsEachSche(
+				urlNumsEachSche), _bScheThreadStatus(false) {
+	pthread_mutex_init(&mutex, NULL);
+	for (DP_U16 i = 0; i < (DP_U16) _u32UrlNumsEachSche; i++) {
+		_mClientSet[i] = NULL;
+	}
 }
 
 TaskScheduler::~TaskScheduler() {

@@ -46,11 +46,11 @@ public:
 	void setStreamSocket(int sockNum, DP_U8 streamChannelId);
 	void addStreamSocket(int sockNum, DP_U8 streamChannelId);
 	void removeStreamSocket(int sockNum, DP_U8 streamChannelId);
-	static void setServerRequestAlternativeByteHandler(UsageEnvironment& env,
-			int socketNum, ServerRequestAlternativeByteHandler* handler,
-			void* clientData);
-	static void clearServerRequestAlternativeByteHandler(UsageEnvironment& env,
-			int socketNum);
+	static void setServerRequestAlternativeByteHandler(DP_U16 scheID,
+			UsageEnvironment& env, int socketNum,
+			ServerRequestAlternativeByteHandler* handler, void* clientData);
+	static void clearServerRequestAlternativeByteHandler(DP_U16 scheID,
+			UsageEnvironment& env, int socketNum);
 
 	Boolean sendPacket(DP_U8* packet, unsigned packetSize);
 	void startNetworkReading(TaskScheduler::BackgroundHandlerProc* handlerProc);
@@ -71,6 +71,10 @@ public:
 		return fOwner->envir();
 	}
 
+	Medium *getOwnerMedium() const {
+		return fOwner;
+	}
+
 	void setAuxilliaryReadHandler(AuxHandlerFunc* handlerFunc,
 			void* handlerClientData) {
 		fAuxReadHandlerFunc = handlerFunc;
@@ -80,19 +84,19 @@ public:
 	void forgetOurGroupsock() {
 		fGS = NULL;
 	}
+	friend class SocketDescriptor;
 	// This may be called - *only immediately prior* to deleting this - to prevent our destructor
 	// from turning off background reading on the 'groupsock'.  (This is in case the 'groupsock'
 	// is also being read from elsewhere.)
 
 private:
 	// Helper functions for sending a RTP or RTCP packet over a TCP connection:
-	Boolean sendRTPorRTCPPacketOverTCP(DP_U8* packet,
-			unsigned packetSize, int socketNum, DP_U8 streamChannelId);
+	Boolean sendRTPorRTCPPacketOverTCP(DP_U8* packet, unsigned packetSize,
+			int socketNum, DP_U8 streamChannelId);
 	Boolean sendDataOverTCP(int socketNum, u_int8_t const* data,
 			unsigned dataSize, Boolean forceSendToSucceed);
 
 private:
-	friend class SocketDescriptor;
 	Medium* fOwner;
 	Groupsock* fGS;
 	tcpStreamRecord* fTCPStreams; // optional, for RTP-over-TCP streaming/receiving

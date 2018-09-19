@@ -6,6 +6,7 @@
  */
 
 #include "FramedSource.h"
+#include "CommonPlay.h"
 #include <stdlib.h>
 #include <iostream>
 using namespace std;
@@ -109,7 +110,7 @@ void FramedSource::stopGettingFrames() {
 
 void FramedSource::doStopGettingFrames() {
 	// Default implementation: Do nothing except cancel any pending 'delivery' task:
-	envir().taskScheduler().unscheduleDelayedTask(nextTask());
+	envir().taskScheduler(fcpObj->_fClientID / 10)->unscheduleDelayedTask(nextTask());
 	// Subclasses may wish to redefine this function.
 }
 

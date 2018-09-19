@@ -17,10 +17,10 @@ Boolean UsageEnvironment::reclaim() {
 	return False;
 }
 
-UsageEnvironment::UsageEnvironment(TaskScheduler& scheduler,
+UsageEnvironment::UsageEnvironment(vector<TaskScheduler*> *scheduler,
 		unsigned short clientID) :
 		liveMediaPriv(NULL), groupsockPriv(NULL), _u16CliID(clientID), fScheduler(
-				scheduler) {
+				*scheduler) {
 }
 
 UsageEnvironment::~UsageEnvironment() {
@@ -30,7 +30,9 @@ UsageEnvironment &UsageEnvironment::operator=(const UsageEnvironment &env) {
 	if (this != &env) {
 		liveMediaPriv = env.liveMediaPriv;
 		groupsockPriv = env.groupsockPriv;
-		setFScheduler(env.taskScheduler());
+		//old
+//		setFScheduler(env.taskScheduler());
+		fScheduler = env.fScheduler;
 	}
 	return *this;
 }

@@ -83,7 +83,9 @@ unsigned RTSPClient::sendSetupCommand(MediaSubsession& subsession,
 unsigned RTSPClient::sendPlayCommand(MediaSession& session,
 		responseHandler* responseHandler, double start, double end, float scale,
 		Authenticator* authenticator) {
-	cout << "TSPClient::sendPlayCommand(MediaSession& sessio ********************"<<endl;
+	cout
+			<< "TSPClient::sendPlayCommand(MediaSession& sessio ********************"
+			<< endl;
 	if (fCurrentAuthenticator < authenticator)
 		fCurrentAuthenticator = *authenticator;
 	sendDummyUDPPackets(session); // hack to improve NAT traversal
@@ -439,7 +441,7 @@ RTSPClient::RTSPClient(UsageEnvironment& env, char const* rtspURL,
 		int verbosityLevel, char const* applicationName,
 		portNumBits tunnelOverHTTPPortNum, int socketNumToServer,
 		CommonPlay *cpObj) :
-		Medium(env), desiredMaxIncomingPacketSize(0), fVerbosityLevel(1), fCSeq(
+		Medium(env, cpObj), desiredMaxIncomingPacketSize(0), fVerbosityLevel(1), fCSeq(
 				1), fAllowBasicAuthentication(True), fServerAddress(0), fcpObj(
 				cpObj), fTunnelOverHTTPPortNum(tunnelOverHTTPPortNum), fUserAgentHeaderStr(
 		NULL), fUserAgentHeaderStrLen(0), fInputSocketNum(-1), fOutputSocketNum(
@@ -455,8 +457,9 @@ RTSPClient::RTSPClient(UsageEnvironment& env, char const* rtspURL,
 		// This socket number is (assumed to be) already connected to the server.
 		// Use it, and arrange to handle responses to requests sent on it:
 		fInputSocketNum = fOutputSocketNum = socketNumToServer;
-		envir().taskScheduler().setBackgroundHandling(fInputSocketNum,
-		SOCKET_READABLE | SOCKET_EXCEPTION,
+		envir().taskScheduler(fcpObj->_fClientID / 10)->setBackgroundHandling(
+				fInputSocketNum,
+				SOCKET_READABLE | SOCKET_EXCEPTION,
 				(TaskScheduler::BackgroundHandlerProc*) &incomingDataHandler,
 				this);
 	}
@@ -511,8 +514,8 @@ void RTSPClient::setBaseURL(char const* url) {
 
 int RTSPClient::grabSocket() {
 	int inputSocket = fInputSocketNum;
-	RTPInterface::clearServerRequestAlternativeByteHandler(envir(),
-			fInputSocketNum); // in case we were receiving RTP-over-TCP
+	RTPInterface::clearServerRequestAlternativeByteHandler(
+			fcpObj->_fClientID / 10, envir(), fInputSocketNum); // in case we were receiving RTP-over-TCP
 	fInputSocketNum = -1;
 
 	return inputSocket;
@@ -541,7 +544,8 @@ unsigned RTSPClient::sendRequest(RequestRecord* request) {
 					<< fcpObj->_fClientID << " connectResult "
 					<< fInputSocketNum << " pass "
 					<< fcpObj->ourAuthenticator->password() << endl;
-			envir().fScheduler._mSockfdCpSet[fInputSocketNum] = fcpObj;
+			envir().fScheduler[fcpObj->_fClientID / 10]->_mSockfdCpSet[fInputSocketNum] =
+					fcpObj;
 		}
 		if (connectionIsPending) {
 			fRequestsAwaitingConnection.enqueue(request);
@@ -954,12 +958,14 @@ Boolean RTSPClient::isRTSPClient() const {
 
 void RTSPClient::resetTCPSockets() {
 	if (fInputSocketNum >= 0) {
-		RTPInterface::clearServerRequestAlternativeByteHandler(envir(),
-				fInputSocketNum); // in case we were receiving RTP-over-TCP
-		envir().taskScheduler().disableBackgroundHandling(fInputSocketNum);
+		RTPInterface::clearServerRequestAlternativeByteHandler(
+				fcpObj->_fClientID / 10, envir(), fInputSocketNum); // in case we were receiving RTP-over-TCP
+		envir().taskScheduler(fcpObj->_fClientID / 10)->disableBackgroundHandling(
+				fInputSocketNum);
 		::closeSocket(fInputSocketNum);
 		if (fOutputSocketNum != fInputSocketNum) {
-			envir().taskScheduler().disableBackgroundHandling(fOutputSocketNum);
+			envir().taskScheduler(fcpObj->_fClientID / 10)->disableBackgroundHandling(
+					fOutputSocketNum);
 			::closeSocket(fOutputSocketNum);
 		}
 	}
@@ -1009,8 +1015,9 @@ int RTSPClient::openConnection() {
 			break;
 		else if (connectResult > 0) {
 			// The connection succeeded.  Arrange to handle responses to requests sent on it:
-			envir().taskScheduler().setBackgroundHandling(fInputSocketNum,
-			SOCKET_READABLE | SOCKET_EXCEPTION,
+			envir().taskScheduler(fcpObj->_fClientID / 10)->setBackgroundHandling(
+					fInputSocketNum,
+					SOCKET_READABLE | SOCKET_EXCEPTION,
 					(TaskScheduler::BackgroundHandlerProc*) &incomingDataHandler,
 					this);
 		}
@@ -1033,8 +1040,9 @@ int RTSPClient::connectToServer(int socketNum, portNumBits remotePortNum) {
 		int const err = envir().getErrno();
 		if (err == EINPROGRESS || err == EWOULDBLOCK) {
 			// The connection is pending; we'll need to handle it later.  Wait for our socket to be 'writable', or have an exception.
-			envir().taskScheduler().setBackgroundHandling(socketNum,
-			SOCKET_WRITABLE | SOCKET_EXCEPTION,
+			envir().taskScheduler(fcpObj->_fClientID / 10)->setBackgroundHandling(
+					socketNum,
+					SOCKET_WRITABLE | SOCKET_EXCEPTION,
 					(TaskScheduler::BackgroundHandlerProc*) &connectionHandler,
 					this);
 			return 0;
@@ -1368,8 +1376,9 @@ Boolean RTSPClient::handleSETUPResponse(MediaSubsession& subsession,
 						subsession.rtcpChannelId);
 
 			}
-			RTPInterface::setServerRequestAlternativeByteHandler(envir(),
-					fInputSocketNum, handleAlternativeRequestByte, this);
+			RTPInterface::setServerRequestAlternativeByteHandler(
+					fcpObj->_fClientID / 10, envir(), fInputSocketNum,
+					handleAlternativeRequestByte, this);
 		} else {
 			// Normal case.
 			// Set the RTP and RTCP sockets' destination address and port from the information in the SETUP response (if present):
@@ -1608,8 +1617,9 @@ void RTSPClient::handleAlternativeRequestByte1(u_int8_t requestByte) {
 		handleResponseBytes(-1, NULL);
 	} else if (requestByte == 0xFE) {
 		// Another hack: The new handler of the input TCP socket no longer needs it, so take back control:
-		envir().taskScheduler().setBackgroundHandling(fInputSocketNum,
-		SOCKET_READABLE | SOCKET_EXCEPTION,
+		envir().taskScheduler(fcpObj->_fClientID / 10)->setBackgroundHandling(
+				fInputSocketNum,
+				SOCKET_READABLE | SOCKET_EXCEPTION,
 				(TaskScheduler::BackgroundHandlerProc*) &incomingDataHandler,
 				this);
 	} else {
@@ -1748,9 +1758,11 @@ void RTSPClient::connectionHandler(void* instance, int /*mask*/,
 
 void RTSPClient::connectionHandler1() {
 	// Restore normal handling on our sockets:
-	envir().taskScheduler().disableBackgroundHandling(fOutputSocketNum); ////fHandlers changed  -- next -> NULL
-	envir().taskScheduler().setBackgroundHandling(fInputSocketNum,
-	SOCKET_READABLE | SOCKET_EXCEPTION,
+	envir().taskScheduler(fcpObj->_fClientID / 10)->disableBackgroundHandling(
+			fOutputSocketNum); ////fHandlers changed  -- next -> NULL
+	envir().taskScheduler(fcpObj->_fClientID / 10)->setBackgroundHandling(
+			fInputSocketNum,
+			SOCKET_READABLE | SOCKET_EXCEPTION,
 			(TaskScheduler::BackgroundHandlerProc*) &incomingDataHandler, this);
 
 	// Move all requests awaiting connection into a new, temporary queue, to clear "fRequestsAwaitingConnection"
@@ -1832,7 +1844,8 @@ static char* getLine(char* startOfLine) {
 }
 
 void RTSPClient::handleResponseBytes(int newBytesRead, CommonPlay *cpObj) {
-	cout << "cpObj::handleResponseBytes() \\\\\\\\\\\\  " << cpObj->_fClientID << endl;
+	cout << "cpObj::handleResponseBytes() \\\\\\\\\\\\  " << cpObj->_fClientID
+			<< endl;
 	do {
 		if (newBytesRead >= 0
 				&& (unsigned) newBytesRead < fResponseBufferBytesLeft)
