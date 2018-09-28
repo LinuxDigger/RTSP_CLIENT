@@ -24,21 +24,21 @@ vector<TaskScheduler*> *BasicTaskScheduler::createNew(DP_U32 maxConnectionCnt,
 	DP_U32 i = 0;
 	for (i = 0; i < maxConnectionCnt / urlNumsEachSche; i++) {
 		taskSche.push_back(
-				new BasicTaskScheduler(urlNumsEachSche, maxSchedulerGranularity,
-						cpObj));
+				new BasicTaskScheduler(i, urlNumsEachSche,
+						maxSchedulerGranularity, cpObj));
 	}
 	if ((maxConnectionCnt - i * urlNumsEachSche)) {
 		taskSche.push_back(
-				new BasicTaskScheduler(urlNumsEachSche, maxSchedulerGranularity,
-						cpObj));
+				new BasicTaskScheduler(i, urlNumsEachSche,
+						maxSchedulerGranularity, cpObj));
 	}
 	return &taskSche;
 
 }
 
-BasicTaskScheduler::BasicTaskScheduler(DP_U32 urlNumsEachSche,
+BasicTaskScheduler::BasicTaskScheduler(DP_U16 scheIndex, DP_U32 urlNumsEachSche,
 		unsigned maxSchedulerGranularity, CommonPlay *cpObj) :
-		BasicTaskScheduler0(urlNumsEachSche, cpObj), fMaxSchedulerGranularity(
+		BasicTaskScheduler0(scheIndex, urlNumsEachSche, cpObj), fMaxSchedulerGranularity(
 				maxSchedulerGranularity), fMaxNumSockets(0)
 #if defined(__WIN32__) || defined(_WIN32)
 , fDummySocketNum(-1)
@@ -180,7 +180,7 @@ void BasicTaskScheduler::SingleStep(unsigned maxDelayTime) {
 //			cout << "urllllllllllllllllllllllllfafter 0fLastHandledSocketNum0 "<<fLastHandledSocketNum<<endl;
 				(*handler->handlerProc)(handler->clientData, resultConditionSet,
 						_mSockfdCpSet[fLastHandledSocketNum]);///////sending  cseq 2处理和RTSP服务器的通信协议的商定
-			break;
+//			break;
 		}
 	}
 
@@ -207,7 +207,7 @@ void BasicTaskScheduler::SingleStep(unsigned maxDelayTime) {
 				// in case the handler calls "doEventLoop()" reentrantly.
 				(*handler->handlerProc)(handler->clientData, resultConditionSet,
 						_mSockfdCpSet[fLastHandledSocketNum]);  ///处理真正的视频和音频数据
-				break;
+//				break;
 			}
 		}
 		if (handler == NULL)

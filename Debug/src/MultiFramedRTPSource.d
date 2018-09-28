@@ -1,7 +1,7 @@
 src/MultiFramedRTPSource.o: ../src/MultiFramedRTPSource.cpp \
- /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/X86/include/Rtsp_server.h \
- /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/X86/include/Rtsp_sys.h \
- /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/X86/include/Rtsp_sys.h \
+ /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/arm400/X86/include/Rtsp_server.h \
+ /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/arm400/X86/include/Rtsp_sys.h \
+ /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/arm400/X86/include/Rtsp_sys.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/MultiFramedRTPSource.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/RTPSource.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/FramedSource.h \
@@ -10,10 +10,12 @@ src/MultiFramedRTPSource.o: ../src/MultiFramedRTPSource.cpp \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/liveMedia_version.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/HashTable.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/Boolean.h \
+ /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/DP_RTSP_CLIENT_GlobDefine.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/UsageEnvironment.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/NetCommon.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/TaskScheduler.h \
- /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/DP_RTSP_CLIENT_GlobDefine.h \
+ /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/Logger.h \
+ /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/Mutex.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/GroupSock.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/groupsock_version.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/NetInterface.h \
@@ -51,14 +53,13 @@ src/MultiFramedRTPSource.o: ../src/MultiFramedRTPSource.cpp \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/EfficientAddOrUpdate.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/EfficientAddOrUpdate.hpp \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/DP_RTSP_CLIENT_DataQueue.h \
- /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/DP_RTSP_CLIENT_DataStructureDef.h \
- /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/Mutex.h
+ /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/DP_RTSP_CLIENT_DataStructureDef.h
 
-/home/jhb/nfs/TerminalC++Workspace/RTSP_Client/X86/include/Rtsp_server.h:
+/home/jhb/nfs/TerminalC++Workspace/RTSP_Client/arm400/X86/include/Rtsp_server.h:
 
-/home/jhb/nfs/TerminalC++Workspace/RTSP_Client/X86/include/Rtsp_sys.h:
+/home/jhb/nfs/TerminalC++Workspace/RTSP_Client/arm400/X86/include/Rtsp_sys.h:
 
-/home/jhb/nfs/TerminalC++Workspace/RTSP_Client/X86/include/Rtsp_sys.h:
+/home/jhb/nfs/TerminalC++Workspace/RTSP_Client/arm400/X86/include/Rtsp_sys.h:
 
 /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/MultiFramedRTPSource.h:
 
@@ -76,13 +77,17 @@ src/MultiFramedRTPSource.o: ../src/MultiFramedRTPSource.cpp \
 
 /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/Boolean.h:
 
+/home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/DP_RTSP_CLIENT_GlobDefine.h:
+
 /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/UsageEnvironment.h:
 
 /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/NetCommon.h:
 
 /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/TaskScheduler.h:
 
-/home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/DP_RTSP_CLIENT_GlobDefine.h:
+/home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/Logger.h:
+
+/home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/Mutex.h:
 
 /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/GroupSock.h:
 
@@ -159,5 +164,3 @@ src/MultiFramedRTPSource.o: ../src/MultiFramedRTPSource.cpp \
 /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/DP_RTSP_CLIENT_DataQueue.h:
 
 /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/DP_RTSP_CLIENT_DataStructureDef.h:
-
-/home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/Mutex.h:

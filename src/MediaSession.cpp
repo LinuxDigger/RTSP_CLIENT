@@ -730,9 +730,10 @@ MediaSubsessionIterator::~MediaSubsessionIterator() {
 //segmentation fault
 MediaSubsession* MediaSubsessionIterator::next() {
 	MediaSubsession* result = fNextPtr;
-	if (fNextPtr != NULL)
+	if (fNextPtr != NULL) {
 		//fNext seg fault
 		fNextPtr = fNextPtr->fNext;
+	}
 	return result;
 }
 
@@ -1005,8 +1006,8 @@ Boolean MediaSubsession::initiate(int useSpecialRTPoffset) {
 		// Try to use a big receive buffer for RTP - at least 0.1 second of
 		// specified bandwidth and at least 50 KB
 		unsigned rtpBufSize = fBandwidth * 25 / 2; // 1 kbps * 0.1 s = 12.5 bytes
-		if (rtpBufSize < 50 * 1024)
-			rtpBufSize = 50 * 1024;
+		if (rtpBufSize < 1024 * 1024 * 5)
+			rtpBufSize = 1024 * 1024 * 5;
 		increaseReceiveBufferTo(env(), fRTPSocket->socketNum(), rtpBufSize);
 
 		if (isSSM() && fRTCPSocket != NULL) {
@@ -1385,7 +1386,9 @@ Boolean MediaSubsession::parseSDPAttribute_fmtp(char const* sdpLine) {
 				int fps = 0;
 				//sprop-parameter-sets 264
 				//sprop-sps 265
-				DP_U8 ssbackup[iPos] = { 0 };
+//				DP_U8 ssbackup[iPos] = { 0 };
+				DP_U8 *ssbackup = new DP_U8[iPos];
+				memset(ssbackup, 0, iPos);
 				memcpy(ssbackup, base64ss, iPos);
 				DP_U8 nal_unit_type = (ssbackup[0] & 0x7E) >> 1;
 				printf("nal_unit_type::::::::::::: %d", nal_unit_type);
@@ -1406,6 +1409,7 @@ Boolean MediaSubsession::parseSDPAttribute_fmtp(char const* sdpLine) {
 							<< " nal_length_size : " << params.nal_length_size
 							<< endl;
 				}
+				delete[] ssbackup;
 			}
 			// Move to the next parameter assignment string:
 			while (*sdpLine != '\0' && *sdpLine != '\r' && *sdpLine != '\n'
@@ -1624,6 +1628,7 @@ Boolean MediaSubsession::createSourceObjects(int useSpecialRTPoffset) {
 					|| strcmp(fCodecName, "X-QUICKTIME") == 0) {
 				// Generic QuickTime streams, as defined in
 				// <http://developer.apple.com/quicktime/icefloe/dispatch026.html>
+				//seg fault !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!11
 				char* mimeType = new char[strlen(mediumName())
 						+ strlen(codecName()) + 2];
 				sprintf(mimeType, "%s/%s", mediumName(), codecName());

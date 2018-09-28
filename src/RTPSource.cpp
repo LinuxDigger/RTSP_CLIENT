@@ -38,7 +38,7 @@ Boolean RTPSource::isRTPSource() const {
 RTPSource::RTPSource(UsageEnvironment& env, Groupsock* RTPgs,
 		DP_U8 rtpPayloadFormat, u_int32_t rtpTimestampFrequency,
 		CommonPlay *cpObj) :
-		FramedSource(env, cpObj), fRTPInterface(this, RTPgs), fCurPacketRTPSeqNum(
+		FramedSource(env, cpObj), fRTPInterface(cpObj, this, RTPgs), fCurPacketRTPSeqNum(
 				0), fCurPacketRTPTimestamp(0), fCurPacketMarkerBit(false), fCurPacketHasBeenSynchronizedUsingRTCP(
 				False), fLastReceivedSSRC(0), fRTCPInstanceForMultiplexedRTCPPackets(
 		NULL), fRTPPayloadFormat(rtpPayloadFormat), fTimestampFrequency(

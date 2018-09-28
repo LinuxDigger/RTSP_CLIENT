@@ -25,10 +25,44 @@
 #include "QuickTimeFileSink.h"
 #include "DigestAuthentication.h"
 
+#define REQUEST_STREAMING_OVER_TCP False
+
+class StreamClientState {
+public:
+	StreamClientState(UsageEnvironment& env, CommonPlay *cpObj);
+	virtual ~StreamClientState();
+
+public:
+	UsageEnvironment* _env;
+	CommonPlay *_cpObj;
+	MediaSubsessionIterator* iter;
+	MediaSession* session;
+	MediaSubsession* subsession;
+	TaskToken streamTimerTask;
+	double duration;
+};
+
+class OurRTSPClient: public RTSPClient {
+public:
+	static OurRTSPClient* createNew(UsageEnvironment& env, CommonPlay *cpObj,
+			char const* rtspURL, int verbosityLevel = 0,
+			char const* applicationName = NULL,
+			portNumBits tunnelOverHTTPPortNum = 0);
+
+protected:
+	OurRTSPClient(UsageEnvironment& env, CommonPlay *cpObj, char const* rtspURL,
+			int verbosityLevel, char const* applicationName,
+			portNumBits tunnelOverHTTPPortNum);
+	// called only by createNew();
+	virtual ~OurRTSPClient();
+
+public:
+	StreamClientState scs;
+};
+
 typedef void TaskFunc(void* clientData, CommonPlay *cpObj);
 typedef void* TaskToken;
-//class AVIFileSink;
-//class UsageEnvironment;
+
 class CommonPlay {
 public:
 
@@ -85,13 +119,13 @@ public:
 
 	Medium* createClient(UsageEnvironment& env, char const* url,
 			CommonPlay *cpObj) {
-		return ourRTSPClient = RTSPClient::createNew(env, url, cpObj, -1, NULL,
-				tunnelOverHTTPPortNum);
+		return ourRTSPClient = OurRTSPClient::createNew(env, cpObj, url, -1,
+		NULL, tunnelOverHTTPPortNum);
 	}
-
-	void assignClient(Medium* client) {
-		ourRTSPClient = (RTSPClient*) client;
-	}
+//
+//	void assignClient(Medium* client) {
+//		ourRTSPClient = (OurRTSPClient*) client;
+//	}
 
 	void getOptions(RTSPClient::responseHandler* afterFunc) {
 		ourRTSPClient->sendOptionsCommand(afterFunc, ourAuthenticator);
@@ -134,6 +168,8 @@ public:
 
 	static void scheduleNextQOSMeasurement(CommonPlay *cpObj);
 	void setUsrnamePassword(const DP_C_S8 *usrname, const DP_C_S8 *password);
+	void setupNextSubsession(RTSPClient* rtspClient);
+	void shutdownStream(RTSPClient* rtspClient, int exitCode = 1);
 public:
 
 	char const* progName;
@@ -213,6 +249,7 @@ public:
 	struct timeval startTime;
 
 //openRTSP
+//	OurRTSPClient* ourRTSPClient;
 	RTSPClient* ourRTSPClient;
 	Boolean allowProxyServers;
 	Boolean controlConnectionUsesTCP;

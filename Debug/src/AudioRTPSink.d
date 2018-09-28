@@ -1,7 +1,7 @@
 src/AudioRTPSink.o: ../src/AudioRTPSink.cpp \
- /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/X86/include/Rtsp_server.h \
- /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/X86/include/Rtsp_sys.h \
- /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/X86/include/Rtsp_sys.h \
+ /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/arm400/X86/include/Rtsp_server.h \
+ /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/arm400/X86/include/Rtsp_sys.h \
+ /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/arm400/X86/include/Rtsp_sys.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/AudioRTPSink.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/MultiFramedRTPSink.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/RTPSink.h \
@@ -12,10 +12,12 @@ src/AudioRTPSink.o: ../src/AudioRTPSink.cpp \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/liveMedia_version.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/HashTable.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/Boolean.h \
+ /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/DP_RTSP_CLIENT_GlobDefine.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/UsageEnvironment.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/NetCommon.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/TaskScheduler.h \
- /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/DP_RTSP_CLIENT_GlobDefine.h \
+ /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/Logger.h \
+ /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/Mutex.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/RTPInterface.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/GroupSock.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/groupsock_version.h \
@@ -23,11 +25,11 @@ src/AudioRTPSink.o: ../src/AudioRTPSink.cpp \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/NetAddress.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/GroupEId.h
 
-/home/jhb/nfs/TerminalC++Workspace/RTSP_Client/X86/include/Rtsp_server.h:
+/home/jhb/nfs/TerminalC++Workspace/RTSP_Client/arm400/X86/include/Rtsp_server.h:
 
-/home/jhb/nfs/TerminalC++Workspace/RTSP_Client/X86/include/Rtsp_sys.h:
+/home/jhb/nfs/TerminalC++Workspace/RTSP_Client/arm400/X86/include/Rtsp_sys.h:
 
-/home/jhb/nfs/TerminalC++Workspace/RTSP_Client/X86/include/Rtsp_sys.h:
+/home/jhb/nfs/TerminalC++Workspace/RTSP_Client/arm400/X86/include/Rtsp_sys.h:
 
 /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/AudioRTPSink.h:
 
@@ -49,13 +51,17 @@ src/AudioRTPSink.o: ../src/AudioRTPSink.cpp \
 
 /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/Boolean.h:
 
+/home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/DP_RTSP_CLIENT_GlobDefine.h:
+
 /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/UsageEnvironment.h:
 
 /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/NetCommon.h:
 
 /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/TaskScheduler.h:
 
-/home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/DP_RTSP_CLIENT_GlobDefine.h:
+/home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/Logger.h:
+
+/home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/Mutex.h:
 
 /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/RTPInterface.h:
 

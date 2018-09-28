@@ -10,10 +10,10 @@
 
 ////////// BasicUsageEnvironment //////////
 
-BasicUsageEnvironment0::BasicUsageEnvironment0(vector<TaskScheduler*> *taskScheduler,
-		unsigned short clientID) :
+BasicUsageEnvironment0::BasicUsageEnvironment0(
+		vector<TaskScheduler*> *taskScheduler, unsigned short clientID) :
 		UsageEnvironment(taskScheduler, clientID), fBufferMaxSize(
-				RESULT_MSG_BUFFER_MAX) {
+		RESULT_MSG_BUFFER_MAX) {
 	reset();
 }
 
@@ -68,6 +68,7 @@ void BasicUsageEnvironment0::setResultErrMsg(MsgString msg, int err) {
 }
 
 void BasicUsageEnvironment0::appendToResultMsg(MsgString msg) {
+	return;
 	char* curPtr = &fResultMsgBuffer[fCurBufferSize];
 	unsigned spaceAvailable = fBufferMaxSize - fCurBufferSize;
 	unsigned msgLength = strlen(msg);
@@ -83,6 +84,7 @@ void BasicUsageEnvironment0::appendToResultMsg(MsgString msg) {
 }
 
 void BasicUsageEnvironment0::reportBackgroundError() {
+	return;
 	fputs(getResultMsg(), stderr);
 }
 

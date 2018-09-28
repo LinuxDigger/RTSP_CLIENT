@@ -29,6 +29,7 @@ CPP_SRCS += \
 ../src/DVVideoStreamFramer.cpp \
 ../src/DelayQueue.cpp \
 ../src/DigestAuthentication.cpp \
+../src/DummySink.cpp \
 ../src/FileSink.cpp \
 ../src/FramedFilter.cpp \
 ../src/FramedSource.cpp \
@@ -115,6 +116,7 @@ CPP_SRCS += \
 ../src/RTSPRegisterSender.cpp \
 ../src/RTSPServer.cpp \
 ../src/RTSPServerRegister.cpp \
+../src/Rtsp_client.cpp \
 ../src/SIPClient.cpp \
 ../src/ServerMediaSession.cpp \
 ../src/SimpleRTPSink.cpp \
@@ -171,6 +173,7 @@ OBJS += \
 ./src/DVVideoStreamFramer.o \
 ./src/DelayQueue.o \
 ./src/DigestAuthentication.o \
+./src/DummySink.o \
 ./src/FileSink.o \
 ./src/FramedFilter.o \
 ./src/FramedSource.o \
@@ -257,6 +260,7 @@ OBJS += \
 ./src/RTSPRegisterSender.o \
 ./src/RTSPServer.o \
 ./src/RTSPServerRegister.o \
+./src/Rtsp_client.o \
 ./src/SIPClient.o \
 ./src/ServerMediaSession.o \
 ./src/SimpleRTPSink.o \
@@ -311,6 +315,7 @@ CPP_DEPS += \
 ./src/DVVideoStreamFramer.d \
 ./src/DelayQueue.d \
 ./src/DigestAuthentication.d \
+./src/DummySink.d \
 ./src/FileSink.d \
 ./src/FramedFilter.d \
 ./src/FramedSource.d \
@@ -397,6 +402,7 @@ CPP_DEPS += \
 ./src/RTSPRegisterSender.d \
 ./src/RTSPServer.d \
 ./src/RTSPServerRegister.d \
+./src/Rtsp_client.d \
 ./src/SIPClient.d \
 ./src/ServerMediaSession.d \
 ./src/SimpleRTPSink.d \
@@ -432,14 +438,14 @@ C_DEPS += \
 src/%.o: ../src/%.cpp
 	@echo 'Building file: $<'
 	@echo 'Invoking: GCC C++ Compiler'
-	g++ -I/home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include -I/home/jhb/nfs/TerminalC++Workspace/RTSP_Client/X86/include -include/home/jhb/nfs/TerminalC++Workspace/RTSP_Client/X86/include/Rtsp_server.h -include/home/jhb/nfs/TerminalC++Workspace/RTSP_Client/X86/include/Rtsp_sys.h -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"$(@:%.o=%.d)" -MT"$(@)" -o "$@" "$<" -Wno-unused
+	arm-hisiv400-linux-g++ -I/home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include -I"/home/jhb/nfs/TerminalC++Workspace/RTSP_Client/arm400/X86/include" -include"/home/jhb/nfs/TerminalC++Workspace/RTSP_Client/arm400/X86/include/Rtsp_server.h" -include"/home/jhb/nfs/TerminalC++Workspace/RTSP_Client/arm400/X86/include/Rtsp_sys.h" -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"$(@:%.o=%.d)" -MT"$(@)" -o "$@" "$<" -Wno-unused
 	@echo 'Finished building: $<'
 	@echo ' '
 
 src/%.o: ../src/%.c
 	@echo 'Building file: $<'
 	@echo 'Invoking: GCC C Compiler'
-	gcc -I"/home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include" -I"/home/jhb/nfs/TerminalC++Workspace/RTSP_Client/X86/include" -include/home/jhb/nfs/TerminalC++Workspace/RTSP_Client/X86/include/Rtsp_server.h -include"/home/jhb/nfs/TerminalC++Workspace/RTSP_Client/X86/include/Rtsp_sys.h" -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"$(@:%.o=%.d)" -MT"$(@)" -o "$@" "$<"
+	arm-hisiv400-linux-gcc -I"/home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include" -I"/home/jhb/nfs/TerminalC++Workspace/RTSP_Client/arm400/X86/include" -include"/home/jhb/nfs/TerminalC++Workspace/RTSP_Client/arm400/X86/include/Rtsp_server.h" -include"/home/jhb/nfs/TerminalC++Workspace/RTSP_Client/arm400/X86/include/Rtsp_sys.h" -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"$(@:%.o=%.d)" -MT"$(@)" -o "$@" "$<"
 	@echo 'Finished building: $<'
 	@echo ' '
 

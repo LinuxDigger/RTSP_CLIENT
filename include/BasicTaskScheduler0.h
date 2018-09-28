@@ -39,7 +39,8 @@ public:
 	NULL);
 
 protected:
-	BasicTaskScheduler0(DP_U32 urlNumsEachSche, CommonPlay *fcpObj);
+	BasicTaskScheduler0(DP_U16 scheIndex, DP_U32 urlNumsEachSche,
+			CommonPlay *fcpObj);
 
 protected:
 	// To implement delayed operations:

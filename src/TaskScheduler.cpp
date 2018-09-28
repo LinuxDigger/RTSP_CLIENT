@@ -5,17 +5,36 @@
  *      Author: jhb
  */
 
+#include <iostream>
 #include "TaskScheduler.h"
-
+using namespace std;
 pthread_mutex_t TaskScheduler::mutex;
 
-TaskScheduler::TaskScheduler(DP_U32 urlNumsEachSche) :
+TaskScheduler::TaskScheduler(DP_U16 scheIndex, DP_U32 urlNumsEachSche) :
 		pausePlay(false), _bClientSetIsFull(false), _u32UrlNumsEachSche(
-				urlNumsEachSche), _bScheThreadStatus(false) {
+				urlNumsEachSche), _bScheThreadStatus(false), _u16ScheIndex(
+				scheIndex) {
 	pthread_mutex_init(&mutex, NULL);
 	for (DP_U16 i = 0; i < (DP_U16) _u32UrlNumsEachSche; i++) {
 		_mClientSet[i] = NULL;
 	}
+}
+
+DP_U16 TaskScheduler::getIdleClientNum() {
+	pthread_mutex_lock(&mutex);
+	for (DP_U16 i = 1; i <= _u32UrlNumsEachSche; i++) {
+		if (_mClientSet[i + _u16ScheIndex * 10] == NULL) {
+			if (i == _u32UrlNumsEachSche) {
+				_bClientSetIsFull = true;
+			}
+			pthread_mutex_unlock(&mutex);
+			return i;
+		} else if (i == _u32UrlNumsEachSche) {
+			_bClientSetIsFull = true;
+		}
+	}
+	pthread_mutex_unlock(&mutex);
+	return 0;
 }
 
 TaskScheduler::~TaskScheduler() {

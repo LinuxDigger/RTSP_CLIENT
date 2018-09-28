@@ -17,6 +17,24 @@ Boolean UsageEnvironment::reclaim() {
 	return False;
 }
 
+DP_U16 UsageEnvironment::getAIdleClientFromEnv() {
+	Logger::GetInstance().Debug(
+			"fScheduler.size()...............................................%d ",
+			fScheduler.size());
+	for (DP_U16 i = 0; i < fScheduler.size(); i++) {
+		if (!fScheduler[i]->isClientSetFull()) {
+			Logger::GetInstance().Warn(
+					"fScheduler[i]->getIdleClientNum() + i * 10   : %d ",
+					fScheduler[i]->getIdleClientNum() + i * 10);
+			return (fScheduler[i]->getIdleClientNum() + i * 10);
+		} else if (i == fScheduler.size() - 1) {
+			Logger::GetInstance().Error("f (i == fScheduler.size() - 1))))))");
+			return 0;
+		}
+	}
+	return 0;
+}
+
 UsageEnvironment::UsageEnvironment(vector<TaskScheduler*> *scheduler,
 		unsigned short clientID) :
 		liveMediaPriv(NULL), groupsockPriv(NULL), _u16CliID(clientID), fScheduler(

@@ -1,7 +1,7 @@
 src/H264or5VedioFileSink.o: ../src/H264or5VedioFileSink.cpp \
- /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/X86/include/Rtsp_server.h \
- /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/X86/include/Rtsp_sys.h \
- /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/X86/include/Rtsp_sys.h \
+ /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/arm400/X86/include/Rtsp_server.h \
+ /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/arm400/X86/include/Rtsp_sys.h \
+ /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/arm400/X86/include/Rtsp_sys.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/H264or5VideoFileSink.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/FileSink.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/MediaSink.h \
@@ -11,10 +11,12 @@ src/H264or5VedioFileSink.o: ../src/H264or5VedioFileSink.cpp \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/liveMedia_version.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/HashTable.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/Boolean.h \
+ /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/DP_RTSP_CLIENT_GlobDefine.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/UsageEnvironment.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/NetCommon.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/TaskScheduler.h \
- /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/DP_RTSP_CLIENT_GlobDefine.h \
+ /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/Logger.h \
+ /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/Mutex.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/DP_RTSP_CLIENT_CycleQueue.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/CycleQueue.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/H264VideoRTPSource.h \
@@ -26,14 +28,13 @@ src/H264or5VedioFileSink.o: ../src/H264or5VedioFileSink.cpp \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/NetAddress.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/GroupEId.h \
  /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/RTPInterface.h \
- /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/Logger.h \
- /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/Mutex.h
+ /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/Logger.h
 
-/home/jhb/nfs/TerminalC++Workspace/RTSP_Client/X86/include/Rtsp_server.h:
+/home/jhb/nfs/TerminalC++Workspace/RTSP_Client/arm400/X86/include/Rtsp_server.h:
 
-/home/jhb/nfs/TerminalC++Workspace/RTSP_Client/X86/include/Rtsp_sys.h:
+/home/jhb/nfs/TerminalC++Workspace/RTSP_Client/arm400/X86/include/Rtsp_sys.h:
 
-/home/jhb/nfs/TerminalC++Workspace/RTSP_Client/X86/include/Rtsp_sys.h:
+/home/jhb/nfs/TerminalC++Workspace/RTSP_Client/arm400/X86/include/Rtsp_sys.h:
 
 /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/H264or5VideoFileSink.h:
 
@@ -53,13 +54,17 @@ src/H264or5VedioFileSink.o: ../src/H264or5VedioFileSink.cpp \
 
 /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/Boolean.h:
 
+/home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/DP_RTSP_CLIENT_GlobDefine.h:
+
 /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/UsageEnvironment.h:
 
 /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/NetCommon.h:
 
 /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/TaskScheduler.h:
 
-/home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/DP_RTSP_CLIENT_GlobDefine.h:
+/home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/Logger.h:
+
+/home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/Mutex.h:
 
 /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/DP_RTSP_CLIENT_CycleQueue.h:
 
@@ -84,5 +89,3 @@ src/H264or5VedioFileSink.o: ../src/H264or5VedioFileSink.cpp \
 /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/RTPInterface.h:
 
 /home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/Logger.h:
-
-/home/jhb/nfs/TerminalC++Workspace/RTSP_Client/include/Mutex.h:

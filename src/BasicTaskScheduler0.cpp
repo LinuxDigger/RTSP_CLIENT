@@ -7,6 +7,7 @@
 
 #include "BasicTaskScheduler0.h"
 #include <iostream>
+#include <malloc.h>
 #include "RTSPClient.h"
 #include "CommonPlay.h"
 using namespace std;
@@ -40,11 +41,11 @@ private:
 ////////// BasicTaskScheduler0 //////////
 
 //when BasicTaskScheduler construction
-BasicTaskScheduler0::BasicTaskScheduler0(DP_U32 urlNumsEachSche,
-		CommonPlay *cpObj) :
-		TaskScheduler(urlNumsEachSche), fLastHandledSocketNum(-1), fTriggersAwaitingHandling(
+BasicTaskScheduler0::BasicTaskScheduler0(DP_U16 scheIndex,
+		DP_U32 urlNumsEachSche, CommonPlay *cpObj) :
+		TaskScheduler(scheIndex, urlNumsEachSche), fLastHandledSocketNum(-1), fTriggersAwaitingHandling(
 				0), fLastUsedTriggerMask(1), fLastUsedTriggerNum(
-				MAX_NUM_EVENT_TRIGGERS - 1), fcpObj(cpObj) {
+		MAX_NUM_EVENT_TRIGGERS - 1), fcpObj(cpObj) {
 	fHandlers = new HandlerSet;  ///first new 111
 	for (unsigned i = 0; i < MAX_NUM_EVENT_TRIGGERS; ++i) {
 		fTriggeredEventHandlers[i] = NULL;
@@ -78,13 +79,15 @@ void BasicTaskScheduler0::unscheduleDelayedTask(TaskToken& prevTask) {
 }
 
 void BasicTaskScheduler0::doEventLoop(char volatile* watchVariable) {
-	cout << "askScheduler0::doEventLoop(c=================="
-			<< _mSockfdCpSet.size() << endl;
 	// Repeatedly loop, handling readble sockets and timed events:
 	while (!pausePlay) {
+//		if (fcpObj->_fClientID == 1)
+//			malloc_stats();
 		if (watchVariable != NULL && *watchVariable != 0)
 			break;
 		SingleStep();
+//		if (fcpObj->_fClientID == 1)
+//			malloc_stats();
 	}
 }
 

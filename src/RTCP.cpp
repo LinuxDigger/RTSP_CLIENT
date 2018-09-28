@@ -113,7 +113,7 @@ static unsigned const preferredRTCPPacketSize = 1000; // bytes
 RTCPInstance::RTCPInstance(UsageEnvironment& env, Groupsock* RTCPgs,
 		unsigned totSessionBW, DP_U8 const* cname, RTPSink* sink,
 		RTPSource* source, Boolean isSSMSource, CommonPlay *cpObj) :
-		Medium(env), fcpObj(cpObj), fRTCPInterface(this, RTCPgs), fTotSessionBW(
+		Medium(env), fcpObj(cpObj), fRTCPInterface(cpObj, this, RTCPgs), fTotSessionBW(
 				totSessionBW), fSink(sink), fSource(source), fIsSSMSource(
 				isSSMSource), fCNAME(RTCP_SDES_CNAME, cname), fOutgoingReportCount(
 				1), fAveRTCPSize(0), fIsInitial(1), fPrevNumMembers(0), fLastSentSize(

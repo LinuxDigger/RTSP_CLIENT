@@ -27,8 +27,8 @@ public:
 	virtual ~BasicTaskScheduler();
 
 protected:
-	BasicTaskScheduler(DP_U32 urlNumsEachSche, unsigned maxSchedulerGranularity,
-			CommonPlay *cpObj);
+	BasicTaskScheduler(DP_U16 scheIndex, DP_U32 urlNumsEachSche,
+			unsigned maxSchedulerGranularity, CommonPlay *cpObj);
 	// called only by "createNew()"
 
 	static void schedulerTickTask(void* clientData, CommonPlay *cpObj);

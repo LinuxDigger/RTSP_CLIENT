@@ -10,6 +10,7 @@
 
 #include "DP_RTSP_CLIENT_GlobDefine.h"
 //#include "DP_RTSP_CLIENT_Interface.h"
+#include <unistd.h>
 #include "DP_RTSP_CLIENT_DataStructureDef.h"
 #include <vector>
 using namespace std;

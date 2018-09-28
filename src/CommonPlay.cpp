@@ -10,6 +10,7 @@
 #include "CommonPlay.h"
 #include "FileSink.h"
 #include "Logger.h"
+#include "DummySink.h"
 using namespace FrameWork;
 using namespace std;
 
@@ -125,15 +126,21 @@ void CommonPlay::setEnvURL(UsageEnvironment &envv, const char *URL) {
 	streamURL = URL;
 }
 
-void CommonPlay::continueAfterDESCRIBE(RTSPClient *, int resultCode,
+#if 0
+void CommonPlay::continueAfterDESCRIBE(RTSPClient *rtspClient, int resultCode,
 		char *resultString, CommonPlay *cpObj) {
+
+//	cout<< "rtspClientt   test 11111"<<endl;
+//	StreamClientState& scs = ((OurRTSPClient*) rtspClient)->scs;
+//	cout << scs._cpObj->_fClientID<<endl;
+//	cout<< "rtspClientt   test 222222"<<endl;
 	Logger::GetInstance().Debug(
 			"after describe =======================================================================");
 	if (resultCode != 0) {
 		*cpObj->env << "Failed to get a SDP description for the URL \""
-				<< cpObj->streamURL << "\": " << resultString << "\n";
+		<< cpObj->streamURL << "\": " << resultString << "\n";
 		cout << "cp ..........." << cpObj->_fClientID
-				<< cpObj->ourAuthenticator->password() << endl;
+		<< cpObj->ourAuthenticator->password() << endl;
 		delete[] resultString;
 		cpObj->shutdown();
 	}
@@ -150,12 +157,12 @@ void CommonPlay::continueAfterDESCRIBE(RTSPClient *, int resultCode,
 	delete[] sdpDescription;
 	if (cpObj->session == NULL) {
 		*cpObj->env
-				<< "Failed to create a MediaSession object from the SDP description: "
-				<< cpObj->env->getResultMsg() << "\n";
+		<< "Failed to create a MediaSession object from the SDP description: "
+		<< cpObj->env->getResultMsg() << "\n";
 		cpObj->shutdown();
 	} else if (!cpObj->session->hasSubsessions()) {
 		*cpObj->env
-				<< "This session has no media subsessions (i.e., no \"m=\" lines)\n";
+		<< "This session has no media subsessions (i.e., no \"m=\" lines)\n";
 		cpObj->shutdown();
 	}
 
@@ -169,9 +176,9 @@ void CommonPlay::continueAfterDESCRIBE(RTSPClient *, int resultCode,
 		if (singleMediumToTest != NULL) {
 			if (strcmp(subsession->mediumName(), singleMediumToTest) != 0) {
 				*cpObj->env << "Ignoring \"" << subsession->mediumName() << "/"
-						<< subsession->codecName()
-						<< "\" subsession, because we've asked to receive a single "
-						<< cpObj->singleMedium << " session only\n";
+				<< subsession->codecName()
+				<< "\" subsession, because we've asked to receive a single "
+				<< cpObj->singleMedium << " session only\n";
 				continue;
 			} else {
 				// Receive this subsession only
@@ -188,23 +195,24 @@ void CommonPlay::continueAfterDESCRIBE(RTSPClient *, int resultCode,
 		if (cpObj->createReceivers) {
 			if (!subsession->initiate(cpObj->simpleRTPoffsetArg)) {
 				*cpObj->env << "Unable to create receiver for \""
-						<< subsession->mediumName() << "/"
-						<< subsession->codecName() << "\" subsession: "
-						<< cpObj->env->getResultMsg() << "\n";
+				<< subsession->mediumName() << "/"
+				<< subsession->codecName() << "\" subsession: "
+				<< cpObj->env->getResultMsg() << "\n";
 			} else {
 				*cpObj->env << "Created receiver for \""
-						<< subsession->mediumName()						// audio
-						<< "/" << subsession->codecName() << "\" subsession ("; // MPA
-				if (subsession->rtcpIsMuxed()) {
-					*cpObj->env << "client port "
-							<< subsession->clientPortNum();
-				} else {
-					*cpObj->env << "client ports "
-							<< subsession->clientPortNum() << "-"
-							<< subsession->clientPortNum() + 1;
-				}
-				*cpObj->env << ")\n";
-
+				<< subsession->mediumName()						// audio
+				<< "/" << subsession->codecName() << "\" subsession (";// MPA
+#if 0
+//				if (subsession->rtcpIsMuxed()) {
+//					*cpObj->env << "client port "
+//							<< subsession->clientPortNum();
+//				} else {
+//					*cpObj->env << "client ports "
+//							<< subsession->clientPortNum() << "-"
+//							<< subsession->clientPortNum() + 1;
+//				}
+//				*cpObj->env << ")\n";
+#endif
 				//				cout << "videoFPSaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
 				//						<< subsession->videoFPS();  //0
 				//				cout << "videoWidthaaaaaaaaaaaaaaaaaaaaaaa"
@@ -219,7 +227,7 @@ void CommonPlay::continueAfterDESCRIBE(RTSPClient *, int resultCode,
 					// Because we're saving the incoming data, rather than playing
 					// it in real time, allow an especially large time threshold
 					// (1 second) for reordering misordered incoming packets:
-					unsigned const thresh = 1000000; // 1 second
+					unsigned const thresh = 1000000;// 1 second
 					subsession->rtpSource()->setPacketReorderingThresholdTime(
 							thresh);
 
@@ -228,24 +236,24 @@ void CommonPlay::continueAfterDESCRIBE(RTSPClient *, int resultCode,
 					// (The latter case is a heuristic, on the assumption that if the user asked for a large FileSink buffer size,
 					// then the input data rate may be large enough to justify increasing the OS socket buffer size also.)
 					int socketNum =
-							subsession->rtpSource()->RTPgs()->socketNum();
+					subsession->rtpSource()->RTPgs()->socketNum();
 					unsigned curBufferSize = getReceiveBufferSize(*cpObj->env,
 							socketNum);
 					if (cpObj->socketInputBufferSize > 0
 							|| cpObj->fileSinkBufferSize > curBufferSize) {
 						unsigned newBufferSize =
-								cpObj->socketInputBufferSize > 0 ?
-										cpObj->socketInputBufferSize :
-										cpObj->fileSinkBufferSize;
+						cpObj->socketInputBufferSize > 0 ?
+						cpObj->socketInputBufferSize :
+						cpObj->fileSinkBufferSize;
 						newBufferSize = setReceiveBufferTo(*cpObj->env,
 								socketNum, newBufferSize);
 						if (cpObj->socketInputBufferSize > 0) { // The user explicitly asked for the new socket buffer size; announce it:
 							*cpObj->env
-									<< "Changed socket receive buffer size for the \""
-									<< subsession->mediumName() << "/"
-									<< subsession->codecName()
-									<< "\" subsession from " << curBufferSize
-									<< " to " << newBufferSize << " bytes\n";
+							<< "Changed socket receive buffer size for the \""
+							<< subsession->mediumName() << "/"
+							<< subsession->codecName()
+							<< "\" subsession from " << curBufferSize
+							<< " to " << newBufferSize << " bytes\n";
 						}
 					}
 				}
@@ -253,56 +261,166 @@ void CommonPlay::continueAfterDESCRIBE(RTSPClient *, int resultCode,
 		} else {
 			if (subsession->clientPortNum() == 0) {
 				*cpObj->env << "No client port was specified for the \""
-						<< subsession->mediumName() << "/"
-						<< subsession->codecName()
-						<< "\" subsession.  (Try adding the \"-p <portNum>\" option.)\n";
+				<< subsession->mediumName() << "/"
+				<< subsession->codecName()
+				<< "\" subsession.  (Try adding the \"-p <portNum>\" option.)\n";
 			} else {
 				madeProgress = True;
 			}
 		}
 	}
 	if (!madeProgress)
-		cpObj->shutdown();
-
+	cpObj->shutdown();
 	// Perform additional 'setup' on each subsession, before playing them:
 	cpObj->setupStreams();
 }
+#endif
 
+void CommonPlay::continueAfterDESCRIBE(RTSPClient* rtspClient, int resultCode,
+		char* resultString, CommonPlay *cpObj) {
+	do {
+		UsageEnvironment& env = rtspClient->envir(); // alias
+		StreamClientState& scs = ((OurRTSPClient*) rtspClient)->scs; // alias
+
+		if (resultCode != 0) {
+//			env << *rtspClient << "Failed to get a SDP description: "
+//					<< resultString << "\n";
+			delete[] resultString;
+			break;
+		}
+
+		char* const sdpDescription = resultString;
+//		env << *rtspClient << "Got a SDP description:\n" << sdpDescription
+//				<< "\n";
+
+		// Create a media session object from this SDP description:
+		scs.session = MediaSession::createNew(*cpObj->env, sdpDescription,
+				cpObj);
+		delete[] sdpDescription; // because we don't need it anymore
+		if (scs.session == NULL) {
+//			env << *rtspClient
+//					<< "Failed to create a MediaSession object from the SDP description: "
+//					<< env.getResultMsg() << "\n";
+			break;
+		} else if (!scs.session->hasSubsessions()) {
+//			env << *rtspClient
+//					<< "This session has no media subsessions (i.e., no \"m=\" lines)\n";
+			break;
+		}
+
+		// Then, create and set up our data source objects for the session.  We do this by iterating over the session's 'subsessions',
+		// calling "MediaSubsession::initiate()", and then sending a RTSP "SETUP" command, on each one.
+		// (Each 'subsession' will have its own data source.)
+		scs.iter = new MediaSubsessionIterator(*scs.session);
+		cpObj->setupNextSubsession(rtspClient);
+		return;
+	} while (0);
+
+	// An unrecoverable error occurred with this stream.
+	cpObj->shutdownStream(rtspClient);
+}
 //MediaSubsession *subsession;
 //Boolean madeProgress = False;
+#if 0
 void CommonPlay::continueAfterSETUP(RTSPClient *client, int resultCode,
 		char *resultString, CommonPlay *cpObj) {
 	Logger::GetInstance().Debug(
 			"aftersetup =======================================================================");
 	if (resultCode == 0) {
-		cout
-				<< "seg fault monPlay::continueAfterSETUP(RTSPClient *client, int resul ,,,,,,,,,,,,,,,,"
-				<< endl;
+//		cout
+//				<< "seg fault monPlay::continueAfterSETUP(RTSPClient *client, int resul ,,,,,,,,,,,,,,,,"
+//				<< endl;
 		*cpObj->env << "Setup \"" << cpObj->subsession->mediumName() << "/"
-				<< cpObj->subsession->codecName() << "\" subsession (";
+		<< cpObj->subsession->codecName() << "\" subsession (";
 		if (cpObj->subsession->rtcpIsMuxed()) {
 			Logger::GetInstance().Debug("client port %d",
 					cpObj->subsession->clientPortNum());
 		} else {
 			*cpObj->env << "client ports " << cpObj->subsession->clientPortNum()
-					<< "-" << cpObj->subsession->clientPortNum() + 1;
+			<< "-" << cpObj->subsession->clientPortNum() + 1;
 		}
 		*cpObj->env << ")\n";
 		cpObj->madeProgress = True;
 	} else {
 		*cpObj->env << "Failed to setup \"" << cpObj->subsession->mediumName()
-				<< "/" << cpObj->subsession->codecName() << "\" subsession: "
-				<< resultString << "\n";
+		<< "/" << cpObj->subsession->codecName() << "\" subsession: "
+		<< resultString << "\n";
 	}
 	delete[] resultString;
 
 	if (client != NULL)
-		cpObj->sessionTimeoutParameter = client->sessionTimeoutParameter();
+	cpObj->sessionTimeoutParameter = client->sessionTimeoutParameter();
 
 	// Set up the next subsession, if any:
 	cpObj->setupStreams();
 }
+#endif
 
+#if 1
+void CommonPlay::continueAfterSETUP(RTSPClient *rtspClient, int resultCode,
+		char *resultString, CommonPlay *cpObj) {
+//	cout << "111111111111111<" << endl;
+	do {
+		UsageEnvironment& env = rtspClient->envir(); // alias
+		StreamClientState& scs = ((OurRTSPClient*) rtspClient)->scs; // alias
+//		cout << "rtspClientt   test 0000000000000" << endl;
+//		cout << scs._cpObj->_fClientID << endl;
+//		cout << "rtspClientt   test 2222222222221122222" << endl;
+		if (resultCode != 0) {
+//			cpObj->env << *rtspClient << "Failed to set up the \"" << *scs.subsession
+//			<< "\" subsession: " << resultString << "\n";
+			break;
+		}
+//		cout << "2222222222222222<" << endl;
+
+//		cpObj->env << *rtspClient << "Set up the \"" << *scs.subsession
+//		<< "\" subsession (";
+#if 0
+//		if (scs.subsession->rtcpIsMuxed()) {
+//			env << "client port " << scs.subsession->clientPortNum();
+//		} else {
+//			env << "client ports " << scs.subsession->clientPortNum() << "-"
+//					<< scs.subsession->clientPortNum() + 1;
+//		}
+//		env << ")\n";
+#endif
+		// Having successfully setup the subsession, create a data sink for it, and call "startPlaying()" on it.
+		// (This will prepare the data sink to receive data; the actual flow of data from the client won't start happening until later,
+		// after we've sent a RTSP "PLAY" command.)
+//		cout << scs._cpObj->_fClientID << endl;
+		scs.subsession->sink = NULL;
+//		cout << "33333333333333333<" << endl;
+		scs.subsession->sink = DummySink::createNew(*cpObj->env, cpObj,
+				*scs.subsession, rtspClient->url());
+		//对每个MediaSubsession创建一个MediaSink对象来请求和保存数据
+		// perhaps use your own custom "MediaSink" subclass instead
+//		cout << "4444444444444444<" << endl;
+		if (scs.subsession->sink == NULL) {
+//			cpObj->env << *rtspClient << "Failed to create a data sink for the \""
+//			<< *scs.subsession << "\" subsession: "
+//			<< env.getResultMsg() << "\n";
+			break;
+		}
+
+//		cpObj->env << *rtspClient << "Created a data sink for the \""
+//		<< *scs.subsession << "\" subsession\n";
+		scs.subsession->miscPtr = rtspClient; // a hack to let subsession handler functions get the "RTSPClient" from the subsession
+		scs.subsession->sink->startPlaying(*(scs.subsession->readSource()),
+				subsessionAfterPlaying, scs.subsession, cpObj);
+		// Also set a handler to be called if a RTCP "BYE" arrives for this subsession:
+		if (scs.subsession->rtcpInstance() != NULL) {
+			scs.subsession->rtcpInstance()->setByeHandler(subsessionByeHandler,
+					scs.subsession);
+		}
+//		cout << "55555555555555555555<" << endl;
+	} while (0);
+	delete[] resultString;
+//	cout << "66666666666666666666666666<" << endl;
+	// Set up the next subsession, if any:  与下一个ServerMediaSubsession建立连接
+	cpObj->setupNextSubsession(rtspClient);
+//	cout << "777777777777777777777777<" << endl;
+}
+#endif
 void CommonPlay::createOutputFiles(char const *periodicFilenameSuffix) {
 	char outFileName[1000];
 
@@ -373,6 +491,7 @@ void CommonPlay::createOutputFiles(char const *periodicFilenameSuffix) {
 			}
 
 			FileSink *fileSink = NULL;
+			DummySink *dummySink = NULL;
 			Boolean createOggFileSink = False; // by default
 			if (strcmp(subsession->mediumName(), "video") == 0) {
 				if (strcmp(subsession->codecName(), "H264") == 0) {
@@ -412,11 +531,16 @@ void CommonPlay::createOutputFiles(char const *periodicFilenameSuffix) {
 						subsession->rtpTimestampFrequency(),
 						subsession->fmtp_config());
 			} else if (fileSink == NULL) {
-				// Normal case:
+//				UsageEnvironment& env, CommonPlay *cpObj,
+//						MediaSubsession& subsession, char const* streamId
 
+//				dummySink = DummySink::createNew(*env, this, *subsession);
+
+				// Normal case:
 				fileSink = FileSink::createNew(*env, outFileName,
 						fileSinkBufferSize, _fClientID, oneFilePerFrame, this);
 			}
+//			subsession->sink = dummySink;
 			subsession->sink = fileSink;
 
 			if (subsession->sink == NULL) {
@@ -732,8 +856,6 @@ void CommonPlay::sessionTimerHandler(void *clientData, CommonPlay *cpObj) {
 
 	RTSPClient *rtspClient = (RTSPClient *) clientData;
 	cout << rtspClient->url() << endl;
-	cout << "cpObj........................."
-			<< cpObj->ourAuthenticator->password() << endl;
 //	cpObj->sessionTimerTask = NULL;
 	rtspClient->sendGetParameterCommand(*cpObj->session, continueAfterGetParam,
 	NULL);
@@ -1062,7 +1184,7 @@ void CommonPlay::continueAfterGetParam(RTSPClient *client, int resultCode,
 
 	struct timeval timeNow;
 	gettimeofday(&timeNow, NULL);
-	Logger::GetInstance().Warn("Time now : %d : %d", timeNow.tv_sec,
+	Logger::GetInstance().Debug("Time now : %d : %d", timeNow.tv_sec,
 			timeNow.tv_usec);
 	int64_t uSecsToDelay = (int64_t) (1000000.0 * 60);
 	cpObj->sessionTimerTask =
@@ -1220,4 +1342,126 @@ void CommonPlay::checkSessionTimeoutBrokenServer(void * /*clientData*/,
 			cpObj->_fClientID / 10)->scheduleDelayedTask(
 			secondsUntilNextKeepAlive * 1000000,
 			(TaskFunc *) checkSessionTimeoutBrokenServer, NULL, cpObj);
+}
+
+void CommonPlay::setupNextSubsession(RTSPClient* rtspClient) {
+	UsageEnvironment& env = rtspClient->envir(); // alias
+	StreamClientState& scs = ((OurRTSPClient*) rtspClient)->scs; // alias
+	scs.subsession = scs.iter->next();
+	if (scs.subsession != NULL) {
+		if (!scs.subsession->initiate()) {
+//			env << *rtspClient << "Failed to initiate the \"" << *scs.subsession
+//					<< "\" subsession: " << env.getResultMsg() << "\n";
+			setupNextSubsession(rtspClient); // give up on this subsession; go to the next one
+		} else {
+//			env << *rtspClient << "Initiated the \"" << *scs.subsession
+//					<< "\" subsession (";
+			if (scs.subsession->rtcpIsMuxed()) {
+				env << "client port " << scs.subsession->clientPortNum();
+			} else {
+				env << "client ports " << scs.subsession->clientPortNum() << "-"
+						<< scs.subsession->clientPortNum() + 1;
+			}
+//			env << ")\n";
+
+			// Continue setting up this subsession, by sending a RTSP "SETUP" command:
+			rtspClient->sendSetupCommand(*scs.subsession, continueAfterSETUP,
+					False, REQUEST_STREAMING_OVER_TCP);
+		}
+		return;
+	}
+
+	// We've finished setting up all of the subsessions.  Now, send a RTSP "PLAY" command to start the streaming:
+	if (scs.session->absStartTime() != NULL) {
+		// Special case: The stream is indexed by 'absolute' time, so send an appropriate "PLAY" command:
+		rtspClient->sendPlayCommand(*scs.session, continueAfterPLAY,
+				scs.session->absStartTime(), scs.session->absEndTime());
+	} else {
+		scs.duration = scs.session->playEndTime()
+				- scs.session->playStartTime();
+		rtspClient->sendPlayCommand(*scs.session, continueAfterPLAY);
+	}
+}
+
+
+void CommonPlay::shutdownStream(RTSPClient* rtspClient, int exitCode) {
+	UsageEnvironment& env = rtspClient->envir(); // alias
+	StreamClientState& scs = ((OurRTSPClient*) rtspClient)->scs; // alias
+
+	// First, check whether any subsessions have still to be closed:
+	if (scs.session != NULL) {
+		Boolean someSubsessionsWereActive = False;
+		MediaSubsessionIterator iter(*scs.session);
+		MediaSubsession* subsession;
+
+		while ((subsession = iter.next()) != NULL) {
+			if (subsession->sink != NULL) {
+				Medium::close(subsession->sink);
+				subsession->sink = NULL;
+
+				if (subsession->rtcpInstance() != NULL) {
+					subsession->rtcpInstance()->setByeHandler(NULL, NULL); // in case the server sends a RTCP "BYE" while handling "TEARDOWN"
+				}
+
+				someSubsessionsWereActive = True;
+			}
+		}
+
+		if (someSubsessionsWereActive) {
+			// Send a RTSP "TEARDOWN" command, to tell the server to shutdown the stream.
+			// Don't bother handling the response to the "TEARDOWN".
+			rtspClient->sendTeardownCommand(*scs.session, NULL);
+		}
+	}
+
+//	env << *rtspClient << "Closing the stream.\n";
+	Medium::close(rtspClient);
+	// Note that this will also cause this stream's "StreamClientState" structure to get reclaimed.
+#if 0
+	if (--rtspClientCount == 0) {
+		// The final stream has ended, so exit the application now.
+		// (Of course, if you're embedding this code into your own application, you might want to comment this out,
+		// and replace it with "eventLoopWatchVariable = 1;", so that we leave the LIVE555 event loop, and continue running "main()".)
+		exit(exitCode);
+	}
+#endif
+}
+
+// Implementation of "ourRTSPClient":
+
+OurRTSPClient* OurRTSPClient::createNew(UsageEnvironment& env,
+		CommonPlay *cpObj, char const* rtspURL, int verbosityLevel,
+		char const* applicationName, portNumBits tunnelOverHTTPPortNum) {
+	return new OurRTSPClient(env, cpObj, rtspURL, verbosityLevel,
+			applicationName, tunnelOverHTTPPortNum);
+}
+
+OurRTSPClient::OurRTSPClient(UsageEnvironment& env, CommonPlay *cpObj,
+		char const* rtspURL, int verbosityLevel, char const* applicationName,
+		portNumBits tunnelOverHTTPPortNum) :
+		RTSPClient(env, rtspURL, verbosityLevel, applicationName,
+				tunnelOverHTTPPortNum, -1, cpObj), scs(env, cpObj) {
+}
+
+OurRTSPClient::~OurRTSPClient() {
+}
+
+//// Implementation of "StreamClientState":
+//
+StreamClientState::StreamClientState(UsageEnvironment& env, CommonPlay *cpObj) :
+		_env(&env), _cpObj(cpObj), iter(NULL), session(cpObj->session), subsession(
+				cpObj->subsession), streamTimerTask(
+		NULL), duration(0.0) {
+}
+
+StreamClientState::~StreamClientState() {
+	delete iter;
+	if (session != NULL) {
+		// We also need to delete "session", and unschedule "streamTimerTask" (if set)
+		UsageEnvironment& env = session->envir(); // alias
+
+		_env->taskScheduler(_cpObj->_fClientID / 10)->unscheduleDelayedTask(
+				streamTimerTask);
+		Medium::close(session);
+	}
 }

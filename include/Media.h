@@ -47,6 +47,9 @@ public:
 		return fcpObj;
 	}
 
+	void setCpObj(CommonPlay *cpObj) {
+		fcpObj = cpObj;
+	}
 	// Test for specific types of media:
 	virtual Boolean isSource() const;
 	virtual Boolean isSink() const;

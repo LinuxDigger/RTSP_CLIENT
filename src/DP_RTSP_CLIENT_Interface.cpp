@@ -8,6 +8,7 @@
 #include <iostream>
 #include <time.h>
 #include <errno.h>
+#include <sys/syscall.h>
 #include "DP_RTSP_CLIENT_Interface.h"
 #include "Media.h"
 #include "playCommon.h"
@@ -35,6 +36,7 @@ DP_RTSP_CLIENT_Client::~DP_RTSP_CLIENT_Client() {
 DP_Bool DP_RTSP_CLIENT_Client::DP_RTSP_CLIENT_GlobalSetting(DP_U16 u16MaxURLNum,
 		DP_U16 URLNumsEachSche) {
 
+//	InitLogging("./RTSP_Client", WARN, ".");
 	vector<TaskScheduler*> * scheduler = BasicTaskScheduler::createNew(
 			u16MaxURLNum, URLNumsEachSche, 10000, NULL);
 	_env = BasicUsageEnvironment::createNew(scheduler, 0);			//111id?
@@ -119,29 +121,38 @@ DP_S32 DP_RTSP_CLIENT_Client::DP_RTSP_CLIENT_Init(const char *ps8URL,
 		DP_RTSP_CLIENT_STREAM_TYPE_E enStreamType,
 		DP_RTSP_CLIENT_NET_PROTOCOL_E enNetProtocol, DP_U16 u32FrmNums,
 		const DP_C_S8 *pu8UsrName, const DP_C_S8 *pu8UsrPassword) {
-
 	DP_U16 cliID = _env->getAIdleClientFromEnv();
+	Logger::GetInstance().Debug("start init iiiiiiiiiiiiiiiiiiiii url : %s ",
+			ps8URL);
 	if (cliID == 0) {
-		Logger::GetInstance().Error("no cliID");
+		Logger::GetInstance().Error(
+				"noooooooooooooooooooooooooooooooooooo cliID");
 	} else {
-		Logger::GetInstance().Warn("cliID:: in init : %d", cliID);
+		Logger::GetInstance().Debug(
+				"cliID:: in inittttttttttttttttttttttttt : %d", cliID);
 	}
 
 	CommonPlay *cp = new CommonPlay(cliID);
-	Logger::GetInstance().Warn("DP_RTSP_CLIENT_Init::: %s ", ps8URL);
+	Logger::GetInstance().Debug("DP_RTSP_CLIENT_Init::: %s ", ps8URL);
 	cp->setUsrnamePassword(pu8UsrName, pu8UsrPassword);
-	Logger::GetInstance().Warn(
+	Logger::GetInstance().Debug(
 			"stCliArgs->pu8UsrName %s,  stCliArgs->pu8UsrPassword %s",
 			pu8UsrName, pu8UsrPassword);
 	_env->taskScheduler(cliID / 10)->_mClientSet[cliID] = cp->createClient(
 			*_env, ps8URL, cp);
+	if (_env->taskScheduler(cliID / 10)->_mClientSet[cliID] == NULL) {
+		Logger::GetInstance().Error(
+				"_env->taskScheduler(cliID / 10)->_mClientSet[cliID]: is NULL");
+	}
 	cp->setEnvURL(*_env, ps8URL);
 	if (_env->taskScheduler(cliID / 10)->_mClientSet[cliID] == NULL) {
 		cp->shutdown();
 	}
+	Logger::GetInstance().Debug("cliID/:: %d", cliID);
 	cp->continueAfterClientCreation1();
 //	sleep(2);
 #if 1
+	//////
 	if (!_env->taskScheduler(cliID / 10)->taskScheThreadEnable()) {
 		_env->taskScheduler(cliID / 10)->setScheThreadStatus(true);
 //		thread
@@ -162,6 +173,9 @@ DP_S32 DP_RTSP_CLIENT_Client::DP_RTSP_CLIENT_Init(const char *ps8URL,
 			return 0;
 		}
 	} else {
+		DP_RTSP_CLIENT_DataQueue *dataQueue = new DP_RTSP_CLIENT_DataQueue(
+				cliID, u32FrmNums);
+		efficientAddOrUpdate(_mDataQueueSet, cliID, dataQueue);
 		Logger::GetInstance().Info("Thread enable true !");
 	}
 #endif
@@ -233,13 +247,16 @@ void* DP_RTSP_CLIENT_Client::sClientInit(void*args) {
 	}
 	cp.continueAfterClientCreation1();
 #endif
+	Logger::GetInstance().Error(
+			"threadddddddddddddd %d syscall(SYS_gettid) :%d  ", pthread_self(),
+			syscall(SYS_gettid));
 	stEnvScheID->_env->taskScheduler(stEnvScheID->clientID)->doEventLoop(); // does not return
 	return NULL;
 }
 
 DP_S32 DP_RTSP_CLIENT_Client::DP_RTSP_CLIENT_GetStreamData(
 		DP_RTSP_CLIENT_FRAME_DATA_S *stDataRecv, DP_U32 timeout,
-		FrameDataMemManage &memManage, DP_Bool &firstPutout) {
+		DP_Bool &firstPutout) {
 	DP_U16 cliID = stDataRecv->u16ClientID;
 	if (_mDataQueueSet[cliID] == NULL)
 		return -1;

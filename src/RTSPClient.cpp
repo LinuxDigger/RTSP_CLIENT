@@ -43,8 +43,6 @@ unsigned RTSPClient::sendOptionsCommand(responseHandler* responseHandler,
 		Authenticator* authenticator) {
 	if (authenticator != NULL)
 		fCurrentAuthenticator = *authenticator;
-	cout << "fcpObjsend opthino  command :: "
-			<< fcpObj->ourAuthenticator->password() << endl;
 	return sendRequest(
 			new RequestRecord(++fCSeq, "OPTIONS", fcpObj, responseHandler));
 }
@@ -83,9 +81,6 @@ unsigned RTSPClient::sendSetupCommand(MediaSubsession& subsession,
 unsigned RTSPClient::sendPlayCommand(MediaSession& session,
 		responseHandler* responseHandler, double start, double end, float scale,
 		Authenticator* authenticator) {
-	cout
-			<< "TSPClient::sendPlayCommand(MediaSession& sessio ********************"
-			<< endl;
 	if (fCurrentAuthenticator < authenticator)
 		fCurrentAuthenticator = *authenticator;
 	sendDummyUDPPackets(session); // hack to improve NAT traversal
@@ -540,10 +535,9 @@ unsigned RTSPClient::sendRequest(RequestRecord* request) {
 				connectionIsPending = True;
 			} // else the connection succeeded.  Continue sending the command.
 			  ///0
-			cout << "unsigned RTSPClient::sendRequest(RequestRecord* request) "
-					<< fcpObj->_fClientID << " connectResult "
-					<< fInputSocketNum << " pass "
-					<< fcpObj->ourAuthenticator->password() << endl;
+			Logger::GetInstance().Info(
+					"unsigned RTSPClient::sendRequest(RequestRecord* request)  %d",
+					fInputSocketNum);
 			envir().fScheduler[fcpObj->_fClientID / 10]->_mSockfdCpSet[fInputSocketNum] =
 					fcpObj;
 		}
@@ -1133,6 +1127,10 @@ void RTSPClient::handleRequestError(RequestRecord* request) {
 		resultCode = -ENOTCONN;
 #endif
 	}
+	cout << "rtspClientt   test 3333333333" << endl;
+	StreamClientState& scs = ((OurRTSPClient*) this)->scs;
+	cout << scs._cpObj->_fClientID << endl;
+	cout << "rtspClientt   test 4444444444" << endl;
 	if (request->handler() != NULL)
 		(*request->handler())(this, resultCode, strDup(envir().getResultMsg()),
 				fcpObj);
@@ -1817,9 +1815,6 @@ void RTSPClient::incomingDataHandler1(CommonPlay *cpObj) {
 	int bytesRead = readSocket(envir(), fInputSocketNum,
 			(DP_U8*) &fResponseBuffer[fResponseBytesAlreadySeen],
 			fResponseBufferBytesLeft, dummy);
-	cout << "1111111111111111111111" << endl;
-	cout << "cpObj:: " << cpObj->_fClientID << endl;
-	cout << "222222222222222222222" << endl;
 	handleResponseBytes(bytesRead, cpObj);  //1800lines
 }
 
@@ -1844,8 +1839,6 @@ static char* getLine(char* startOfLine) {
 }
 
 void RTSPClient::handleResponseBytes(int newBytesRead, CommonPlay *cpObj) {
-	cout << "cpObj::handleResponseBytes() \\\\\\\\\\\\  " << cpObj->_fClientID
-			<< endl;
 	do {
 		if (newBytesRead >= 0
 				&& (unsigned) newBytesRead < fResponseBufferBytesLeft)
@@ -2217,13 +2210,16 @@ void RTSPClient::handleResponseBytes(int newBytesRead, CommonPlay *cpObj) {
 					resultString = strDup(responseStr);
 					envir().setResultMsg(responseStr);
 				}
-				cout << "fcpObjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjj "
-						<< resultCode << " " << endl;
-				cout << cpObj->_fClientID << endl;
+//				cout << "fcpObjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjj "
+//						<< resultCode << " " << endl;
+//				cout << cpObj->_fClientID << endl;
+
+//				cout << "rtspClientt   test 11111111111111" << endl;
+//				StreamClientState& scs = ((OurRTSPClient*) this)->scs;
+//				cout << scs._cpObj->_fClientID << endl;
+//				cout << "rtspClientt   test 22222222222222222" << endl;
 				(*foundRequest->handler())(this, resultCode, resultString,
 						cpObj); /////after option send request ------
-				cout << "oooooooooooooooooooooooooooooooooooooooooooo<<"
-						<< endl;
 			} else {
 				// An error occurred parsing the response, so call the handler, indicating an error:
 				handleRequestError(foundRequest);

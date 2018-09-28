@@ -112,10 +112,11 @@ static void removeSocketDescription(UsageEnvironment& env, int sockNum) {
 
 ////////// RTPInterface - Implementation //////////
 
-RTPInterface::RTPInterface(Medium* owner, Groupsock* gs) :
+RTPInterface::RTPInterface(CommonPlay *cpObj, Medium* owner, Groupsock* gs) :
 		fOwner(owner), fGS(gs), fTCPStreams(NULL), fNextTCPReadSize(0), fNextTCPReadStreamSocketNum(
 				-1), fNextTCPReadStreamChannelId(0xFF), fReadHandlerProc(NULL), fAuxReadHandlerFunc(
 		NULL), fAuxReadHandlerClientData(NULL) {
+	fOwner->setCpObj(cpObj);
 	// Make the socket non-blocking, even though it will be read from only asynchronously, when packets arrive.
 	// The reason for this is that, in some OSs, reads on a blocking socket can (allegedly) sometimes block,
 	// even if the socket was previously reported (e.g., by "select()") as having data available.
@@ -245,8 +246,8 @@ Boolean RTPInterface::sendPacket(DP_U8* packet, unsigned packetSize) {
 void RTPInterface::startNetworkReading(
 		TaskScheduler::BackgroundHandlerProc* handlerProc) {
 	// Normal case: Arrange to read UDP packets:
-	cout << "tartNetworkReading(erMedium()->getCpObj()->_fClientID / 10  "
-			<< getOwnerMedium()->getCpObj()->_fClientID << endl;
+//	cout << "tartNetworkReading(erMedium()->getCpObj()->_fClientID / 10  "
+//			<< getOwnerMedium()->getCpObj()->_fClientID << endl;
 	envir().taskScheduler(getOwnerMedium()->getCpObj()->_fClientID / 10)->turnOnBackgroundReadHandling(
 			fGS->socketNum(), handlerProc, fOwner);
 
@@ -422,8 +423,8 @@ SocketDescriptor::SocketDescriptor(DP_U16 _u16ScheID, UsageEnvironment& env,
 				HashTable::create(ONE_WORD_HASH_KEYS)), fServerRequestAlternativeByteHandler(
 		NULL), fServerRequestAlternativeByteHandlerClientData(NULL), fStreamChannelId(
 				0), fSizeByte1(0), fReadErrorOccurred(False), fDeleteMyselfNext(
-				False), fAreInReadHandlerLoop(False), fTCPReadingState(
-				AWAITING_DOLLAR), _u16ScheID(_u16ScheID) {
+				False), fAreInReadHandlerLoop(False), _u16ScheID(_u16ScheID), fTCPReadingState(
+				AWAITING_DOLLAR) {
 }
 
 SocketDescriptor::~SocketDescriptor() {

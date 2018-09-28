@@ -18,7 +18,8 @@
  */
 
 unsigned our_inet_addr(cp)
-	char const* cp; {
+char const* cp;
+{
 	return inet_addr(cp);
 }
 
@@ -265,16 +266,16 @@ void our_srandom(unsigned int x) {
  * Returns a pointer to the old state.
  */
 char * our_initstate(seed, arg_state, n)
-	unsigned int seed; /* seed for R.N.G. */
-	char *arg_state; /* pointer to state array */
-	int n; /* # bytes of state info */
+unsigned int seed; /* seed for R.N.G. */
+char *arg_state; /* pointer to state array */
+int n; /* # bytes of state info */
 {
 	register char *ostate = (char *) (&state[-1]);
 
 	if (rand_type == TYPE_0)
-		state[-1] = rand_type;
+	state[-1] = rand_type;
 	else
-		state[-1] = MAX_TYPES * (rptr - state) + rand_type;
+	state[-1] = MAX_TYPES * (rptr - state) + rand_type;
 	if (n < BREAK_0) {
 #ifdef DEBUG
 		(void)fprintf(stderr,
@@ -307,9 +308,9 @@ char * our_initstate(seed, arg_state, n)
 	end_ptr = &state[rand_deg]; /* must set end_ptr before srandom */
 	our_srandom(seed);
 	if (rand_type == TYPE_0)
-		state[-1] = rand_type;
+	state[-1] = rand_type;
 	else
-		state[-1] = MAX_TYPES * (rptr - state) + rand_type;
+	state[-1] = MAX_TYPES * (rptr - state) + rand_type;
 	return (ostate);
 }
 
@@ -329,27 +330,28 @@ char * our_initstate(seed, arg_state, n)
  * Returns a pointer to the old state information.
  */
 char * our_setstate(arg_state)
-	char *arg_state; {
+char *arg_state;
+{
 	register long *new_state = (long *) arg_state;
 	register int type = new_state[0] % MAX_TYPES;
 	register int rear = new_state[0] / MAX_TYPES;
 	char *ostate = (char *) (&state[-1]);
 
 	if (rand_type == TYPE_0)
-		state[-1] = rand_type;
+	state[-1] = rand_type;
 	else
-		state[-1] = MAX_TYPES * (rptr - state) + rand_type;
+	state[-1] = MAX_TYPES * (rptr - state) + rand_type;
 	switch (type) {
-	case TYPE_0:
-	case TYPE_1:
-	case TYPE_2:
-	case TYPE_3:
-	case TYPE_4:
+		case TYPE_0:
+		case TYPE_1:
+		case TYPE_2:
+		case TYPE_3:
+		case TYPE_4:
 		rand_type = type;
 		rand_deg = degrees[type];
 		rand_sep = seps[type];
 		break;
-	default:
+		default:
 #ifdef DEBUG
 		(void)fprintf(stderr,
 				"random: state info corrupted; not changed.\n");

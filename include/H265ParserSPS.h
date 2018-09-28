@@ -9,6 +9,7 @@
 #define INCLUDE_H265PARSERSPS_H_
 
 #include <string.h>
+#include "DP_RTSP_CLIENT_GlobDefine.h"
 
 typedef DP_U8 uint8;
 

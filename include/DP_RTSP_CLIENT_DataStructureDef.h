@@ -6,9 +6,9 @@
  */
 #ifndef INCLUDE_DATASTRUCTUREDEF_H_
 #define INCLUDE_DATASTRUCTUREDEF_H_
-
+#include <pthread.h>
 #include "DP_RTSP_CLIENT_GlobDefine.h"
-#pragma pack(push, 1)
+//#pragma pack(push, 1)
 typedef enum _DP_RTSP_CLIENT_NET_PROTOCOL_E {
 	DP_RTSP_CLIENT_NET_PROTOCOL_TCP,
 	DP_RTSP_CLIENT_NET_PROTOCOL_UDP,
@@ -71,7 +71,7 @@ typedef struct _DP_RTSP_CLIENT_CODEC_PARAM_S {
 typedef struct _DP_RTSP_CLIENT_FRAME_DATA_S {
 	_DP_RTSP_CLIENT_FRAME_DATA_S(DP_U16 u16CliID) :
 			u16ClientID(u16CliID), pu8Data(NULL), u32Timestamp(0), u32FrameSize(
-					0), u32FrameSequence(0), enFrameType(
+					0), u32MaxFrameSize(0), u32FrameSequence(0), enFrameType(
 					DP_RTSP_CLINET_CODEC_BUTT), bIsCodecParamChanged(false) {
 		pthread_rwlock_init(&rwLock, NULL);
 	}
@@ -79,6 +79,7 @@ typedef struct _DP_RTSP_CLIENT_FRAME_DATA_S {
 	DP_U8* pu8Data;
 	DP_U32 u32Timestamp;
 	DP_U32 u32FrameSize;
+	DP_U32 u32MaxFrameSize;
 	DP_U32 u32FrameSequence;
 	DP_RTSP_CLINET_CODEC_TYPE_E enFrameType;
 	DP_Bool bIsCodecParamChanged;
@@ -95,6 +96,6 @@ typedef struct _DP_RTSP_CLIENT_FRAME_DATA_S {
 	}
 } DP_RTSP_CLIENT_FRAME_DATA_S;
 
-#pragma pack(pop)
+//#pragma pack(pop)
 
 #endif /* INCLUDE_DP_RTSP_CLIENT_DATASTRUCTUREDEF_H_ */

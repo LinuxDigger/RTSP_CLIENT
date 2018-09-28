@@ -36,7 +36,7 @@ public:
 
 class RTPInterface {
 public:
-	RTPInterface(Medium* owner, Groupsock* gs);
+	RTPInterface(CommonPlay *cpObj, Medium* owner, Groupsock* gs);
 	virtual ~RTPInterface();
 
 	Groupsock* gs() const {

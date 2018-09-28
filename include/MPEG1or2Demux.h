@@ -75,13 +75,13 @@ private:
 	// called only by createNew()
 	virtual ~MPEG1or2Demux();
 
-	void registerReadInterest(u_int8_t streamIdTag, DP_U8* to,
-			unsigned maxSize, FramedSource::afterGettingFunc* afterGettingFunc,
+	void registerReadInterest(u_int8_t streamIdTag, DP_U8* to, unsigned maxSize,
+			FramedSource::afterGettingFunc* afterGettingFunc,
 			void* afterGettingClientData,
 			FramedSource::onCloseFunc* onCloseFunc, void* onCloseClientData);
 
-	Boolean useSavedData(u_int8_t streamIdTag, DP_U8* to,
-			unsigned maxSize, FramedSource::afterGettingFunc* afterGettingFunc,
+	Boolean useSavedData(u_int8_t streamIdTag, DP_U8* to, unsigned maxSize,
+			FramedSource::afterGettingFunc* afterGettingFunc,
 			void* afterGettingClientData);
 
 	static void continueReadProcessing(void* clientData, DP_U8* ptr,
@@ -101,7 +101,6 @@ private:
 	DP_U8 fNextVideoStreamNumber;
 	Boolean fReclaimWhenLastESDies;
 	unsigned fNumOutstandingESs;
-
 	// A descriptor for each possible stream id tag:
 	typedef struct OutputDescriptor {
 		// input parameters

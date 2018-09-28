@@ -16,6 +16,8 @@
 #include "DP_RTSP_CLIENT_DataQueue.h"
 #include "Mutex.h"
 #include "DP_RTSP_CLIENT_DataStructureDef.h"
+#include "Logger.h"
+using namespace FrameWork;
 using namespace std;
 class UsageEnvironment;
 class DP_RTSP_CLIENT_FrameDataMemManage;
@@ -48,8 +50,7 @@ public:
 			DP_RTSP_CLIENT_CODEC_PARAM_S *stCodeParam);
 
 	DP_S32 DP_RTSP_CLIENT_GetStreamData(DP_RTSP_CLIENT_FRAME_DATA_S *stDataRecv,
-			DP_U32 timeout, FrameDataMemManage &memManage,
-			DP_Bool &firstPutout);
+			DP_U32 timeout, DP_Bool &firstPutout);
 
 	DP_S32 DP_RTSP_CLIENT_Close(DP_U16 s32CliID);
 
@@ -72,7 +73,7 @@ private:
 	Mutex _mutex;
 
 	UsageEnvironment* _env;
-
+//#pragma pack(push, 1)
 	typedef struct _ClientInitArgs_S {
 		_ClientInitArgs_S(DP_U16 cliID, const char *URL,
 				DP_RTSP_CLIENT_STREAM_TYPE_E streamType,
@@ -100,6 +101,8 @@ private:
 		UsageEnvironment* _env;
 		DP_U16 clientID;
 	} EnvScheID_S;
+
+//#pragma pack(pop))
 
 	static void* sClientInit(void*args);
 };

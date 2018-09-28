@@ -17,6 +17,8 @@ DP_RTSP_CLIENT_DataQueue::DP_RTSP_CLIENT_DataQueue(DP_U16 u16CliID,
 				0) {
 	_vDataRecvSet.reserve(frameCnt);
 	DP_RTSP_CLIENT_FRAME_DATA_S frameData(u16CliID);
+	frameData.pu8Data = NULL;
+//	frameData.pu8Data = new DP_U8[450000];
 	for (DP_U32 i = 0; i < frameCnt; i++)
 		_vDataRecvSet.push_back(frameData);
 }
@@ -49,20 +51,35 @@ DP_RTSP_CLIENT_DataQueue::~DP_RTSP_CLIENT_DataQueue() {
 DP_S32 DP_RTSP_CLIENT_DataQueue::DP_RTSP_CLIENT_RecvData(DP_U32 timestamp,
 		DP_U32 frameSize, DP_U32 &frameSequence,
 		DP_RTSP_CLINET_CODEC_TYPE_E frameType, DP_U8 *dataBuff) {
+#if 1
 	_u32FrameIndex = frameSequence;
 	DP_U32 frameSeqMod = frameSequence % _u32FrameCnt;
 //	frameSequence %= _u32FrameCnt;
+//	cout << "-------------------------------------_vDataRecvSet.size: "<<_vDataRecvSet.size()<<endl;
 	_vDataRecvSet[frameSeqMod].WRLock();
 	_vDataRecvSet[frameSeqMod].u32Timestamp = timestamp;
 	_vDataRecvSet[frameSeqMod].enFrameType = frameType;
 	_vDataRecvSet[frameSeqMod].u32FrameSequence = frameSequence;
-	if (_vDataRecvSet[frameSeqMod].u32FrameSize < frameSize) {
-		_vDataRecvSet[frameSeqMod].pu8Data = (DP_U8 *) realloc(
-				_vDataRecvSet[frameSeqMod].pu8Data, frameSize);
+//	cout << "_vDataRecvSet[frameSeqMod].u32FrameSize < frameSize : "
+//			<< _vDataRecvSet[frameSeqMod].u32FrameSize << " " << frameSize
+//			<< endl;
+	if (_vDataRecvSet[frameSeqMod].u32MaxFrameSize < frameSize) {
+		if (_vDataRecvSet[frameSeqMod].pu8Data != NULL) {
+			delete[] _vDataRecvSet[frameSeqMod].pu8Data;
+			_vDataRecvSet[frameSeqMod].pu8Data = NULL;
+		}
+//		cout << "newwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww1:"
+//				<< frameSize << " frameSeqMod].u32FrameSize "
+//				<< _vDataRecvSet[frameSeqMod].u32FrameSize << " frameSeqMod "<<frameSeqMod<<endl;
+		_vDataRecvSet[frameSeqMod].pu8Data = new DP_U8[frameSize];
+//		_vDataRecvSet[frameSeqMod].pu8Data = (DP_U8 *) realloc(
+//				_vDataRecvSet[frameSeqMod].pu8Data, frameSize);
 		memset(_vDataRecvSet[frameSeqMod].pu8Data, 0, frameSize);
+		_vDataRecvSet[frameSeqMod].u32MaxFrameSize = frameSize;
 	} else
 		memset(_vDataRecvSet[frameSeqMod].pu8Data, 0,
-				_vDataRecvSet[frameSeqMod].u32FrameSize);
+				_vDataRecvSet[frameSeqMod].u32MaxFrameSize);
+	///should be optimized !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!111
 	_vDataRecvSet[frameSeqMod].u32FrameSize = frameSize;
 	memcpy(_vDataRecvSet[frameSeqMod].pu8Data, dataBuff, frameSize);
 
@@ -107,6 +124,7 @@ DP_S32 DP_RTSP_CLIENT_DataQueue::DP_RTSP_CLIENT_RecvData(DP_U32 timestamp,
 			_u32IDRFrameIndex, frameSequence);
 	frameSequence++;
 
+#endif
 	return frameSize;
 }
 
@@ -126,7 +144,7 @@ DP_U32 DP_RTSP_CLIENT_DataQueue::DP_RTSP_CLIENT_PutoutData(
 		DP_U32 timeoutCnt = 0;
 		DP_U32 IDRMod = _u32IDRFrameIndex % _u32FrameCnt;
 		Logger::GetInstance().Info(
-				"1DP_RTSP_CLIENT_PutoutData()111111111111111111111111putoutdata _u32IDRFrameIndex ::%d ",
+				"1DP_RTSP_CLIENT_PutoutData()1111putoutdata _u32IDRFrameIndex ::%d ",
 				_u32IDRFrameIndex);
 		//There is a IDR frame in _u32FrameCnt range .//seldom 0
 		if (streamType == DP_RTSP_CLIENT_STREAM_VIDEO
@@ -171,6 +189,7 @@ DP_U32 DP_RTSP_CLIENT_DataQueue::DP_RTSP_CLIENT_PutoutData(
 			if (_u32AudioFrameIndex != 0) {
 				//read lock
 				_vDataRecvSet[AudioMod].RDLock();
+				memset(stData, 0, sizeof(DP_RTSP_CLIENT_FRAME_DATA_S));
 				memcpy(stData, &_vDataRecvSet[AudioMod],
 						sizeof(DP_RTSP_CLIENT_FRAME_DATA_S));
 				_vDataRecvSet[AudioMod].UNLock();
@@ -185,6 +204,8 @@ DP_U32 DP_RTSP_CLIENT_DataQueue::DP_RTSP_CLIENT_PutoutData(
 						_vDataRecvSet[nextFrameIndexMod].RDLock();
 						if (_vDataRecvSet[nextFrameIndexMod].enFrameType
 								> DP_RTSP_CLINET_CODEC_H265_IFRAME) {
+							memset(stData, 0,
+									sizeof(DP_RTSP_CLIENT_FRAME_DATA_S));
 							memcpy(stData, &_vDataRecvSet[nextFrameIndexMod],
 									sizeof(DP_RTSP_CLIENT_FRAME_DATA_S));
 							_vDataRecvSet[nextFrameIndexMod].UNLock();
@@ -252,6 +273,7 @@ DP_U32 DP_RTSP_CLIENT_DataQueue::DP_RTSP_CLIENT_PutoutData(
 void DP_RTSP_CLIENT_DataQueue::copyData(DP_U32 indexMod,
 		DP_RTSP_CLIENT_FRAME_DATA_S*stData) {
 	_vDataRecvSet[indexMod].RDLock();
+	memset(stData, 0, sizeof(DP_RTSP_CLIENT_FRAME_DATA_S));
 	memcpy(stData, &_vDataRecvSet[indexMod],
 			sizeof(DP_RTSP_CLIENT_FRAME_DATA_S));
 	Logger::GetInstance().Info("copyData()_vDataRecvSet[indexMod].fraseq : %d",

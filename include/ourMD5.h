@@ -7,7 +7,7 @@
 
 #ifndef INCLUDE_OURMD5_H_
 #define INCLUDE_OURMD5_H_
-
+#include "DP_RTSP_CLIENT_GlobDefine.h"
 
 extern char* our_MD5Data(DP_U8 const* data, unsigned dataSize, char* outputDigest);
     // "outputDigest" must be either NULL (in which case this function returns a heap-allocated

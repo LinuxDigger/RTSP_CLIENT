@@ -7,6 +7,7 @@
 
 #ifndef INCLUDE_MP3ADUDESCRIPTOR_H_
 #define INCLUDE_MP3ADUDESCRIPTOR_H_
+#include "DP_RTSP_CLIENT_GlobDefine.h"
 
 
 // A class for handling the descriptor that begins each ADU frame:

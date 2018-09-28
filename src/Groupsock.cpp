@@ -331,6 +331,8 @@ Boolean Groupsock::handleRead(DP_U8* buffer, unsigned bufferMaxSize,
 	// unless the packet was originally sent by us to begin with.
 	bytesRead = numBytes;
 
+	return True;
+
 	int numMembers = 0;
 	if (!wasLoopedBackFromUs(env(), fromAddressAndPort)) {
 		statsIncoming.countPacket(numBytes);

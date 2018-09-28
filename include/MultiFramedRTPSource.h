@@ -9,6 +9,7 @@
 #define INCLUDE_MULTIFRAMEDRTPSOURCE_H_
 
 #include "RTPSource.h"
+#include "Boolean.h"
 
 class BufferedPacket;
 // forward

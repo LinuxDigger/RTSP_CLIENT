@@ -16,7 +16,7 @@
 #include <map>
 #include <pthread.h>
 //#include <Media.h>
-
+#include <iostream>
 using namespace std;
 class Medium;
 class CommonPlay;
@@ -33,17 +33,7 @@ public:
 	//start from 1
 	map<DP_U16, Medium*> _mClientSet;
 
-	DP_U16 getIdleClientNum() {
-		pthread_mutex_lock(&mutex);
-		for (DP_U16 i = 1; i <= _mClientSet.size(); i++) {
-			if (_mClientSet[i] == NULL)
-				return i;
-			else if (i == _mClientSet.size())
-				_bClientSetIsFull = true;
-		}
-		pthread_mutex_unlock(&mutex);
-		return 0;
-	}
+	DP_U16 getIdleClientNum();
 
 	void setAClientMedium(Medium *client, DP_U16 cliID) {
 		pthread_mutex_lock(&mutex);
@@ -68,29 +58,29 @@ public:
 
 	virtual TaskToken scheduleDelayedTask(int64_t microseconds, TaskFunc* proc,
 			void* clientData, CommonPlay *cpObj) = 0;
-	// Schedules a task to occur (after a delay) when we next
-	// reach a scheduling point.
-	// (Does not delay if "microseconds" <= 0)
-	// Returns a token that can be used in a subsequent call to
-	// unscheduleDelayedTask() or rescheduleDelayedTask()
-	// (but only if the task has not yet occurred).
+// Schedules a task to occur (after a delay) when we next
+// reach a scheduling point.
+// (Does not delay if "microseconds" <= 0)
+// Returns a token that can be used in a subsequent call to
+// unscheduleDelayedTask() or rescheduleDelayedTask()
+// (but only if the task has not yet occurred).
 
 	virtual void unscheduleDelayedTask(TaskToken& prevTask) = 0;
-	// (Has no effect if "prevTask" == NULL)
-	// Sets "prevTask" to NULL afterwards.
-	// Note: This MUST NOT be called if the scheduled task has already occurred.
+// (Has no effect if "prevTask" == NULL)
+// Sets "prevTask" to NULL afterwards.
+// Note: This MUST NOT be called if the scheduled task has already occurred.
 
 	virtual void rescheduleDelayedTask(TaskToken& task, int64_t microseconds,
 			TaskFunc* proc, void* clientData);
-	// Combines "unscheduleDelayedTask()" with "scheduleDelayedTask()"
-	// (setting "task" to the new task token).
-	// Note: This MUST NOT be called if the scheduled task has already occurred.
+// Combines "unscheduleDelayedTask()" with "scheduleDelayedTask()"
+// (setting "task" to the new task token).
+// Note: This MUST NOT be called if the scheduled task has already occurred.
 
-	// For handling socket operations in the background (from the event loop):
+// For handling socket operations in the background (from the event loop):
 	typedef void BackgroundHandlerProc(void* clientData, int mask,
 			CommonPlay *cpObj);
-	// Possible bits to set in "mask".  (These are deliberately defined
-	// the same as those in Tcl, to make a Tcl-based subclass easy.)
+// Possible bits to set in "mask".  (These are deliberately defined
+// the same as those in Tcl, to make a Tcl-based subclass easy.)
 #define SOCKET_READABLE    (1<<1)
 #define SOCKET_WRITABLE    (1<<2)
 #define SOCKET_EXCEPTION   (1<<3)
@@ -100,27 +90,27 @@ public:
 		setBackgroundHandling(socketNum, 0, NULL, NULL);
 	}
 	virtual void moveSocketHandling(int oldSocketNum, int newSocketNum) = 0;
-	// Changes any socket handling for "oldSocketNum" so that occurs with "newSocketNum" instead.
+// Changes any socket handling for "oldSocketNum" so that occurs with "newSocketNum" instead.
 
 	virtual void doEventLoop(char volatile* watchVariable = NULL) = 0;
-	// Causes further execution to take place within the event loop.
-	// Delayed tasks, background I/O handling, and other events are handled, sequentially (as a single thread of control).
-	// (If "watchVariable" is not NULL, then we return from this routine when *watchVariable != 0)
+// Causes further execution to take place within the event loop.
+// Delayed tasks, background I/O handling, and other events are handled, sequentially (as a single thread of control).
+// (If "watchVariable" is not NULL, then we return from this routine when *watchVariable != 0)
 
 	virtual EventTriggerId createEventTrigger(TaskFunc* eventHandlerProc) = 0;
-	// Creates a 'trigger' for an event, which - if it occurs - will be handled (from the event loop) using "eventHandlerProc".
-	// (Returns 0 iff no such trigger can be created (e.g., because of implementation limits on the number of triggers).)
+// Creates a 'trigger' for an event, which - if it occurs - will be handled (from the event loop) using "eventHandlerProc".
+// (Returns 0 iff no such trigger can be created (e.g., because of implementation limits on the number of triggers).)
 	virtual void deleteEventTrigger(EventTriggerId eventTriggerId) = 0;
 
 	virtual void triggerEvent(EventTriggerId eventTriggerId, void* clientData =
 	NULL) = 0;
-	// Causes the (previously-registered) handler function for the specified event to be handled (from the event loop).
-	// The handler function is called with "clientData" as parameter.
-	// Note: This function (unlike other library functions) may be called from an external thread
-	// - to signal an external event.  (However, "triggerEvent()" should not be called with the
-	// same 'event trigger id' from different threads.)
+// Causes the (previously-registered) handler function for the specified event to be handled (from the event loop).
+// The handler function is called with "clientData" as parameter.
+// Note: This function (unlike other library functions) may be called from an external thread
+// - to signal an external event.  (However, "triggerEvent()" should not be called with the
+// same 'event trigger id' from different threads.)
 
-	// The following two functions are deprecated, and are provided for backwards-compatibility only:
+// The following two functions are deprecated, and are provided for backwards-compatibility only:
 	void turnOnBackgroundReadHandling(int socketNum,
 			BackgroundHandlerProc* handlerProc, void* clientData) {
 		setBackgroundHandling(socketNum, SOCKET_READABLE, handlerProc,
@@ -133,10 +123,11 @@ public:
 	virtual void internalError(); // used to 'handle' a 'should not occur'-type error condition within the library.
 
 protected:
-	TaskScheduler(DP_U32 urlNumsEachSche); // abstract base class
+	TaskScheduler(DP_U16 scheIndex,DP_U32 urlNumsEachSche); // abstract base class
 	DP_Bool _bClientSetIsFull;
 	DP_U32 _u32UrlNumsEachSche;
 	DP_Bool _bScheThreadStatus;
+	DP_U16 _u16ScheIndex;
 
 };
 

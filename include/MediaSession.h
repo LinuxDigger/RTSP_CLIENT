@@ -209,6 +209,7 @@ public:
 		return fRTPTimestampFrequency;
 	}
 	Boolean rtcpIsMuxed() const {
+		cout << "rtcpIsMuxed()  return fMultiplexRTCPWithRTP"<<endl;
 		return fMultiplexRTCPWithRTP;
 	}
 	FramedSource* readSource() {

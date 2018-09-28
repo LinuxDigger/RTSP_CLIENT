@@ -8,6 +8,7 @@
 #ifndef INCLUDE_DP_RTSP_CLIENT_GLOBDEFINE_H_
 #define INCLUDE_DP_RTSP_CLIENT_GLOBDEFINE_H_
 
+
 // Defines unsigned types
 typedef unsigned char           DP_U8;
 typedef unsigned short          DP_U16;

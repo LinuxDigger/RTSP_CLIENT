@@ -11,10 +11,12 @@
 #include "NetCommon.h"
 #include "Boolean.h"
 #include "TaskScheduler.h"
+#include "Logger.h"
 //#include "CommonPlay.h"
 #include <iostream>
 #include <vector>
 using namespace std;
+using namespace FrameWork;
 
 class UsageEnvironment {
 public:
@@ -26,6 +28,8 @@ public:
 //		return fScheduler;
 //	}
 	TaskScheduler* taskScheduler(DP_U32 schedulerNum) const {
+//		cout << "=============================================schedulerNum: "
+//				<< schedulerNum << endl;
 		if (schedulerNum < fScheduler.size())
 			return fScheduler[schedulerNum];
 		else
@@ -36,15 +40,7 @@ public:
 		fScheduler = *scheduler;
 	}
 
-	DP_U16 getAIdleClientFromEnv() {
-		for (DP_U16 i = 0; i < fScheduler.size(); i++) {
-			if (!fScheduler[i]->isClientSetFull()) {
-				return (fScheduler[i]->getIdleClientNum() + i * 10);
-			} else if (i == fScheduler.size() - 1)
-				return 0;
-		}
-		return 0;
-	}
+	DP_U16 getAIdleClientFromEnv();
 
 	// result message handling:
 	typedef char const* MsgString;
