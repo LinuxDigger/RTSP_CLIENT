@@ -73,7 +73,7 @@ T140IdleFilter::T140IdleFilter(UsageEnvironment& env, CommonPlay *cpObj,
 }
 
 T140IdleFilter::~T140IdleFilter() {
-	envir().taskScheduler(fcpObj->_fClientID / 10)->unscheduleDelayedTask(
+	envir().taskScheduler(fcpObj->_fClientID / 100)->unscheduleDelayedTask(
 			fIdleTimerTask);
 
 	delete[] fBuffer;
@@ -92,7 +92,7 @@ void T140IdleFilter::doGetNextFrame() {
 	// We don't have any buffered data, so ask our input source for data (unless we've already done so).
 	// But also set a timer to expire if this doesn't arrive promptly:
 	fIdleTimerTask =
-			envir().taskScheduler(fcpObj->_fClientID / 10)->scheduleDelayedTask(
+			envir().taskScheduler(fcpObj->_fClientID / 100)->scheduleDelayedTask(
 			IDLE_TIMEOUT_MICROSECONDS, handleIdleTimeout, this, fcpObj);
 	if (fInputSource != NULL && !fInputSource->isCurrentlyAwaitingData()) {
 		fInputSource->getNextFrame((DP_U8*) fBuffer, fBufferSize,
@@ -111,7 +111,7 @@ void T140IdleFilter::afterGettingFrame(unsigned frameSize,
 		unsigned numTruncatedBytes, struct timeval presentationTime,
 		unsigned durationInMicroseconds) {
 	// First, cancel any pending idle timer:
-	envir().taskScheduler(fcpObj->_fClientID / 10)->unscheduleDelayedTask(
+	envir().taskScheduler(fcpObj->_fClientID / 100)->unscheduleDelayedTask(
 			fIdleTimerTask);
 
 	// Then note the new data that we have in our buffer:
@@ -127,7 +127,7 @@ void T140IdleFilter::afterGettingFrame(unsigned frameSize,
 
 void T140IdleFilter::doStopGettingFrames() {
 	// Cancel any pending idle timer:
-	envir().taskScheduler(fcpObj->_fClientID / 10)->unscheduleDelayedTask(
+	envir().taskScheduler(fcpObj->_fClientID / 100)->unscheduleDelayedTask(
 			fIdleTimerTask);
 
 	// And call the parent's implementation of this virtual function:
@@ -174,7 +174,7 @@ void T140IdleFilter::onSourceClosure(void* clientData) {
 }
 
 void T140IdleFilter::onSourceClosure() {
-	envir().taskScheduler(fcpObj->_fClientID / 10)->unscheduleDelayedTask(
+	envir().taskScheduler(fcpObj->_fClientID / 100)->unscheduleDelayedTask(
 			fIdleTimerTask);
 	fIdleTimerTask = NULL;
 

@@ -24,7 +24,7 @@ Medium::Medium(UsageEnvironment& env, CommonPlay *cpObj) :
 
 Medium::~Medium() {
 	// Remove any tasks that might be pending for us:
-	fEnviron.taskScheduler(fcpObj->_fClientID / 10)->unscheduleDelayedTask(
+	fEnviron.taskScheduler(fcpObj->_fClientID / 100)->unscheduleDelayedTask(
 			fNextTask);
 }
 

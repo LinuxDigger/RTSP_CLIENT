@@ -25,8 +25,8 @@ DP_U16 UsageEnvironment::getAIdleClientFromEnv() {
 		if (!fScheduler[i]->isClientSetFull()) {
 			Logger::GetInstance().Warn(
 					"fScheduler[i]->getIdleClientNum() + i * 10   : %d ",
-					fScheduler[i]->getIdleClientNum() + i * 10);
-			return (fScheduler[i]->getIdleClientNum() + i * 10);
+					fScheduler[i]->getIdleClientNum() + i * 100);
+			return (fScheduler[i]->getIdleClientNum() + i * 100);
 		} else if (i == fScheduler.size() - 1) {
 			Logger::GetInstance().Error("f (i == fScheduler.size() - 1))))))");
 			return 0;

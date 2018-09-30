@@ -39,7 +39,9 @@ public:
 	MediaSession* session;
 	MediaSubsession* subsession;
 	TaskToken streamTimerTask;
+	TaskToken streamTimerTask_Shutdown;
 	double duration;
+	DP_Bool _bWaitOptionTimer;
 };
 
 class OurRTSPClient: public RTSPClient {
@@ -105,6 +107,7 @@ public:
 	static void checkInterPacketGaps(void* clientData, CommonPlay *cpObj);
 	static void checkSessionTimeoutBrokenServer(void* clientData,
 			CommonPlay *cpObj);
+	static void sessionShutdownTimerHandler(void *clientData, CommonPlay *cpObj);
 	void beginQOSMeasurement();
 	void printQOSData(int exitCode);
 

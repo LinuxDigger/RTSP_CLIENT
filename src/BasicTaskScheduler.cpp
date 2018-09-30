@@ -33,7 +33,6 @@ vector<TaskScheduler*> *BasicTaskScheduler::createNew(DP_U32 maxConnectionCnt,
 						maxSchedulerGranularity, cpObj));
 	}
 	return &taskSche;
-
 }
 
 BasicTaskScheduler::BasicTaskScheduler(DP_U16 scheIndex, DP_U32 urlNumsEachSche,
@@ -180,6 +179,8 @@ void BasicTaskScheduler::SingleStep(unsigned maxDelayTime) {
 //			cout << "urllllllllllllllllllllllllfafter 0fLastHandledSocketNum0 "<<fLastHandledSocketNum<<endl;
 				(*handler->handlerProc)(handler->clientData, resultConditionSet,
 						_mSockfdCpSet[fLastHandledSocketNum]);///////sending  cseq 2处理和RTSP服务器的通信协议的商定
+//				(*handler->handlerProc)(handler->clientData,
+//						resultConditionSet,NULL);///////sending  cseq 2处理和RTSP服务器的通信协议的商定
 //			break;
 		}
 	}
@@ -207,6 +208,8 @@ void BasicTaskScheduler::SingleStep(unsigned maxDelayTime) {
 				// in case the handler calls "doEventLoop()" reentrantly.
 				(*handler->handlerProc)(handler->clientData, resultConditionSet,
 						_mSockfdCpSet[fLastHandledSocketNum]);  ///处理真正的视频和音频数据
+//				(*handler->handlerProc)(handler->clientData,
+//						resultConditionSet,NULL);  ///处理真正的视频和音频数据
 //				break;
 			}
 		}

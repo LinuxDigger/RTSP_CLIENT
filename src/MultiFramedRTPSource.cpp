@@ -99,7 +99,7 @@ void MultiFramedRTPSource::doStopGettingFrames() {
 		fReorderingBuffer->freePacket(fPacketReadInProgress);
 		fPacketReadInProgress = NULL;
 	}
-	envir().taskScheduler(fcpObj->_fClientID / 10)->unscheduleDelayedTask(nextTask());
+	envir().taskScheduler(fcpObj->_fClientID / 100)->unscheduleDelayedTask(nextTask());
 	fRTPInterface.stopNetworkReading();
 	fReorderingBuffer->reset();
 	reset();
@@ -202,7 +202,7 @@ void MultiFramedRTPSource::doGetNextFrame1() {
 				afterGetting(this); //调用函数去处理取出的数据帧
 			} else {
 				// Special case: Call our 'after getting' function via the event loop.
-				nextTask() = envir().taskScheduler(fcpObj->_fClientID / 10)->scheduleDelayedTask(0,
+				nextTask() = envir().taskScheduler(fcpObj->_fClientID / 100)->scheduleDelayedTask(0,
 						(TaskFunc*) FramedSource::afterGetting, this, fcpObj);
 			}
 		} else {

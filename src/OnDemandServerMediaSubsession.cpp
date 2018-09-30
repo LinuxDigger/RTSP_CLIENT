@@ -185,7 +185,7 @@ void OnDemandServerMediaSubsession::getStreamParameters(
 
 		// Set up the state of the stream.  The stream will get started later:
 		streamToken = fLastStreamToken = new StreamState(
-				fcpObj->_fClientID / 10, *this, serverRTPPort, serverRTCPPort,
+				fcpObj->_fClientID / 100, *this, serverRTPPort, serverRTCPPort,
 				rtpSink, udpSink, streamBitrate, mediaSource, rtpGroupsock,
 				rtcpGroupsock);
 	}
@@ -417,7 +417,7 @@ void OnDemandServerMediaSubsession::closeStreamSource(
 Groupsock* OnDemandServerMediaSubsession::createGroupsock(
 		struct in_addr const& addr, Port port) {
 	// Default implementation; may be redefined by subclasses:
-	return new Groupsock(fcpObj->_fClientID / 10, envir(), addr, port, 255);
+	return new Groupsock(fcpObj->_fClientID / 100, envir(), addr, port, 255);
 }
 
 RTCPInstance* OnDemandServerMediaSubsession::createRTCP(Groupsock* RTCPgs,

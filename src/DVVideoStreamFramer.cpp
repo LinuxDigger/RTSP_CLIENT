@@ -83,7 +83,7 @@ void DVVideoStreamFramer::getProfile() {
 			FramedSource::handleClosure, this);
 
 	// Handle events until the requested data arrives:
-	envir().taskScheduler(fcpObj->_fClientID / 10)->doEventLoop(
+	envir().taskScheduler(fcpObj->_fClientID / 100)->doEventLoop(
 			&fInitialBlocksPresent);
 }
 

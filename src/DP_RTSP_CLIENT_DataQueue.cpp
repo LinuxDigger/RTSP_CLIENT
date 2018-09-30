@@ -26,7 +26,7 @@ DP_RTSP_CLIENT_DataQueue::DP_RTSP_CLIENT_DataQueue(DP_U16 u16CliID,
 DP_RTSP_CLIENT_DataQueue::~DP_RTSP_CLIENT_DataQueue() {
 	for (DP_U32 i = 0; i < _u32FrameCnt; i++)
 		if (_vDataRecvSet[i].pu8Data != NULL) {
-			free(_vDataRecvSet[i].pu8Data);
+			delete[] _vDataRecvSet[i].pu8Data;
 			_vDataRecvSet[i].pu8Data = NULL;
 		}
 }
@@ -48,15 +48,20 @@ DP_RTSP_CLIENT_DataQueue::~DP_RTSP_CLIENT_DataQueue() {
 //	pthread_rwlock_t rwLock;
 //} DP_RTSP_CLIENT_FRAME_DATA_S;
 
-DP_S32 DP_RTSP_CLIENT_DataQueue::DP_RTSP_CLIENT_RecvData(DP_U32 timestamp,
+DP_S32 DP_RTSP_CLIENT_DataQueue::DP_RTSP_CLIENT_RecvData(DP_U64 timestamp,
 		DP_U32 frameSize, DP_U32 &frameSequence,
 		DP_RTSP_CLINET_CODEC_TYPE_E frameType, DP_U8 *dataBuff) {
 #if 1
 	_u32FrameIndex = frameSequence;
 	DP_U32 frameSeqMod = frameSequence % _u32FrameCnt;
 //	frameSequence %= _u32FrameCnt;
-//	cout << "-------------------------------------_vDataRecvSet.size: "<<_vDataRecvSet.size()<<endl;
+//	cout << "1111111-------------------------------------_vDataRecvSet.size: "
+//			<< _vDataRecvSet.size() << " frameSequence: " << frameSequence
+//			<< endl;
 	_vDataRecvSet[frameSeqMod].WRLock();
+//	cout << "-2222222------------------------------------_vDataRecvSet.size: "
+//			<< _vDataRecvSet.size() << " frameSequence: " << frameSequence
+//			<< endl;
 	_vDataRecvSet[frameSeqMod].u32Timestamp = timestamp;
 	_vDataRecvSet[frameSeqMod].enFrameType = frameType;
 	_vDataRecvSet[frameSeqMod].u32FrameSequence = frameSequence;
@@ -71,6 +76,10 @@ DP_S32 DP_RTSP_CLIENT_DataQueue::DP_RTSP_CLIENT_RecvData(DP_U32 timestamp,
 //		cout << "newwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww1:"
 //				<< frameSize << " frameSeqMod].u32FrameSize "
 //				<< _vDataRecvSet[frameSeqMod].u32FrameSize << " frameSeqMod "<<frameSeqMod<<endl;
+//		cout
+//				<< "newwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww _vDataRecvSet[frameSeqMod].u32MaxFrameSize : "
+//				<< _vDataRecvSet[frameSeqMod].u32MaxFrameSize << " frameSize "
+//				<< frameSize << endl;
 		_vDataRecvSet[frameSeqMod].pu8Data = new DP_U8[frameSize];
 //		_vDataRecvSet[frameSeqMod].pu8Data = (DP_U8 *) realloc(
 //				_vDataRecvSet[frameSeqMod].pu8Data, frameSize);
@@ -84,6 +93,8 @@ DP_S32 DP_RTSP_CLIENT_DataQueue::DP_RTSP_CLIENT_RecvData(DP_U32 timestamp,
 	memcpy(_vDataRecvSet[frameSeqMod].pu8Data, dataBuff, frameSize);
 
 	_vDataRecvSet[frameSeqMod].UNLock();
+//	cout <<"recvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv : "<<frameSequence<<endl;
+	frameSequence++;
 // figure out a video frame
 	if (_vDataRecvSet[frameSeqMod].enFrameType
 			<= DP_RTSP_CLINET_CODEC_H265_IFRAME) {
@@ -122,7 +133,7 @@ DP_S32 DP_RTSP_CLIENT_DataQueue::DP_RTSP_CLIENT_RecvData(DP_U32 timestamp,
 	Logger::GetInstance().Info(
 			"DP_RTSP_CLIENT_RecvData() _u32IDRFrameIndex!!!!!!!!!!!!!!!!!!%d frameSequence :  ",
 			_u32IDRFrameIndex, frameSequence);
-	frameSequence++;
+//	frameSequence++;
 
 #endif
 	return frameSize;
@@ -136,7 +147,6 @@ DP_U32 DP_RTSP_CLIENT_DataQueue::DP_RTSP_CLIENT_PutoutData(
 			"DP_RTSP_CLIENT_PutoutData() :stData->u32FrameSequence :: %d",
 			stData->u32FrameSequence);
 	//first putout
-//	if (stData->u32FrameSequence == 0) {
 	if (firstPutout == true) {
 		DP_U32 offset = 0;
 		DP_U32 nextFrameIndex = 0;
@@ -147,22 +157,21 @@ DP_U32 DP_RTSP_CLIENT_DataQueue::DP_RTSP_CLIENT_PutoutData(
 				"1DP_RTSP_CLIENT_PutoutData()1111putoutdata _u32IDRFrameIndex ::%d ",
 				_u32IDRFrameIndex);
 		//There is a IDR frame in _u32FrameCnt range .//seldom 0
-		if (streamType == DP_RTSP_CLIENT_STREAM_VIDEO
-				|| streamType == DP_RTSP_CLIENT_STREAM_VIDEO_AND_AUDIO) {
+		if (isAVideoFrame(streamType)) {
 			//modify to 1111111111111111111111111111111111 from 0
 			if (_u32IDRFrameIndex != 1) {
 				//read lock
-				copyData(IDRMod, stData);
+				copyVideoData(IDRMod, stData);
 				firstPutout = false;
 				return stData->u32FrameSize;
 			} else {
-
+				//_u32IDRFrameIndex == 1
 				while (1) {
 					if ((nextFrameIndex = _u32IDRFrameIndex + offset + 1)
-							< _u32FrameIndex) {
+							<= _u32FrameIndex) {
 						nextFrameIndexMod = nextFrameIndex % _u32FrameCnt;
 						if (isVideoStartFrame(nextFrameIndexMod)) {
-							copyData(nextFrameIndexMod, stData);
+							copyVideoData(nextFrameIndexMod, stData);
 							firstPutout = false;
 							return stData->u32FrameSize;
 						} else {
@@ -183,32 +192,21 @@ DP_U32 DP_RTSP_CLIENT_DataQueue::DP_RTSP_CLIENT_PutoutData(
 					}
 				} //end while
 			} //end if (streamType == DP_RTSP_CLIENT_STREAM_VIDEO
-		} else if (streamType == DP_RTSP_CLIENT_STREAM_AUDIO
-				|| streamType == DP_RTSP_CLIENT_STREAM_VIDEO_AND_AUDIO) {
+		} else if (isAAudioFrame(streamType)) {
 			DP_U32 AudioMod = _u32AudioFrameIndex % _u32FrameCnt;
 			if (_u32AudioFrameIndex != 0) {
 				//read lock
-				_vDataRecvSet[AudioMod].RDLock();
-				memset(stData, 0, sizeof(DP_RTSP_CLIENT_FRAME_DATA_S));
-				memcpy(stData, &_vDataRecvSet[AudioMod],
-						sizeof(DP_RTSP_CLIENT_FRAME_DATA_S));
-				_vDataRecvSet[AudioMod].UNLock();
+				copyAudioData(AudioMod, stData);
 				firstPutout = false;
 				return stData->u32FrameSize;
 			} else {
-
 				while (1) {
 					if ((nextFrameIndex = _u32AudioFrameIndex + offset + 1)
-							< _u32FrameIndex) {
+							<= _u32FrameIndex) {
 						nextFrameIndexMod = nextFrameIndex % _u32FrameCnt;
-						_vDataRecvSet[nextFrameIndexMod].RDLock();
 						if (_vDataRecvSet[nextFrameIndexMod].enFrameType
 								> DP_RTSP_CLINET_CODEC_H265_IFRAME) {
-							memset(stData, 0,
-									sizeof(DP_RTSP_CLIENT_FRAME_DATA_S));
-							memcpy(stData, &_vDataRecvSet[nextFrameIndexMod],
-									sizeof(DP_RTSP_CLIENT_FRAME_DATA_S));
-							_vDataRecvSet[nextFrameIndexMod].UNLock();
+							copyAudioData(nextFrameIndexMod, stData);
 							firstPutout = false;
 							return stData->u32FrameSize;
 						} else {
@@ -230,8 +228,8 @@ DP_U32 DP_RTSP_CLIENT_DataQueue::DP_RTSP_CLIENT_PutoutData(
 				} //end while
 			}
 		} // end if (streamType == DP_RTSP_CLIENT_STREAM_AUDIO
-	} else {  //if (stData->u32FrameSequence == 0)
-		//sequence +1 should < index otherwise wait
+	} else {  //if (stData->u32FrameSequence == 0) 	if (firstPutout == true
+		//sequence +1 should < index otherwise waiting
 		DP_U32 offset = 0;
 		DP_U32 nextFrmOffsetSeqMod = 0;
 		DP_U32 timeoutCnt = 0;
@@ -240,23 +238,59 @@ DP_U32 DP_RTSP_CLIENT_DataQueue::DP_RTSP_CLIENT_PutoutData(
 				"nextFrmSeq:::::::::::::::::::::::::::::::::::::::: %d _u32FrameIndex : %d",
 				nextFrmSeq, _u32FrameIndex);
 		while (1) {
-			if (nextFrmSeq < _u32FrameIndex) {
-				nextFrmOffsetSeqMod = (nextFrmSeq + offset) % _u32FrameCnt;
-				//find video frame or audio frame.
-				if (isAvailableFrame(nextFrmOffsetSeqMod, streamType)) {
-					copyData(nextFrmOffsetSeqMod, stData);
-					return stData->u32FrameSize;
-				} else if (isUnvalidFrame(nextFrmOffsetSeqMod, streamType)) {
-					if (nextFrmSeq + ++offset != _u32FrameIndex)
-						continue;
-					else {
-						offset++;
-						if (isTimeOut(timeout, timeoutCnt) == true)
-							return 0;
-						else
+			if (nextFrmSeq + offset <= _u32FrameIndex) {
+//				cout <<"nextFrmSeq + offset11111111 :: "<<nextFrmSeq + offset <<" _u32FrameIndex :: "<<_u32FrameIndex<<endl;
+				//can not find next frame
+				if ((_u32FrameIndex - nextFrmSeq) >= _u32FrameCnt) {
+//					cout <<"nextFrmSeq + offset 22222:: "<<nextFrmSeq + offset <<" _u32FrameIndex :: "<<_u32FrameIndex<<endl;
+					if (nextFrmSeq
+							!= _vDataRecvSet[nextFrmSeq % _u32FrameCnt].u32FrameSequence)
+						cout << "errorrrrrrrrrrrrrrrrrrrrrrrrrrr111111111";
+					else
+						cout << "erorrrrrrrrrrrrrrrrrrrrrrrrrrrrr222222222222";
+					if (isAAudioFrame(streamType)) {
+						nextFrmOffsetSeqMod = _u32FrameIndex % _u32FrameCnt;
+						copyVideoData(nextFrmOffsetSeqMod, stData);
+						return stData->u32FrameSize;
+					} else {
+						DP_U32 findIDRTimeOut = 0;
+						//wait for a IDR
+						while (1) {
+							if ((_u32FrameIndex - _u32IDRFrameIndex)
+									< _u32FrameCnt) {
+								nextFrmOffsetSeqMod = _u32IDRFrameIndex
+										% _u32FrameCnt;
+								copyVideoData(nextFrmOffsetSeqMod, stData);
+								return stData->u32FrameSize;
+							} //if ((_u32FrameIndex - _u32IDRFrameIndex) < _u32FrameCnt)
+							else {
+								if (isTimeOut(1000, findIDRTimeOut) == true)
+									return 0;
+								else
+									continue;
+							}
+						} //end  while (1)
+					}  //	if (isAAudioFrame(streamType))
+				}  //if ((_u32FrameIndex - nextFrmSeq) >= _u32FrameCnt)
+				else {
+					nextFrmOffsetSeqMod = (nextFrmSeq + offset) % _u32FrameCnt;
+					//find video frame or audio frame.
+					if (isAvailableFrame(nextFrmOffsetSeqMod, streamType)) {
+						copyVideoData(nextFrmOffsetSeqMod, stData);
+						return stData->u32FrameSize;
+					} else if (isUnvalidFrame(nextFrmOffsetSeqMod,
+							streamType)) {
+						if (nextFrmSeq + ++offset <= _u32FrameIndex)
 							continue;
+						else {
+//							offset++;
+							if (isTimeOut(timeout, timeoutCnt) == true)
+								return 0;
+							else
+								continue;
+						}
 					}
-				} //end if (isAvailableFrame(nextFrmOffsetSeqMod, streamType))
+				}
 			} else { //nextFrmSeq = _u32FrameIndex
 				//timeout wait
 //				offset++;
@@ -270,14 +304,44 @@ DP_U32 DP_RTSP_CLIENT_DataQueue::DP_RTSP_CLIENT_PutoutData(
 	return 1;
 }
 
-void DP_RTSP_CLIENT_DataQueue::copyData(DP_U32 indexMod,
+void DP_RTSP_CLIENT_DataQueue::copyVideoData(DP_U32 indexMod,
 		DP_RTSP_CLIENT_FRAME_DATA_S*stData) {
 	_vDataRecvSet[indexMod].RDLock();
-	memset(stData, 0, sizeof(DP_RTSP_CLIENT_FRAME_DATA_S));
-	memcpy(stData, &_vDataRecvSet[indexMod],
-			sizeof(DP_RTSP_CLIENT_FRAME_DATA_S));
+	DP_U32 frameSize = _vDataRecvSet[indexMod].u32FrameSize;
+	if (stData->u32MaxFrameSize < frameSize) {
+		delete[] stData->pu8Data;
+		stData->pu8Data = NULL;
+		stData->pu8Data = new DP_U8[frameSize];
+		memset(stData->pu8Data, 0, frameSize);
+		stData->u32MaxFrameSize = frameSize;
+	} else
+		memset(stData->pu8Data, 0, stData->u32MaxFrameSize);
+
+	memcpy(stData->pu8Data, _vDataRecvSet[indexMod].pu8Data, frameSize);
+	stData->u32FrameSequence = _vDataRecvSet[indexMod].u32FrameSequence;
+	stData->u32FrameSize = frameSize;
+	stData->u32Timestamp = _vDataRecvSet[indexMod].u32Timestamp;
+
 	Logger::GetInstance().Info("copyData()_vDataRecvSet[indexMod].fraseq : %d",
 			_vDataRecvSet[indexMod].u32FrameSequence);
+	_vDataRecvSet[indexMod].UNLock();
+}
+
+void DP_RTSP_CLIENT_DataQueue::copyAudioData(DP_U32 indexMod,
+		DP_RTSP_CLIENT_FRAME_DATA_S*stData) {
+	_vDataRecvSet[indexMod].RDLock();
+	DP_U32 frameSize = _vDataRecvSet[indexMod].u32FrameSize;
+	if (stData->u32MaxFrameSize < frameSize) {
+		delete[] stData->pu8Data;
+		stData->pu8Data = NULL;
+		stData->pu8Data = new DP_U8[frameSize];
+		memset(stData->pu8Data, 0, frameSize);
+		stData->u32MaxFrameSize = frameSize;
+	} else
+		memset(stData->pu8Data, 0, stData->u32MaxFrameSize);
+	memcpy(stData->pu8Data, _vDataRecvSet[indexMod].pu8Data, frameSize);
+	stData->u32FrameSequence = _vDataRecvSet[indexMod].u32FrameSequence;
+	stData->u32Timestamp = _vDataRecvSet[indexMod].u32Timestamp;
 	_vDataRecvSet[indexMod].UNLock();
 }
 
@@ -309,6 +373,18 @@ DP_Bool DP_RTSP_CLIENT_DataQueue::isUnvalidFrame(DP_U32 nextFrameMod,
 			|| ((_vDataRecvSet[nextFrameMod].enFrameType
 					>= DP_RTSP_CLINET_CODEC_PCM)
 					&& (streamType == DP_RTSP_CLIENT_STREAM_VIDEO)));
+}
+
+DP_Bool DP_RTSP_CLIENT_DataQueue::isAAudioFrame(
+		DP_RTSP_CLIENT_STREAM_TYPE_E streamType) {
+	return (streamType == DP_RTSP_CLIENT_STREAM_AUDIO
+			|| streamType == DP_RTSP_CLIENT_STREAM_VIDEO_AND_AUDIO);
+}
+
+DP_Bool DP_RTSP_CLIENT_DataQueue::isAVideoFrame(
+		DP_RTSP_CLIENT_STREAM_TYPE_E streamType) {
+	return (streamType == DP_RTSP_CLIENT_STREAM_VIDEO
+			|| streamType == DP_RTSP_CLIENT_STREAM_VIDEO_AND_AUDIO);
 }
 
 //

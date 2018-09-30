@@ -110,7 +110,7 @@ void FramedSource::stopGettingFrames() {
 
 void FramedSource::doStopGettingFrames() {
 	// Default implementation: Do nothing except cancel any pending 'delivery' task:
-	envir().taskScheduler(fcpObj->_fClientID / 10)->unscheduleDelayedTask(nextTask());
+	envir().taskScheduler(fcpObj->_fClientID / 100)->unscheduleDelayedTask(nextTask());
 	// Subclasses may wish to redefine this function.
 }
 

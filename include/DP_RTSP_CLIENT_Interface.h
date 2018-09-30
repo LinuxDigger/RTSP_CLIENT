@@ -16,9 +16,11 @@
 #include "DP_RTSP_CLIENT_DataQueue.h"
 #include "Mutex.h"
 #include "DP_RTSP_CLIENT_DataStructureDef.h"
+#include "RtspFrameQueue.h"
 #include "Logger.h"
 using namespace FrameWork;
 using namespace std;
+class CommonPlay;
 class UsageEnvironment;
 class DP_RTSP_CLIENT_FrameDataMemManage;
 typedef DP_RTSP_CLIENT_FrameDataMemManage FrameDataMemManage;
@@ -64,6 +66,7 @@ public:
 	static map<DP_U16, pthread_cond_t*> mCliCondSet;
 	static map<DP_U16, pthread_mutex_t*> mCliMuxSet;
 	static map<DP_U16, DP_RTSP_CLIENT_DataQueue*> _mDataQueueSet;
+	static RTSP_FRAME_QUEUE frameQueue;
 
 private:
 	DP_U16 _u16ClientNum;
@@ -71,8 +74,12 @@ private:
 	DP_U32 _u32MaxFrameSize;
 	vector<DP_U16> _vClientIDSet;
 	Mutex _mutex;
+	map<DP_U16, CommonPlay *> _mCliCpobjSet;
+
+//	map<const DP_C_S8*,DP_U16>_mURLSet;
 
 	UsageEnvironment* _env;
+
 //#pragma pack(push, 1)
 	typedef struct _ClientInitArgs_S {
 		_ClientInitArgs_S(DP_U16 cliID, const char *URL,
@@ -107,23 +114,23 @@ private:
 	static void* sClientInit(void*args);
 };
 
-class DP_RTSP_CLIENT_FrameDataMemManage {
-public:
-	DP_RTSP_CLIENT_FrameDataMemManage() :
-			_stDataRecv(NULL) {
-	}
-	~DP_RTSP_CLIENT_FrameDataMemManage() {
-		if (_stDataRecv->pu8Data != NULL) {
-			delete[] _stDataRecv->pu8Data;
-			_stDataRecv->pu8Data = NULL;
-		}
-	}
-	void DP_RTSP_CLIENT_SetFrameDataStruct(
-			DP_RTSP_CLIENT_FRAME_DATA_S *stDataRecv) {
-		_stDataRecv = stDataRecv;
-	}
-private:
-	DP_RTSP_CLIENT_FRAME_DATA_S *_stDataRecv;
-};
+//class DP_RTSP_CLIENT_FrameDataMemManage {
+//public:
+//	DP_RTSP_CLIENT_FrameDataMemManage() :
+//			_stDataRecv(NULL) {
+//	}
+//	~DP_RTSP_CLIENT_FrameDataMemManage() {
+//		if (_stDataRecv->pu8Data != NULL) {
+//			delete[] _stDataRecv->pu8Data;
+//			_stDataRecv->pu8Data = NULL;
+//		}
+//	}
+//	void DP_RTSP_CLIENT_SetFrameDataStruct(
+//			DP_RTSP_CLIENT_FRAME_DATA_S *stDataRecv) {
+//		_stDataRecv = stDataRecv;
+//	}
+//private:
+//	DP_RTSP_CLIENT_FRAME_DATA_S *_stDataRecv;
+//};
 
 #endif /* INCLUDE_DP_RTSP_CLIENT_INTERFACE_H_ */

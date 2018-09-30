@@ -132,7 +132,7 @@ RTPInterface::~RTPInterface() {
 
 void RTPInterface::setStreamSocket(int sockNum, DP_U8 streamChannelId) {
 	fGS->removeAllDestinations();
-	envir().taskScheduler(getOwnerMedium()->getCpObj()->_fClientID / 10)->disableBackgroundHandling(
+	envir().taskScheduler(getOwnerMedium()->getCpObj()->_fClientID / 100)->disableBackgroundHandling(
 			fGS->socketNum()); // turn off any reading on our datagram socket
 	fGS->reset(); // and close our datagram socket, because we won't be using it anymore
 
@@ -155,7 +155,7 @@ void RTPInterface::addStreamSocket(int sockNum, DP_U8 streamChannelId) {
 
 	// Also, make sure this new socket is set up for receiving RTP/RTCP-over-TCP:
 	SocketDescriptor* socketDescriptor = lookupSocketDescriptor(
-			getOwnerMedium()->getCpObj()->_fClientID / 10, envir(), sockNum);
+			getOwnerMedium()->getCpObj()->_fClientID / 100, envir(), sockNum);
 	socketDescriptor->registerRTPInterface(streamChannelId, this);
 }
 
@@ -191,7 +191,7 @@ void RTPInterface::removeStreamSocket(int sockNum, DP_U8 streamChannelId) {
 				*streamsPtr = next;
 
 				// And 'deregister' this socket,channelId pair:
-				deregisterSocket(getOwnerMedium()->getCpObj()->_fClientID / 10,
+				deregisterSocket(getOwnerMedium()->getCpObj()->_fClientID / 100,
 						envir(), sockNum, streamChannelIdToRemove);
 
 				if (streamChannelId != 0xFF)
@@ -246,9 +246,9 @@ Boolean RTPInterface::sendPacket(DP_U8* packet, unsigned packetSize) {
 void RTPInterface::startNetworkReading(
 		TaskScheduler::BackgroundHandlerProc* handlerProc) {
 	// Normal case: Arrange to read UDP packets:
-//	cout << "tartNetworkReading(erMedium()->getCpObj()->_fClientID / 10  "
+//	cout << "tartNetworkReading(erMedium()->getCpObj()->_fClientID / 100  "
 //			<< getOwnerMedium()->getCpObj()->_fClientID << endl;
-	envir().taskScheduler(getOwnerMedium()->getCpObj()->_fClientID / 10)->turnOnBackgroundReadHandling(
+	envir().taskScheduler(getOwnerMedium()->getCpObj()->_fClientID / 100)->turnOnBackgroundReadHandling(
 			fGS->socketNum(), handlerProc, fOwner);
 
 	// Also, receive RTP over TCP, on each of our TCP connections:
@@ -257,7 +257,7 @@ void RTPInterface::startNetworkReading(
 			streams->fNext) {
 		// Get a socket descriptor for "streams->fStreamSocketNum":
 		SocketDescriptor* socketDescriptor = lookupSocketDescriptor(
-				getOwnerMedium()->getCpObj()->_fClientID / 10, envir(),
+				getOwnerMedium()->getCpObj()->_fClientID / 100, envir(),
 				streams->fStreamSocketNum);
 
 		// Tell it about our subChannel:
@@ -319,13 +319,13 @@ Boolean RTPInterface::handleRead(DP_U8* buffer, unsigned bufferMaxSize,
 void RTPInterface::stopNetworkReading() {
 	// Normal case
 	if (fGS != NULL)
-		envir().taskScheduler(getOwnerMedium()->getCpObj()->_fClientID / 10)->turnOffBackgroundReadHandling(
+		envir().taskScheduler(getOwnerMedium()->getCpObj()->_fClientID / 100)->turnOffBackgroundReadHandling(
 				fGS->socketNum());
 
 	// Also turn off read handling on each of our TCP connections:
 	for (tcpStreamRecord* streams = fTCPStreams; streams != NULL; streams =
 			streams->fNext) {
-		deregisterSocket(getOwnerMedium()->getCpObj()->_fClientID / 10, envir(),
+		deregisterSocket(getOwnerMedium()->getCpObj()->_fClientID / 100, envir(),
 				streams->fStreamSocketNum, streams->fStreamChannelId);
 	}
 }

@@ -166,7 +166,7 @@ char const* ProxyServerMediaSession::url() const {
 Groupsock* ProxyServerMediaSession::createGroupsock(struct in_addr const& addr,
 		Port port) {
 	// Default implementation; may be redefined by subclasses:
-	return new Groupsock(fcpObj->_fClientID/10,envir(), addr, port, 255);
+	return new Groupsock(fcpObj->_fClientID / 100, envir(), addr, port, 255);
 }
 
 RTCPInstance* ProxyServerMediaSession::createRTCP(Groupsock* RTCPgs,
@@ -308,19 +308,19 @@ ProxyRTSPClient::ProxyRTSPClient(ProxyServerMediaSession& ourServerMediaSession,
 }
 
 void ProxyRTSPClient::reset() {
-	envir().taskScheduler(fcpObj->_fClientID / 10)->unscheduleDelayedTask(
+	envir().taskScheduler(fcpObj->_fClientID / 100)->unscheduleDelayedTask(
 			fLivenessCommandTask);
 	fLivenessCommandTask = NULL;
-	envir().taskScheduler(fcpObj->_fClientID / 10)->unscheduleDelayedTask(
+	envir().taskScheduler(fcpObj->_fClientID / 100)->unscheduleDelayedTask(
 			fDESCRIBECommandTask);
 	fDESCRIBECommandTask = NULL;
-	envir().taskScheduler(fcpObj->_fClientID / 10)->unscheduleDelayedTask(
+	envir().taskScheduler(fcpObj->_fClientID / 100)->unscheduleDelayedTask(
 			fSubsessionTimerTask);
 	fSubsessionTimerTask = NULL;
-	envir().taskScheduler(fcpObj->_fClientID / 10)->unscheduleDelayedTask(
+	envir().taskScheduler(fcpObj->_fClientID / 100)->unscheduleDelayedTask(
 			fResetTask);
 	fResetTask = NULL;
-	envir().taskScheduler(fcpObj->_fClientID / 10)->unscheduleDelayedTask(
+	envir().taskScheduler(fcpObj->_fClientID / 100)->unscheduleDelayedTask(
 			fInterPacketGapsTask);
 	fInterPacketGapsTask = NULL;
 
@@ -424,7 +424,7 @@ void ProxyRTSPClient::continueAfterSETUP(int resultCode) {
 		}
 		envir() << "\n";
 	}
-	envir().taskScheduler(fcpObj->_fClientID / 10)->unscheduleDelayedTask(
+	envir().taskScheduler(fcpObj->_fClientID / 100)->unscheduleDelayedTask(
 			fSubsessionTimerTask); // in case it had been set
 
 	// Dequeue the first "ProxyServerMediaSubsession" from our 'SETUP queue'.  It will be the one for which this "SETUP" was done:
@@ -456,7 +456,7 @@ void ProxyRTSPClient::continueAfterSETUP(int resultCode) {
 			// To allow for this possibility, we set a timer.  If the timer expires without the remaining subsessions getting "SETUP",
 			// then we send a "PLAY" command anyway:
 			fSubsessionTimerTask = envir().taskScheduler(
-					fcpObj->_fClientID / 10)->scheduleDelayedTask(
+					fcpObj->_fClientID / 100)->scheduleDelayedTask(
 			SUBSESSION_TIMEOUT_SECONDS * MILLION, (TaskFunc*) subsessionTimeout,
 					this, fcpObj);
 		}
@@ -491,7 +491,7 @@ void ProxyRTSPClient::scheduleLivenessCommand() {
 		uSecondsToDelay = us_1stPart + (us_2ndPart * our_random()) % us_2ndPart;
 	}
 	fLivenessCommandTask =
-			envir().taskScheduler(fcpObj->_fClientID / 10)->scheduleDelayedTask(
+			envir().taskScheduler(fcpObj->_fClientID / 100)->scheduleDelayedTask(
 					uSecondsToDelay, sendLivenessCommand, this, fcpObj);
 }
 
@@ -551,7 +551,7 @@ void ProxyRTSPClient::checkInterPacketGaps_(Boolean delayReset) {
 		fTotNumPacketsReceived = newTotNumPacketsReceived;
 		// Check again, after the specified delay:
 		fInterPacketGapsTask =
-				envir().taskScheduler(fcpObj->_fClientID / 10)->scheduleDelayedTask(
+				envir().taskScheduler(fcpObj->_fClientID / 100)->scheduleDelayedTask(
 						fInterPacketGapMaxTime * MILLION, checkInterPacketGaps,
 						this, fcpObj);
 	}
@@ -567,7 +567,7 @@ void ProxyRTSPClient::scheduleReset() {
 	if (fVerbosityLevel > 0) {
 		envir() << "ProxyRTSPClient::scheduleReset\n";
 	}
-	envir().taskScheduler(fcpObj->_fClientID / 10)->rescheduleDelayedTask(
+	envir().taskScheduler(fcpObj->_fClientID / 100)->rescheduleDelayedTask(
 			fResetTask, 0, doReset, this);
 }
 
@@ -604,7 +604,7 @@ void ProxyRTSPClient::scheduleDESCRIBECommand() {
 				<< secondsToDelay << " seconds\n";
 	}
 	fDESCRIBECommandTask =
-			envir().taskScheduler(fcpObj->_fClientID / 10)->scheduleDelayedTask(
+			envir().taskScheduler(fcpObj->_fClientID / 100)->scheduleDelayedTask(
 					secondsToDelay * MILLION, sendDESCRIBE, this, fcpObj);
 }
 
@@ -815,7 +815,7 @@ void ProxyServerMediaSubsession::closeStreamSource(FramedSource* inputSource) {
 						fClientMediaSubsession.parentSession(), NULL,
 						proxyRTSPClient->auth());
 				proxyRTSPClient->fLastCommandWasPLAY = False;
-				envir().taskScheduler(fcpObj->_fClientID / 10)->unscheduleDelayedTask(
+				envir().taskScheduler(fcpObj->_fClientID / 100)->unscheduleDelayedTask(
 						proxyRTSPClient->fInterPacketGapsTask);
 				proxyRTSPClient->fInterPacketGapsTask = NULL;
 			}

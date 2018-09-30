@@ -180,6 +180,7 @@ RTCPInstance::~RTCPInstance() {
 	sendBYE();
 
 	cout << "BYEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE" << endl;
+
 	if (fSource != NULL && fSource->RTPgs() == fRTCPInterface.gs()) {
 		// We were receiving RTCP reports that were multiplexed with RTP, so tell the RTP source
 		// to stop giving them to us:
@@ -387,7 +388,7 @@ void RTCPInstance::setStreamSocket(int sockNum, DP_U8 streamChannelId) {
 void RTCPInstance::addStreamSocket(int sockNum, DP_U8 streamChannelId) {
 	cout << "RTCP add Stream socket `````````````````````````````````" << endl;
 	// First, turn off background read handling for the default (UDP) socket:
-	envir().taskScheduler(fcpObj->_fClientID / 10)->turnOffBackgroundReadHandling(
+	envir().taskScheduler(fcpObj->_fClientID / 100)->turnOffBackgroundReadHandling(
 			fRTCPInterface.gs()->socketNum());
 
 	// Add the RTCP-over-TCP interface:
@@ -1197,12 +1198,12 @@ void RTCPInstance::schedule(double nextTime) {
 #endif
 	int64_t usToGo = (int64_t) (secondsToDelay * 1000000);
 	nextTask() =
-			envir().taskScheduler(fcpObj->_fClientID / 10)->scheduleDelayedTask(
+			envir().taskScheduler(fcpObj->_fClientID / 100)->scheduleDelayedTask(
 					usToGo, (TaskFunc*) RTCPInstance::onExpire, this, fcpObj);
 }
 
 void RTCPInstance::reschedule(double nextTime) {
-	envir().taskScheduler(fcpObj->_fClientID / 10)->unscheduleDelayedTask(
+	envir().taskScheduler(fcpObj->_fClientID / 100)->unscheduleDelayedTask(
 			nextTask());
 	schedule(nextTime);
 }

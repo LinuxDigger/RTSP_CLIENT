@@ -13,7 +13,7 @@
 ////////// MediaSink //////////
 
 MediaSink::MediaSink(UsageEnvironment& env, CommonPlay *cpObj) :
-		Medium(env), fSource(NULL), fAfterFunc(), fAfterClientData(), fcpObj(
+		Medium(env, cpObj), fSource(NULL), fAfterFunc(), fAfterClientData(), fcpObj(
 				cpObj) {
 }
 
@@ -75,7 +75,8 @@ void MediaSink::stopPlaying() {
 		fSource->stopGettingFrames();
 
 	// Cancel any pending tasks:
-	envir().taskScheduler(fcpObj->_fClientID / 10)->unscheduleDelayedTask(nextTask());
+	envir().taskScheduler(fcpObj->_fClientID / 100)->unscheduleDelayedTask(
+			nextTask());
 
 	fSource = NULL; // indicates that we can be played again
 	fAfterFunc = NULL;
@@ -88,7 +89,8 @@ void MediaSink::onSourceClosure(void* clientData) {
 
 void MediaSink::onSourceClosure() {
 	// Cancel any pending tasks:
-	envir().taskScheduler(fcpObj->_fClientID / 10)->unscheduleDelayedTask(nextTask());
+	envir().taskScheduler(fcpObj->_fClientID / 100)->unscheduleDelayedTask(
+			nextTask());
 
 	fSource = NULL; // indicates that we can be played again
 	if (fAfterFunc != NULL) {

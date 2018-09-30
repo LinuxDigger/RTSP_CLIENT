@@ -105,7 +105,7 @@ GenericMediaServer::GenericMediaServer(UsageEnvironment& env, int ourSocket,
 
 GenericMediaServer::~GenericMediaServer() {
 	// Turn off background read handling:
-	envir().taskScheduler(fcpObj->_fClientID / 10)->turnOffBackgroundReadHandling(
+	envir().taskScheduler(fcpObj->_fClientID / 100)->turnOffBackgroundReadHandling(
 			fServerSocket);
 	::closeSocket(fServerSocket);
 }

@@ -77,7 +77,7 @@ typedef struct _DP_RTSP_CLIENT_FRAME_DATA_S {
 	}
 	DP_U16 u16ClientID;
 	DP_U8* pu8Data;
-	DP_U32 u32Timestamp;
+	DP_U64 u32Timestamp;
 	DP_U32 u32FrameSize;
 	DP_U32 u32MaxFrameSize;
 	DP_U32 u32FrameSequence;

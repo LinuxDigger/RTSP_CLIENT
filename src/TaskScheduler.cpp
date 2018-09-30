@@ -23,7 +23,7 @@ TaskScheduler::TaskScheduler(DP_U16 scheIndex, DP_U32 urlNumsEachSche) :
 DP_U16 TaskScheduler::getIdleClientNum() {
 	pthread_mutex_lock(&mutex);
 	for (DP_U16 i = 1; i <= _u32UrlNumsEachSche; i++) {
-		if (_mClientSet[i + _u16ScheIndex * 10] == NULL) {
+		if (_mClientSet[i + _u16ScheIndex * 100] == NULL) {
 			if (i == _u32UrlNumsEachSche) {
 				_bClientSetIsFull = true;
 			}

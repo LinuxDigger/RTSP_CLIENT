@@ -28,14 +28,14 @@ BasicUDPSource::BasicUDPSource(UsageEnvironment& env, CommonPlay *cpObj,
 }
 
 BasicUDPSource::~BasicUDPSource() {
-	envir().taskScheduler(fcpObj->_fClientID / 10)->turnOffBackgroundReadHandling(
+	envir().taskScheduler(fcpObj->_fClientID / 100)->turnOffBackgroundReadHandling(
 			fInputGS->socketNum());
 }
 
 void BasicUDPSource::doGetNextFrame() {
 	if (!fHaveStartedReading) {
 		// Await incoming packets:
-		envir().taskScheduler(fcpObj->_fClientID / 10)->turnOnBackgroundReadHandling(
+		envir().taskScheduler(fcpObj->_fClientID / 100)->turnOnBackgroundReadHandling(
 				fInputGS->socketNum(),
 				(TaskScheduler::BackgroundHandlerProc*) &incomingPacketHandler,
 				this);
@@ -44,7 +44,7 @@ void BasicUDPSource::doGetNextFrame() {
 }
 
 void BasicUDPSource::doStopGettingFrames() {
-	envir().taskScheduler(fcpObj->_fClientID / 10)->turnOffBackgroundReadHandling(
+	envir().taskScheduler(fcpObj->_fClientID / 100)->turnOffBackgroundReadHandling(
 			fInputGS->socketNum());
 	fHaveStartedReading = False;
 }

@@ -360,11 +360,12 @@ private:
 	Boolean setupHTTPTunneling2(); // send the HTTP "POST"
 
 	// Support for asynchronous connections to the server:
-	static void connectionHandler(void*, int /*mask*/, CommonPlay *cpObj);
+	static void connectionHandler(void*, int /*mask*/, CommonPlay *cpObj=NULL);
 	void connectionHandler1();
 
 	// Support for handling data sent back by a server:
-	static void incomingDataHandler(void*, int /*mask*/, CommonPlay *cpObj);
+	static void incomingDataHandler(void*, int /*mask*/, CommonPlay *cpObj =
+			NULL);
 	void incomingDataHandler1(CommonPlay *cpObj);
 	void handleResponseBytes(int newBytesRead, CommonPlay *cpObj);
 

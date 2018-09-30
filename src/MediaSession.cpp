@@ -883,10 +883,10 @@ Boolean MediaSubsession::initiate(int useSpecialRTPoffset) {
 				// use an even-numbered port for RTP, and the next (odd-numbered) port for RTCP
 			}
 			if (isSSM()) {
-				fRTPSocket = new Groupsock(fcpObj->_fClientID / 10, env(),
+				fRTPSocket = new Groupsock(fcpObj->_fClientID / 100, env(),
 						tempAddr, fSourceFilterAddr, fClientPortNum);
 			} else {
-				fRTPSocket = new Groupsock(fcpObj->_fClientID / 10, env(),
+				fRTPSocket = new Groupsock(fcpObj->_fClientID / 100, env(),
 						tempAddr, fClientPortNum, 255);
 			}
 			if (fRTPSocket == NULL) {
@@ -902,11 +902,11 @@ Boolean MediaSubsession::initiate(int useSpecialRTPoffset) {
 					// Set our RTCP port to be the RTP port + 1:
 					portNumBits const rtcpPortNum = fClientPortNum | 1;
 					if (isSSM()) {
-						fRTCPSocket = new Groupsock(fcpObj->_fClientID / 10,
+						fRTCPSocket = new Groupsock(fcpObj->_fClientID / 100,
 								env(), tempAddr, fSourceFilterAddr,
 								rtcpPortNum);
 					} else {
-						fRTCPSocket = new Groupsock(fcpObj->_fClientID / 10,
+						fRTCPSocket = new Groupsock(fcpObj->_fClientID / 100,
 								env(), tempAddr, rtcpPortNum, 255);
 					}
 				}
@@ -928,10 +928,10 @@ Boolean MediaSubsession::initiate(int useSpecialRTPoffset) {
 			while (1) {
 				// Create a new socket:
 				if (isSSM()) {
-					fRTPSocket = new Groupsock(fcpObj->_fClientID / 10, env(),
+					fRTPSocket = new Groupsock(fcpObj->_fClientID / 100, env(),
 							tempAddr, fSourceFilterAddr, 0);
 				} else {
-					fRTPSocket = new Groupsock(fcpObj->_fClientID / 10, env(),
+					fRTPSocket = new Groupsock(fcpObj->_fClientID / 100, env(),
 							tempAddr, 0, 255);
 				}
 				if (fRTPSocket == NULL) {
@@ -968,10 +968,10 @@ Boolean MediaSubsession::initiate(int useSpecialRTPoffset) {
 				// Make sure we can use the next (i.e., odd) port number, for RTCP:
 				portNumBits rtcpPortNum = fClientPortNum | 1;
 				if (isSSM()) {
-					fRTCPSocket = new Groupsock(fcpObj->_fClientID / 10, env(),
+					fRTCPSocket = new Groupsock(fcpObj->_fClientID / 100, env(),
 							tempAddr, fSourceFilterAddr, rtcpPortNum);
 				} else {
-					fRTCPSocket = new Groupsock(fcpObj->_fClientID / 10, env(),
+					fRTCPSocket = new Groupsock(fcpObj->_fClientID / 100, env(),
 							tempAddr, rtcpPortNum, 255);
 				}
 				if (fRTCPSocket != NULL && fRTCPSocket->socketNum() >= 0) {

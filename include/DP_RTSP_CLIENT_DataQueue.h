@@ -9,7 +9,6 @@
 #define INCLUDE_DP_RTSP_CLIENT_DATAQUEUE_H_
 
 #include "DP_RTSP_CLIENT_GlobDefine.h"
-//#include "DP_RTSP_CLIENT_Interface.h"
 #include <unistd.h>
 #include "DP_RTSP_CLIENT_DataStructureDef.h"
 #include <vector>
@@ -20,7 +19,7 @@ public:
 	DP_RTSP_CLIENT_DataQueue(DP_U16 u16CliID, DP_U32 frameCnt);
 	~DP_RTSP_CLIENT_DataQueue();
 
-	DP_S32 DP_RTSP_CLIENT_RecvData(DP_U32 timestamp, DP_U32 frameSize,
+	DP_S32 DP_RTSP_CLIENT_RecvData(DP_U64 timestamp, DP_U32 frameSize,
 			DP_U32 &frameSequence, DP_RTSP_CLINET_CODEC_TYPE_E frameType,
 			DP_U8 *dataBuff);
 	DP_U32 DP_RTSP_CLIENT_PutoutData(DP_RTSP_CLIENT_FRAME_DATA_S *stData,
@@ -45,12 +44,15 @@ private:
 			return false;
 	}
 
-	void copyData(DP_U32 indexMod, DP_RTSP_CLIENT_FRAME_DATA_S*stData);
+	void copyVideoData(DP_U32 indexMod, DP_RTSP_CLIENT_FRAME_DATA_S*stData);
+	void copyAudioData(DP_U32 indexMod, DP_RTSP_CLIENT_FRAME_DATA_S*stData);
 	DP_Bool isVideoStartFrame(DP_U32 nextFrameMod);
 	DP_Bool isAvailableFrame(DP_U32 nextFrameMod,
 			DP_RTSP_CLIENT_STREAM_TYPE_E streamType);
 	DP_Bool isUnvalidFrame(DP_U32 nextFrameMod,
 			DP_RTSP_CLIENT_STREAM_TYPE_E streamType);
+	DP_Bool isAAudioFrame(DP_RTSP_CLIENT_STREAM_TYPE_E streamType);
+	DP_Bool isAVideoFrame(DP_RTSP_CLIENT_STREAM_TYPE_E streamType);
 
 };
 
